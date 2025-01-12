@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
 import org.pizzeria.fabulosa.entity.error.Error;
 import org.pizzeria.fabulosa.repos.error.ErrorRepository;
+import org.pizzeria.fabulosa.utils.ExceptionLogger;
 import org.pizzeria.fabulosa.web.constants.ApiResponses;
 import org.pizzeria.fabulosa.web.constants.SecurityResponses;
 import org.pizzeria.fabulosa.web.dto.api.Response;
@@ -38,7 +39,6 @@ import java.util.UUID;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private static final String CLASS_NAME_SHORT = "G.E.H";
-	private static final String INFO_LOG = "Exception caught -> {}";
 
 	private final ErrorRepository errorRepository;
 
@@ -76,7 +76,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 						.build())
 				.build();
 
-		log.info(INFO_LOG, response);
+		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 	}
 
@@ -116,7 +116,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.error(error)
 				.build();
 
-		log.info(INFO_LOG, response);
+		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 	}
 
@@ -142,7 +142,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.error(error)
 				.build();
 
-		log.info(INFO_LOG, response);
+		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 	}
 
@@ -195,7 +195,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.error(error)
 				.build();
 
-		log.info(INFO_LOG, response);
+		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 	}
 
@@ -222,7 +222,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.error(error)
 				.build();
 
-		log.info(INFO_LOG, response);
+		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 	}
 }
