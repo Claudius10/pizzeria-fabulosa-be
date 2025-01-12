@@ -69,7 +69,8 @@ public class UserController {
 
 	@ValidateUserId
 	@PostMapping(ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS)
-	public ResponseEntity<Response> createUserAddress(@RequestBody @Valid Address address, @PathVariable Long userId, HttpServletRequest request) {
+	public ResponseEntity<Response> createUserAddress(
+			@RequestBody @Valid Address address, @PathVariable Long userId, HttpServletRequest request) {
 		boolean ok = userService.addUserAddress(userId, address);
 
 		Response response = Response.builder()

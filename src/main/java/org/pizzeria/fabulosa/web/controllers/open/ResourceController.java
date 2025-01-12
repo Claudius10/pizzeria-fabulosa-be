@@ -22,7 +22,6 @@ public class ResourceController {
 	@GetMapping(path = ApiRoutes.RESOURCE_PRODUCT)
 	public ResponseEntity<Response> findAllProducts() {
 
-
 		Response response = Response.builder()
 				.status(Status.builder()
 						.description(HttpStatus.OK.name())

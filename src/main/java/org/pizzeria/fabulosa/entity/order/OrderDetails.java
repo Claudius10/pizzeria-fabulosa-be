@@ -5,9 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLengthNullable;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.constants.ValidationRules;
+import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLengthNullable;
 
 import java.util.Objects;
 

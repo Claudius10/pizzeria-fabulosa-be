@@ -3,9 +3,9 @@ package org.pizzeria.fabulosa.entity.cart;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLength;
 import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.IntegerLength;
-import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 
 import java.util.Objects;
 
