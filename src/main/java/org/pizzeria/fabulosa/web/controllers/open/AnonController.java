@@ -37,7 +37,7 @@ public class AnonController {
 		this.jwtDecoder = jwtDecoder;
 	}
 
-	@PostMapping("/token/{token}")
+	@GetMapping("/token/{token}")
 	public ResponseEntity<Response> verify(@PathVariable String token) {
 
 		try {
