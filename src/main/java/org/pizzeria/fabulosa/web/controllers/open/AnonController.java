@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.pizzeria.fabulosa.services.order.OrderService;
 import org.pizzeria.fabulosa.services.user.UserService;
-import org.pizzeria.fabulosa.utils.ExceptionLogger;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.api.Status;
@@ -14,10 +13,12 @@ import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewAnonOrderDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.ANON_BASE)
@@ -29,28 +30,10 @@ public class AnonController {
 
 	private final OrderService orderService;
 
-	private final JwtDecoder jwtDecoder;
-
 	public AnonController(UserService userService, OrderService orderService, JwtDecoder jwtDecoder) {
 		this.userService = userService;
 		this.orderService = orderService;
-		this.jwtDecoder = jwtDecoder;
 	}
-
-	@GetMapping("/token/{token}")
-	public ResponseEntity<Response> verify(@PathVariable String token) {
-
-		try {
-			Jwt decode = jwtDecoder.decode(token);
-			log.info(decode.getSubject());
-		} catch (Exception e) {
-			log.info("my error");
-			ExceptionLogger.log(e, log, null);
-		}
-
-		return ResponseEntity.status(HttpStatus.OK).build();
-	}
-
 
 	@PostMapping(ApiRoutes.ANON_REGISTER)
 	public ResponseEntity<Response> registerAnonUser(@RequestBody @Valid RegisterDTO registerDTO, HttpServletRequest request) {
