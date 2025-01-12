@@ -16,6 +16,7 @@ public class KeyGenerator {
 			keyPairGenerator.initialize(2048);
 			keyPair = keyPairGenerator.generateKeyPair();
 			log.info("RSA Public Key {}", keyPair.getPublic());
+			log.info("RSA Private Key {}", keyPair.getPrivate());
 		} catch (Exception e) {
 			ExceptionLogger.log(e, log, null);
 			throw new IllegalStateException();
