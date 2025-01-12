@@ -36,6 +36,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static org.pizzeria.fabulosa.utils.Constants.ISSUER;
+
 @Configuration
 public class SecurityConfig {
 
@@ -129,7 +131,7 @@ public class SecurityConfig {
 	@Bean
 	JwtDecoder jwtDecoder(RSAKeyPair keys) {
 		NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(keys.getPublicKey()).build();
-		decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer("https://pizzeriaprojectbe-production.up.railway.app"));
+		decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(ISSUER));
 		return decoder;
 	}
 
@@ -140,10 +142,10 @@ public class SecurityConfig {
 	private CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(
-				Arrays.asList("http://192.168.1.128:4200", "https://pizzeriaangularfe-production.up.railway.app", "https://pizzeriaproject-production.up.railway.app"));
+				Arrays.asList("http://192.168.1.128:4200", "https://pizzeriaangularfe-production.up.railway.app"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-		configuration.setExposedHeaders(Arrays.asList("Content-Type", "x-xsrf-token"));
-		configuration.setAllowedHeaders(Arrays.asList("Content-Type", "x-xsrf-token"));
+		configuration.setExposedHeaders(Arrays.asList("Content-Type"));
+		configuration.setAllowedHeaders(Arrays.asList("Content-Type"));
 		configuration.setAllowCredentials(true);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);

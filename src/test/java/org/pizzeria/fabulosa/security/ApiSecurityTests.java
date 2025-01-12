@@ -23,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -76,12 +75,16 @@ class ApiSecurityTests {
 		// Act
 
 		// post api call to check csrf protection
-		mockMvc.perform(get("/api/tests")
+		MockHttpServletResponse response = mockMvc.perform(get("/api/tests")
 						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, validAccessToken, 30, true, false)))
+				.andReturn().getResponse();
 
-				// Assert
+		Response responseObj = getResponse(response, objectMapper);
 
-				.andExpect(status().isOk());
+		// Assert
+
+		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
+		assertThat(responseObj.getStatus().isError()).isFalse();
 	}
 
 	@Test

@@ -11,10 +11,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static org.pizzeria.fabulosa.utils.Constants.ISSUER;
+
 @Component
 public class JWTTokenManager {
-
-	private final static String ISSUER = "https://pizzeriaprojectbe-production.up.railway.app";
 
 	private final static Instant ACCESS_TOKEN_EXPIRE_DATE = Instant.now().plus(1, ChronoUnit.DAYS);
 
