@@ -199,30 +199,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 //	}
 
-	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<Response> unknownException(Exception ex, WebRequest request) {
-
-		Error error = Error.builder()
-				.cause(ex.getClass().getSimpleName())
-				.message(ex.getMessage())
-				.origin(CLASS_NAME_SHORT + ".unknownException")
-				.path(((ServletWebRequest) request).getRequest().getServletPath())
-				.logged(true)
-				.fatal(true)
-				.build();
-
-		errorRepository.save(error);
-
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.INTERNAL_SERVER_ERROR.name())
-						.code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-						.isError(true)
-						.build())
-				.error(error)
-				.build();
-
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
-	}
+//	@ExceptionHandler(Exception.class)
+//	protected ResponseEntity<Response> unknownException(Exception ex, WebRequest request) {
+//
+//		Error error = Error.builder()
+//				.cause(ex.getClass().getSimpleName())
+//				.message(ex.getMessage())
+//				.origin(CLASS_NAME_SHORT + ".unknownException")
+//				.path(((ServletWebRequest) request).getRequest().getServletPath())
+//				.logged(true)
+//				.fatal(true)
+//				.build();
+//
+//		errorRepository.save(error);
+//
+//		Response response = Response.builder()
+//				.status(Status.builder()
+//						.description(HttpStatus.INTERNAL_SERVER_ERROR.name())
+//						.code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//						.isError(true)
+//						.build())
+//				.error(error)
+//				.build();
+//
+//		ExceptionLogger.log(ex, log, response);
+//		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+//	}
 }

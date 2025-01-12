@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +43,8 @@ public class AnonController {
 		try {
 			Jwt decode = jwtDecoder.decode(token);
 			log.info(decode.getSubject());
-		} catch (JwtException e) {
+		} catch (Exception e) {
+			log.info("my error");
 			ExceptionLogger.log(e, log, null);
 		}
 
