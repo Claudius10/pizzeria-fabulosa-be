@@ -146,58 +146,58 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 	}
 
-	@ExceptionHandler(AuthenticationException.class)
-	protected ResponseEntity<Response> authenticationException(AuthenticationException ex, WebRequest request) {
-
-		String errorMessage;
-		boolean fatal = false;
-		boolean deleteCookies = false;
-
-		switch (ex) {
-			case BadCredentialsException ignored -> errorMessage = SecurityResponses.BAD_CREDENTIALS;
-			case UsernameNotFoundException ignored -> errorMessage = SecurityResponses.USER_NOT_FOUND;
-			case InvalidBearerTokenException ignored -> {
-				errorMessage = SecurityResponses.INVALID_TOKEN;
-				deleteCookies = true;
-			}
-			default -> {
-				fatal = true;
-				errorMessage = ex.getMessage();
-			}
-		}
-
-		Error error = Error.builder()
-				.id(UUID.randomUUID().getMostSignificantBits())
-				.cause(ex.getClass().getSimpleName())
-				.message(errorMessage)
-				.origin(CLASS_NAME_SHORT + ".authenticationException")
-				.path(((ServletWebRequest) request).getRequest().getServletPath())
-				.logged(fatal)
-				.fatal(fatal)
-				.build();
-
-		if (fatal) {
-			error.setId(null);
-			Error savedError = this.errorRepository.save(error);
-			error.setId(savedError.getId());
-		}
-
-		if (deleteCookies) {
-			SecurityCookieUtils.eatAllCookies(((ServletWebRequest) request).getRequest(), ((ServletWebRequest) request).getResponse());
-		}
-
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.UNAUTHORIZED.name())
-						.code(HttpStatus.UNAUTHORIZED.value())
-						.isError(true)
-						.build())
-				.error(error)
-				.build();
-
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
-	}
+//	@ExceptionHandler(AuthenticationException.class)
+//	protected ResponseEntity<Response> authenticationException(AuthenticationException ex, WebRequest request) {
+//
+//		String errorMessage;
+//		boolean fatal = false;
+//		boolean deleteCookies = false;
+//
+//		switch (ex) {
+//			case BadCredentialsException ignored -> errorMessage = SecurityResponses.BAD_CREDENTIALS;
+//			case UsernameNotFoundException ignored -> errorMessage = SecurityResponses.USER_NOT_FOUND;
+//			case InvalidBearerTokenException ignored -> {
+//				errorMessage = SecurityResponses.INVALID_TOKEN;
+//				deleteCookies = true;
+//			}
+//			default -> {
+//				fatal = true;
+//				errorMessage = ex.getMessage();
+//			}
+//		}
+//
+//		Error error = Error.builder()
+//				.id(UUID.randomUUID().getMostSignificantBits())
+//				.cause(ex.getClass().getSimpleName())
+//				.message(errorMessage)
+//				.origin(CLASS_NAME_SHORT + ".authenticationException")
+//				.path(((ServletWebRequest) request).getRequest().getServletPath())
+//				.logged(fatal)
+//				.fatal(fatal)
+//				.build();
+//
+//		if (fatal) {
+//			error.setId(null);
+//			Error savedError = this.errorRepository.save(error);
+//			error.setId(savedError.getId());
+//		}
+//
+//		if (deleteCookies) {
+//			SecurityCookieUtils.eatAllCookies(((ServletWebRequest) request).getRequest(), ((ServletWebRequest) request).getResponse());
+//		}
+//
+//		Response response = Response.builder()
+//				.status(Status.builder()
+//						.description(HttpStatus.UNAUTHORIZED.name())
+//						.code(HttpStatus.UNAUTHORIZED.value())
+//						.isError(true)
+//						.build())
+//				.error(error)
+//				.build();
+//
+//		ExceptionLogger.log(ex, log, response);
+//		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+//	}
 
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<Response> unknownException(Exception ex, WebRequest request) {
