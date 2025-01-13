@@ -3,6 +3,8 @@ package org.pizzeria.fabulosa.entity.cart;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.pizzeria.fabulosa.entity.order.Order;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLength;
@@ -15,20 +17,19 @@ import java.util.Objects;
 
 @Entity(name = "Cart")
 @Table(name = "cart")
+@Getter
+@Setter
 public class Cart {
 
 	@Id
 	private Long id;
 
-	@Column
 	@IntegerLength(min = 1, max = 2, message = ValidationResponses.CART_MAX_PRODUCTS_QUANTITY_ERROR)
 	private Integer totalQuantity;
 
-	@Column
 	@DoubleLength(min = 1, max = 6, message = "")
 	private Double totalCost;
 
-	@Column
 	@DoubleLengthNullable(min = 0, max = 6, message = "")
 	private Double totalCostOffers;
 
@@ -60,60 +61,6 @@ public class Cart {
 	public void removeItem(CartItem item) {
 		cartItems.remove(item);
 		item.setCart(null);
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Integer getTotalQuantity() {
-		return totalQuantity;
-	}
-
-	public void setTotalQuantity(Integer totalQuantity) {
-		this.totalQuantity = totalQuantity;
-	}
-
-	public Double getTotalCost() {
-		return totalCost;
-	}
-
-	public void setTotalCost(Double totalCost) {
-		this.totalCost = totalCost;
-	}
-
-	public Double getTotalCostOffers() {
-		return totalCostOffers;
-	}
-
-	public void setTotalCostOffers(Double totalCostOffers) {
-		this.totalCostOffers = totalCostOffers;
-	}
-
-	public List<CartItem> getCartItems() {
-		return cartItems;
-	}
-
-	public void setCartItems(List<CartItem> cartItems) {
-		this.cartItems = cartItems;
-	}
-
-	public Order getOrder() {
-		return order;
-	}
-
-	public void setOrder(Order order) {
-		this.order = order;
-	}
-
-	@Override
-	public String toString() {
-		return "Cart [id=" + id + ", totalQuantity=" + totalQuantity + ", totalCost=" + totalCost + ", totalCostOffers="
-				+ totalCostOffers + "]";
 	}
 
 	public boolean contentEquals(Object o) {

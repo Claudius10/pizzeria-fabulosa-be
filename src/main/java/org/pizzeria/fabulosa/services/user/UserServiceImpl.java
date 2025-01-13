@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,13 +45,15 @@ public class UserServiceImpl implements UserService {
 	public void createUser(RegisterDTO registerDTO) {
 		String encodedPassword = bCryptEncoder.encode(registerDTO.password());
 		Optional<Role> userRole = roleService.findByName("USER");
+		Set<Role> roles = new HashSet<>();
+		roles.add(userRole.get());
 
-		User user = new User.Builder()
+		User user = User.builder()
 				.withName(registerDTO.name())
 				.withEmail(registerDTO.email())
 				.withContactNumber(registerDTO.contactNumber())
 				.withPassword(encodedPassword)
-				.withRoles(userRole.get())
+				.withRoles(roles)
 				.build();
 
 		userRepository.save(user);

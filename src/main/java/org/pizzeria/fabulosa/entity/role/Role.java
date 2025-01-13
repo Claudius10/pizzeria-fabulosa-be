@@ -1,12 +1,18 @@
 package org.pizzeria.fabulosa.entity.role;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Objects;
 
 @Entity(name = "Role")
 @Table(name = "role")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(setterPrefix = "with")
 public class Role implements GrantedAuthority {
 
 	@Id
@@ -16,10 +22,6 @@ public class Role implements GrantedAuthority {
 
 	@Column(unique = true)
 	private String name;
-
-	public Role() {
-		// The JPA specification requires all Entity classes to have a default no-arg constructor.
-	}
 
 	public Role(String name) {
 		this.name = name;

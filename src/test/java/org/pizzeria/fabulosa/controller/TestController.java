@@ -1,7 +1,6 @@
 package org.pizzeria.fabulosa.controller;
 
 import lombok.AllArgsConstructor;
-import org.pizzeria.fabulosa.entity.error.Error;
 import org.pizzeria.fabulosa.order.context.OrderServiceImplTest;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.api.Status;
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tests")
@@ -48,23 +46,7 @@ class TestController {
 
 	@PostMapping("/error")
 	ResponseEntity<?> errorTestPostEndpoint() {
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.BAD_REQUEST.name())
-						.code(HttpStatus.BAD_REQUEST.value())
-						.isError(true)
-						.build())
-				.build();
-
-		response.setError(Error.builder()
-				.id(UUID.randomUUID().getMostSignificantBits())
-				.cause("TestError")
-				.origin(TestController.class.getSimpleName() + ".errorTestPostEndpoint")
-				.path("/api/tests/error")
-				.logged(false)
-				.fatal(false).build());
-
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+		throw new IllegalArgumentException("TestError");
 	}
 
 	@GetMapping("/admin")

@@ -2,6 +2,8 @@ package org.pizzeria.fabulosa.entity.order;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.pizzeria.fabulosa.entity.address.Address;
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
 
 @Entity(name = "Order")
 @Table(name = "orders")
+@Getter
+@Setter
 public class Order {
 
 	@Id
@@ -19,25 +23,18 @@ public class Order {
 	@SequenceGenerator(name = "order_generator", sequenceName = "order_seq", allocationSize = 1)
 	private Long id;
 
-	@Column
 	private LocalDateTime createdOn;
 
-	@Column
 	private LocalDateTime updatedOn;
 
-	@Column
 	private String formattedCreatedOn;
 
-	@Column
 	private String formattedUpdatedOn;
 
-	@Column
 	private String anonCustomerName;
 
-	@Column
 	private Integer anonCustomerContactNumber;
 
-	@Column
 	private String anonCustomerEmail;
 
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH},
@@ -63,58 +60,6 @@ public class Order {
 		// The JPA specification requires all Entity classes to have a default no-arg constructor.
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public LocalDateTime getCreatedOn() {
-		return createdOn;
-	}
-
-	public LocalDateTime getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(LocalDateTime updatedOn) {
-		this.updatedOn = updatedOn;
-	}
-
-	public String getFormattedCreatedOn() {
-		return formattedCreatedOn;
-	}
-
-	public String getFormattedUpdatedOn() {
-		return formattedUpdatedOn;
-	}
-
-	public void setFormattedUpdatedOn(String formattedUpdatedOn) {
-		this.formattedUpdatedOn = formattedUpdatedOn;
-	}
-
-	public String getAnonCustomerName() {
-		return anonCustomerName;
-	}
-
-	public Integer getAnonCustomerContactNumber() {
-		return anonCustomerContactNumber;
-	}
-
-	public String getAnonCustomerEmail() {
-		return anonCustomerEmail;
-	}
-
-	public Address getAddress() {
-		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
-	}
-
-	public OrderDetails getOrderDetails() {
-		return orderDetails;
-	}
-
 	public void setOrderDetails(OrderDetails orderDetails) {
 		if (orderDetails == null) {
 			if (this.orderDetails != null) {
@@ -126,10 +71,6 @@ public class Order {
 		this.orderDetails = orderDetails;
 	}
 
-	public Cart getCart() {
-		return cart;
-	}
-
 	public void setCart(Cart cart) {
 		if (cart == null) {
 			if (this.cart != null) {
@@ -139,10 +80,6 @@ public class Order {
 			cart.setOrder(this);
 		}
 		this.cart = cart;
-	}
-
-	public User getUser() {
-		return user;
 	}
 
 	@Override
