@@ -9,7 +9,6 @@ import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.api.Status;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewAnonOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
-import org.pizzeria.fabulosa.web.dto.order.dto.UpdateUserOrderDTO;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidationResult;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidator;
 import org.springframework.http.HttpStatus;
@@ -74,39 +73,6 @@ public class ValidateOrderOperation {
 						.id(UUID.randomUUID().getMostSignificantBits())
 						.cause(result.getMessage())
 						.origin(ValidateOrderOperation.class.getSimpleName() + ".validateNewUserOrder")
-						.path(request.getPathInfo())
-						.logged(false)
-						.fatal(false)
-						.build())
-				.build();
-
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
-	}
-
-	@Around(value = "execution(* org.pizzeria.fabulosa.web.controllers.user.UserOrdersController.updateUserOrder(..)) && args" +
-			"(orderId, order, userId, request)", argNames = "pjp,orderId,order,userId,request")
-	public Object validateUserOrderUpdate(ProceedingJoinPoint pjp, Long orderId, UpdateUserOrderDTO order, Long userId, HttpServletRequest request) throws Throwable {
-		OrderValidationResult result = orderValidator.validateUpdate(order.cart(), order.orderDetails(), order.createdOn());
-
-		if (result.isValid() && result.isCartUpdateValid()) {
-			return pjp.proceed();
-		}
-
-		if (result.isValid() && !result.isCartUpdateValid()) {
-			UpdateUserOrderDTO updateUserOrderDTO = order.withCart(null);
-			return pjp.proceed(new Object[]{orderId, updateUserOrderDTO, userId, request});
-		}
-
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.BAD_REQUEST.name())
-						.code(HttpStatus.BAD_REQUEST.value())
-						.isError(true)
-						.build())
-				.error(Error.builder()
-						.id(UUID.randomUUID().getMostSignificantBits())
-						.cause(result.getMessage())
-						.origin(ValidateOrderOperation.class.getSimpleName() + ".validateUserOrderUpdate")
 						.path(request.getPathInfo())
 						.logged(false)
 						.fatal(false)

@@ -3,7 +3,6 @@ package org.pizzeria.fabulosa.services.order;
 import jakarta.transaction.Transactional;
 import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.cart.Cart;
-import org.pizzeria.fabulosa.entity.cart.CartItem;
 import org.pizzeria.fabulosa.entity.order.Order;
 import org.pizzeria.fabulosa.entity.user.User;
 import org.pizzeria.fabulosa.repos.order.OrderRepository;
@@ -22,7 +21,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -123,53 +121,6 @@ public class OrderServiceImpl implements OrderService {
 				newOrder.getOrderDetails(),
 				newOrder.getCart()
 		);
-	}
-
-	@Override
-	public boolean updateUserOrder(Long orderId, UpdateUserOrderDTO updateUserOrder) {
-		Optional<Address> dbAddress = addressService.findAddressById(updateUserOrder.addressId());
-		Optional<Order> dbOrder = findUserOrderById(orderId);
-
-		if (dbOrder.isEmpty() || dbAddress.isEmpty()) {
-			return false;
-		}
-
-		Address address = dbAddress.get();
-		Order order = dbOrder.get();
-
-		boolean pendingAddressUpdate = !order.getAddress().contentEquals(address);
-		boolean pendingOrderDetailsUpdate = !order.getOrderDetails().contentEquals(updateUserOrder.orderDetails());
-		boolean pendingCartUpdate = updateUserOrder.cart() != null && !order.getCart().contentEquals(updateUserOrder.cart());
-
-		if (pendingAddressUpdate) {
-			order.setAddress(address);
-		}
-
-		if (pendingOrderDetailsUpdate) {
-			order.getOrderDetails().setDeliveryTime(updateUserOrder.orderDetails().getDeliveryTime());
-			order.getOrderDetails().setPaymentMethod(updateUserOrder.orderDetails().getPaymentMethod());
-			order.getOrderDetails().setBillToChange(updateUserOrder.orderDetails().getBillToChange());
-			order.getOrderDetails().setChangeToGive(updateUserOrder.orderDetails().getChangeToGive());
-			order.getOrderDetails().setComment(updateUserOrder.orderDetails().getComment());
-		}
-
-		// cart == null if !isCartUpdateValid
-		if (pendingCartUpdate) {
-			order.getCart().setTotalQuantity(updateUserOrder.cart().getTotalQuantity());
-			order.getCart().setTotalCost(updateUserOrder.cart().getTotalCost());
-			order.getCart().setTotalCostOffers(updateUserOrder.cart().getTotalCostOffers());
-			order.getCart().getCartItems().clear();
-			for (CartItem item : updateUserOrder.cart().getCartItems()) {
-				order.getCart().addItem(item);
-			}
-		}
-
-		if (pendingAddressUpdate || pendingOrderDetailsUpdate || pendingCartUpdate) {
-			order.setUpdatedOn(LocalDateTime.now());
-			order.setFormattedUpdatedOn(LocalDateTime.now().plusHours(2).format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy")));
-		}
-
-		return true;
 	}
 
 	@Override

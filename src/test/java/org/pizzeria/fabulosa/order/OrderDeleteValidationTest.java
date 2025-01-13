@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pizzeria.fabulosa.services.order.OrderService;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidationResult;
-import org.pizzeria.fabulosa.web.order.validation.OrderValidatorImpl;
+import org.pizzeria.fabulosa.web.order.validation.OrderValidator;
 
 import java.time.LocalDateTime;
 
@@ -22,7 +22,7 @@ class OrderDeleteValidationTest {
 	private OrderService orderService;
 
 	@InjectMocks
-	private OrderValidatorImpl orderValidator;
+	private OrderValidator orderValidator;
 
 	@Test
 	void givenOrderDeleteRequest_whenDeleteWindowPassed_thenReturnInvalidResult() {

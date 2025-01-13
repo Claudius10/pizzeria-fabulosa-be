@@ -206,6 +206,8 @@ public class UserController {
 						.build())
 				.build();
 
+		// TODO - test error case
+
 		if (isError) {
 			responseObj.setError(Error.builder()
 					.id(UUID.randomUUID().getMostSignificantBits())

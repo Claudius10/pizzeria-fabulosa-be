@@ -10,7 +10,7 @@ public class ControllerPointcuts {
 	 * in the org.pizzeria.api.controllers.locked.user package or any sub-package
 	 * under that.
 	 */
-	@Pointcut("within(org.pizzeria.fabulosa.controllers.locked.user)")
+	@Pointcut("within(org.pizzeria.fabulosa.web.controllers.user)")
 	public void isUserController() {
 	}
 

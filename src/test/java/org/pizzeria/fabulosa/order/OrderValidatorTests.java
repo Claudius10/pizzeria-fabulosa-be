@@ -4,13 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pizzeria.fabulosa.entity.cart.Cart;
 import org.pizzeria.fabulosa.entity.cart.CartItem;
-import org.pizzeria.fabulosa.web.order.validation.OrderValidatorImpl;
+import org.pizzeria.fabulosa.web.order.validation.OrderValidator;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringJUnitConfig
 class OrderValidatorTests {
 
-	OrderValidatorImpl orderValidator = new OrderValidatorImpl(null);
+	OrderValidator orderValidator = new OrderValidator(null);
 
 	@Test
 	void givenIsCartEmptyMethod_whenValidatingEmptyCart_thenReturnTrue() {
@@ -133,17 +132,5 @@ class OrderValidatorTests {
 		double totalCostAfterOffers = 13.3;
 		Double output = orderValidator.calculatePaymentChange(null, totalCost, totalCostAfterOffers);
 		assertNull(output);
-	}
-
-	@Test
-	void givenIsOrderDataUpdateTimeLimitValidMethod_whenOrderUpdateWindowPassed_thenReturnFalse() {
-		boolean isOrderDataUpdateTimeLimitValid = orderValidator.isOrderDataUpdateTimeLimitValid(LocalDateTime.now().minusMinutes(11));
-		assertFalse(isOrderDataUpdateTimeLimitValid);
-	}
-
-	@Test
-	void givenIsOrderDataUpdateTimeLimitValidMethod_whenOrderUpdateWindowIsValid_thenReturnTrue() {
-		boolean isOrderDataUpdateTimeLimitValid = orderValidator.isOrderDataUpdateTimeLimitValid(LocalDateTime.now().minusMinutes(9));
-		assertTrue(isOrderDataUpdateTimeLimitValid);
 	}
 }

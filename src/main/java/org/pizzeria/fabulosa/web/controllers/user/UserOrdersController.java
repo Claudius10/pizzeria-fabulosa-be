@@ -7,7 +7,10 @@ import org.pizzeria.fabulosa.web.aop.annotations.ValidateUserId;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.api.Status;
-import org.pizzeria.fabulosa.web.dto.order.dto.*;
+import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.dto.OrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.dto.OrderSummaryListDTO;
 import org.pizzeria.fabulosa.web.dto.order.projection.OrderSummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -57,28 +60,6 @@ public class UserOrdersController {
 						.isError(false)
 						.build())
 				.payload(projectionById.orElse(null))
-				.build();
-
-		return ResponseEntity.ok(response);
-	}
-
-	@ValidateUserId
-	@PutMapping(ApiRoutes.ORDER_ID)
-	public ResponseEntity<Response> updateUserOrder(
-			@PathVariable Long orderId,
-			@RequestBody @Valid UpdateUserOrderDTO order,
-			@PathVariable Long userId,
-			HttpServletRequest request) {
-
-		boolean result = orderService.updateUserOrder(orderId, order);
-
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(result ? HttpStatus.OK.name() : HttpStatus.NO_CONTENT.name())
-						.code(result ? HttpStatus.OK.value() : HttpStatus.NO_CONTENT.value())
-						.isError(false)
-						.build())
-				.payload(orderId)
 				.build();
 
 		return ResponseEntity.ok(response);
