@@ -2,10 +2,7 @@ package org.pizzeria.fabulosa.entity.resources;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.pizzeria.fabulosa.entity.address.Address;
 
@@ -17,6 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Store {
 
 	@Id

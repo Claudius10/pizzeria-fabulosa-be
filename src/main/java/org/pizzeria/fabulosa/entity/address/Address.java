@@ -16,6 +16,7 @@ import java.util.Objects;
 @Builder(setterPrefix = "with")
 @Valid
 @ValidAddress
+@EqualsAndHashCode
 public class Address {
 
 	@Id
