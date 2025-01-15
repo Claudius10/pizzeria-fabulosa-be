@@ -3,6 +3,7 @@ package org.pizzeria.fabulosa.web.controllers.user;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
 import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.error.Error;
@@ -22,16 +23,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE)
 @Validated
 public class UserController {
 
 	private final UserService userService;
-
-	public UserController(UserService userService) {
-		this.userService = userService;
-	}
 
 	@ValidateUserId
 	@GetMapping(ApiRoutes.USER_ID)

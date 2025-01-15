@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa.services.resources;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.pizzeria.fabulosa.entity.resources.Offer;
 import org.pizzeria.fabulosa.entity.resources.Product;
 import org.pizzeria.fabulosa.entity.resources.Store;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Transactional
 public class ResourceServiceImpl implements ResourceService {
 

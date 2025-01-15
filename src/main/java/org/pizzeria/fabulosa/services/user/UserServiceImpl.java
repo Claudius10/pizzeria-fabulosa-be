@@ -1,6 +1,7 @@
 package org.pizzeria.fabulosa.services.user;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.role.Role;
 import org.pizzeria.fabulosa.entity.user.User;
@@ -19,27 +20,17 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
 
-	private final UserRepository userRepository;
+	private UserRepository userRepository;
 
-	private final RoleService roleService;
+	private RoleService roleService;
 
-	private final AddressService addressService;
+	private AddressService addressService;
 
-	private final PasswordEncoder bCryptEncoder;
-
-	public UserServiceImpl(
-			UserRepository userRepository,
-			RoleService roleService,
-			AddressService addressService,
-			PasswordEncoder bCryptEncoder) {
-		this.userRepository = userRepository;
-		this.roleService = roleService;
-		this.addressService = addressService;
-		this.bCryptEncoder = bCryptEncoder;
-	}
+	private PasswordEncoder bCryptEncoder;
 
 	@Override
 	public void createUser(RegisterDTO registerDTO) {

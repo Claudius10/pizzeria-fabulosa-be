@@ -1,6 +1,7 @@
 package org.pizzeria.fabulosa.services.role;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.pizzeria.fabulosa.entity.role.Role;
 import org.pizzeria.fabulosa.repos.role.RoleRepository;
 import org.springframework.stereotype.Service;
@@ -8,14 +9,11 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 @Transactional
 public class RoleServiceImpl implements RoleService {
 
-	private final RoleRepository roleRepository;
-
-	public RoleServiceImpl(RoleRepository roleRepository) {
-		this.roleRepository = roleRepository;
-	}
+	private RoleRepository roleRepository;
 
 	@Override
 	public void createRole(Role role) {
