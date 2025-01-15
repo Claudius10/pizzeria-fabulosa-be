@@ -7,8 +7,6 @@ import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLength;
 import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.IntegerLength;
 
-import java.util.Objects;
-
 @Entity(name = "CartItem")
 @Table(name = "cart_items")
 @Getter
@@ -53,21 +51,10 @@ public class CartItem {
 		return id != null && id.equals(((CartItem) obj).getId());
 	}
 
-	public boolean contentEquals(Object o) {
-		CartItem cartItem = (CartItem) o;
-		return Objects.equals(code, cartItem.code)
-				&& Objects.equals(quantity, cartItem.quantity)
-				&& Objects.equals(price, cartItem.price);
-	}
-
-	@Override
-	public String toString() {
-		return "CartItem{" +
-				"id=" + id +
-				", code='" + code + '\'' +
-				", quantity=" + quantity +
-				", price=" + price +
-				", cart=" + cart +
-				'}';
-	}
+//	public boolean contentEquals(Object o) {
+//		CartItem cartItem = (CartItem) o;
+//		return Objects.equals(code, cartItem.code)
+//				&& Objects.equals(quantity, cartItem.quantity)
+//				&& Objects.equals(price, cartItem.price);
+//	}
 }

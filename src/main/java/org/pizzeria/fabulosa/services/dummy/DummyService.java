@@ -57,6 +57,8 @@ public class DummyService {
 		if (roleService.findByName("ADMIN").isEmpty()) {
 			this.roleService.createRole(new Role("ADMIN"));
 		}
+
+		log.info("Roles setup done");
 	}
 
 	private void setupDummyUser() {

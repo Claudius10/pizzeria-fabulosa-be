@@ -12,7 +12,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +23,6 @@ public class ResourceServiceImpl implements ResourceService {
 	private final StoreRepository storeRepository;
 
 	private final OfferRepository offerRepository;
-
-	@Cacheable("storeById")
-	@Override
-	public Optional<Store> findStoreByAddressId(Long id) {
-		return storeRepository.findByAddressId(id);
-	}
 
 	@Cacheable("allProducts")
 	@Override

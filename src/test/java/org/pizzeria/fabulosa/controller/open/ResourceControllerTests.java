@@ -135,4 +135,22 @@ class ResourceControllerTests {
 		List<Offer> offerList = objectMapper.convertValue(responseObj.getPayload(), List.class);
 		assertThat(offerList).hasSize(1);
 	}
+
+	@Test
+	void givenGetAllProducts_thenReturnResource() throws Exception {
+		// Act
+
+		// get api call to find offer list
+		MockHttpServletResponse response = mockMvc.perform(get(ApiRoutes.BASE +
+				ApiRoutes.V1 +
+				ApiRoutes.RESOURCE_BASE +
+				ApiRoutes.RESOURCE_PRODUCT
+		)).andReturn().getResponse();
+
+		// Assert
+
+		Response responseObj = getResponse(response, objectMapper);
+		List<Product> productList = objectMapper.convertValue(responseObj.getPayload(), List.class);
+		assertThat(productList).hasSize(1);
+	}
 }

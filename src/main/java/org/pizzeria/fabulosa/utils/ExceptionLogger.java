@@ -21,8 +21,6 @@ public final class ExceptionLogger {
 
 		if (message != null) {
 			log.info("Exception message: {}", message);
-		} else {
-			log.info("Exception message: null");
 		}
 
 		if (cause != null) {
@@ -33,8 +31,6 @@ public final class ExceptionLogger {
 
 		if (response != null) {
 			log.info("Exception Response: {}", response);
-		} else {
-			log.info("Exception Response: null");
 		}
 
 		log.warn("----- --");
@@ -42,8 +38,6 @@ public final class ExceptionLogger {
 
 		if (stackTrace.length > 0) {
 			log.info("Exception stacktrace: {}", ExceptionUtils.getStackTrace(e));
-		} else {
-			log.info("Exception stacktrace: empty");
 		}
 
 		log.warn("----- --");

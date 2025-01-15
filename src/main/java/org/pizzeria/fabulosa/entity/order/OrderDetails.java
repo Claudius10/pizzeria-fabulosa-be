@@ -42,11 +42,11 @@ public class OrderDetails {
 	@JsonBackReference
 	private Order order;
 
-	public boolean contentEquals(Object o) {
-		OrderDetails that = (OrderDetails) o;
-		return Objects.equals(deliveryTime, that.deliveryTime)
-				&& Objects.equals(paymentMethod, that.paymentMethod)
-				&& Objects.equals(billToChange, that.billToChange)
-				&& Objects.equals(comment, that.comment);
-	}
+//	public boolean contentEquals(Object o) {
+//		OrderDetails that = (OrderDetails) o;
+//		return Objects.equals(deliveryTime, that.deliveryTime)
+//				&& Objects.equals(paymentMethod, that.paymentMethod)
+//				&& Objects.equals(billToChange, that.billToChange)
+//				&& Objects.equals(comment, that.comment);
+//	}
 }

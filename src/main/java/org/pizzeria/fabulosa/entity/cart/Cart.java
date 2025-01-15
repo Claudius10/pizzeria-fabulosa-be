@@ -13,7 +13,6 @@ import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.IntegerLength
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity(name = "Cart")
 @Table(name = "cart")
@@ -58,49 +57,49 @@ public class Cart {
 		item.setCart(this);
 	}
 
-	public void removeItem(CartItem item) {
-		cartItems.remove(item);
-		item.setCart(null);
-	}
+//	public void removeItem(CartItem item) {
+//		cartItems.remove(item);
+//		item.setCart(null);
+//	}
 
-	public boolean contentEquals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Cart cart = (Cart) o;
-
-		// orderItem contentEquals
-		List<Boolean> itemEqualityCheck = new ArrayList<>();
-		for (int i = 0; i < cartItems.size(); i++) {
-			for (int j = 0; j < cart.getCartItems().size(); j++) {
-
-				if (cartItems.get(i).contentEquals(cart.cartItems.get(j))) {
-					itemEqualityCheck.add(true);
-
-					// avoid i value becoming greater than orderItems.size() value
-					if (i < cartItems.size() - 1) {
-						// move to next i if i0 is equal to j0
-						// to avoid comparing i0 to j1
-						i++;
-					}
-				} else {
-					itemEqualityCheck.add(false);
-				}
-			}
-		}
-
-		boolean areItemsEqual = true;
-		for (Boolean bool : itemEqualityCheck) {
-			if (!bool) {
-				areItemsEqual = false;
-				break;
-			}
-		}
-
-		return Objects.equals(totalQuantity, cart.totalQuantity) &&
-				Objects.equals(totalCost, cart.totalCost) &&
-				Objects.equals(totalCostOffers, cart.totalCostOffers) &&
-				areItemsEqual;
-	}
+//	public boolean contentEquals(Object o) {
+//		if (this == o) return true;
+//		if (o == null || getClass() != o.getClass()) return false;
+//		Cart cart = (Cart) o;
+//
+//		// orderItem contentEquals
+//		List<Boolean> itemEqualityCheck = new ArrayList<>();
+//		for (int i = 0; i < cartItems.size(); i++) {
+//			for (int j = 0; j < cart.getCartItems().size(); j++) {
+//
+//				if (cartItems.get(i).contentEquals(cart.cartItems.get(j))) {
+//					itemEqualityCheck.add(true);
+//
+//					// avoid i value becoming greater than orderItems.size() value
+//					if (i < cartItems.size() - 1) {
+//						// move to next i if i0 is equal to j0
+//						// to avoid comparing i0 to j1
+//						i++;
+//					}
+//				} else {
+//					itemEqualityCheck.add(false);
+//				}
+//			}
+//		}
+//
+//		boolean areItemsEqual = true;
+//		for (Boolean bool : itemEqualityCheck) {
+//			if (!bool) {
+//				areItemsEqual = false;
+//				break;
+//			}
+//		}
+//
+//		return Objects.equals(totalQuantity, cart.totalQuantity) &&
+//				Objects.equals(totalCost, cart.totalCost) &&
+//				Objects.equals(totalCostOffers, cart.totalCostOffers) &&
+//				areItemsEqual;
+//	}
 
 	public static class Builder {
 
