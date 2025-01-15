@@ -18,8 +18,6 @@ public interface UserService {
 
 	boolean removeUserAddress(Long userId, Long addressId);
 
-	User findUserReference(Long userId);
-
 	Optional<UserDTO> findUserDTOById(Long userId);
 
 	void updateUserName(String password, Long userId, String name);
@@ -32,9 +30,11 @@ public interface UserService {
 
 	boolean deleteUserById(String password, Long userId);
 
-	User findUserOrThrow(Long userId);
-
 	// for internal use only
+
+	User findUserReference(Long userId);
+
+	User findUserOrThrow(Long userId);
 
 	boolean existsById(Long userId);
 }
