@@ -51,7 +51,7 @@ public class UserOrdersController {
 	@ValidateUserId
 	@GetMapping(ApiRoutes.ORDER_ID)
 	public ResponseEntity<Response> findUserOrderDTO(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
-		Optional<OrderDTO> projectionById = orderService.findProjectionById(orderId);
+		Optional<OrderDTO> projectionById = orderService.findOrderDTOById(orderId);
 
 		Response response = Response.builder()
 				.status(Status.builder()

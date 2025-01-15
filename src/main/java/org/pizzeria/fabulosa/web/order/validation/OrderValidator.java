@@ -2,54 +2,43 @@ package org.pizzeria.fabulosa.web.order.validation;
 
 import org.pizzeria.fabulosa.entity.cart.Cart;
 import org.pizzeria.fabulosa.entity.order.OrderDetails;
-import org.pizzeria.fabulosa.services.order.OrderService;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Component
-public class OrderValidator {
-
-	// TODO - refactor this to no need OrderService
+public final class OrderValidator {
 
 	private final static int UPDATE_TIME_LIMIT_MIN = 10;
 
-	private final OrderService orderService;
-
-	public OrderValidator(OrderService orderService) {
-		this.orderService = orderService;
-	}
-
-	public OrderValidationResult validate(Cart cart, OrderDetails orderDetails) {
+	public static OrderValidationResult validate(Cart cart, OrderDetails orderDetails) {
 		if (isCartEmpty(cart)) {
-			return new OrderValidationResult(ValidationResponses.CART_IS_EMPTY);
+			return OrderValidationResult.builder().invalid(ValidationResponses.CART_IS_EMPTY).build();
 		}
 
 		if (!isChangeRequestedValid(orderDetails.getBillToChange(), cart.getTotalCostOffers(), cart.getTotalCost())) {
-			return new OrderValidationResult(ValidationResponses.ORDER_DETAILS_BILL);
+			return OrderValidationResult.builder().invalid(ValidationResponses.ORDER_DETAILS_BILL).build();
 		}
 
 		orderDetails.setChangeToGive(calculatePaymentChange(orderDetails.getBillToChange(), cart.getTotalCost(), cart.getTotalCostOffers()));
-		return new OrderValidationResult();
+		return OrderValidationResult.builder().valid().build();
 	}
 
-	public OrderValidationResult validateDelete(Long orderId) {
-		LocalDateTime createdOn = orderService.findCreatedOnById(orderId);
+	public static OrderValidationResult validateDelete(LocalDateTime createdOn) {
+		LocalDateTime limit = createdOn.plusMinutes(UPDATE_TIME_LIMIT_MIN);
 
-		if (LocalDateTime.now().isAfter(createdOn.plusMinutes(UPDATE_TIME_LIMIT_MIN))) {
-			return new OrderValidationResult(ValidationResponses.ORDER_DELETE_TIME_ERROR);
+		if (limit.isBefore(LocalDateTime.now())) {
+			return OrderValidationResult.builder().invalid(ValidationResponses.ORDER_DELETE_TIME_ERROR).build();
 		}
 
-		return new OrderValidationResult();
+		return OrderValidationResult.builder().valid().build();
 	}
 
-	public boolean isCartEmpty(Cart cart) {
+	public static boolean isCartEmpty(Cart cart) {
 		return cart == null || cart.getCartItems().isEmpty() || cart.getTotalQuantity() == 0;
 	}
 
 	// changeRequested > totalCostAfterOffers || changeRequested > totalCost
-	public boolean isChangeRequestedValid(Double billToChange, Double totalCostAfterOffers, Double totalCost) {
+	public static boolean isChangeRequestedValid(Double billToChange, Double totalCostAfterOffers, Double totalCost) {
 		if (billToChange == null) {
 			return true;
 		}
@@ -57,7 +46,7 @@ public class OrderValidator {
 	}
 
 	// changeRequested == null || (changeRequested - totalCostOffers || totalCost)
-	public Double calculatePaymentChange(Double changeRequested, Double totalCost, Double totalCostAfterOffers) {
+	public static Double calculatePaymentChange(Double changeRequested, Double totalCost, Double totalCostAfterOffers) {
 		if (changeRequested == null) {
 			return null;
 		}

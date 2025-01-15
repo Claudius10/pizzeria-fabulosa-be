@@ -1,34 +1,46 @@
 package org.pizzeria.fabulosa.web.order.validation;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class OrderValidationResult {
 
-	private final boolean isValid;
+	private boolean isValid;
 
-	private final boolean isCartUpdateValid;
+	private String message;
 
-	private final String message;
-
-	public OrderValidationResult() {
-		this.isValid = true;
-		this.isCartUpdateValid = true;
-		this.message = null;
-	}
-
-	public OrderValidationResult(String message) {
-		this.isValid = false;
-		this.isCartUpdateValid = false;
+	private OrderValidationResult(boolean valid, String message) {
+		this.isValid = valid;
 		this.message = message;
 	}
 
-	public boolean isValid() {
-		return isValid;
+	public static Builder builder() {
+		return new Builder();
 	}
 
-	public boolean isCartUpdateValid() {
-		return isCartUpdateValid;
-	}
+	public static class Builder {
+		private boolean isValid;
+		private String message;
 
-	public String getMessage() {
-		return message;
+		private Builder() {
+		}
+
+		public Builder valid() {
+			isValid = true;
+			message = null;
+			return this;
+		}
+
+		public Builder invalid(String message) {
+			isValid = false;
+			this.message = message;
+			return this;
+		}
+
+		public OrderValidationResult build() {
+			return new OrderValidationResult(isValid, message);
+		}
 	}
 }

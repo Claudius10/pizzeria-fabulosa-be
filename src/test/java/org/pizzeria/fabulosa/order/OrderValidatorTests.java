@@ -53,15 +53,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * Extension that initializes mocks and handles strict stubbing.
  */
 
-@SpringJUnitConfig
 class OrderValidatorTests {
-
-	OrderValidator orderValidator = new OrderValidator(null);
 
 	@Test
 	void givenIsCartEmptyMethod_whenValidatingEmptyCart_thenReturnTrue() {
 		Cart cart = new Cart.Builder().withEmptyItemList().build();
-		boolean isCartEmpty = orderValidator.isCartEmpty(cart);
+		boolean isCartEmpty = OrderValidator.isCartEmpty(cart);
 		assertTrue(isCartEmpty);
 	}
 
@@ -76,13 +73,13 @@ class OrderValidatorTests {
 				.withTotalQuantity(1)
 				.withTotalCost(5D)
 				.build();
-		boolean isCartEmpty = orderValidator.isCartEmpty(cart);
+		boolean isCartEmpty = OrderValidator.isCartEmpty(cart);
 		assertFalse(isCartEmpty);
 	}
 
 	@Test
 	void givenIsCartEmptyMethod_whenValidatingNullCart_thenReturnTrue() {
-		boolean isCartEmpty = orderValidator.isCartEmpty(null);
+		boolean isCartEmpty = OrderValidator.isCartEmpty(null);
 		assertTrue(isCartEmpty);
 	}
 
@@ -92,7 +89,7 @@ class OrderValidatorTests {
 		double changeRequested = 10;
 		double totalCost = 20;
 		double totalCostAfterOffers = 13.3;
-		boolean isChangeRequestedValid = orderValidator.isChangeRequestedValid(changeRequested, totalCostAfterOffers, totalCost);
+		boolean isChangeRequestedValid = OrderValidator.isChangeRequestedValid(changeRequested, totalCostAfterOffers, totalCost);
 		assertFalse(isChangeRequestedValid);
 	}
 
@@ -102,7 +99,7 @@ class OrderValidatorTests {
 		double changeRequested = 20;
 		double totalCost = 20;
 		double totalCostAfterOffers = 13.3;
-		boolean isChangeRequestedValid = orderValidator.isChangeRequestedValid(changeRequested, totalCostAfterOffers, totalCost);
+		boolean isChangeRequestedValid = OrderValidator.isChangeRequestedValid(changeRequested, totalCostAfterOffers, totalCost);
 		assertTrue(isChangeRequestedValid);
 	}
 
@@ -112,7 +109,7 @@ class OrderValidatorTests {
 		double totalCost = 10;
 		double totalCostAfterOffers = 0;
 		double expectedOutput = 10;
-		double actualOutput = orderValidator.calculatePaymentChange(changeRequested, totalCost, totalCostAfterOffers);
+		double actualOutput = OrderValidator.calculatePaymentChange(changeRequested, totalCost, totalCostAfterOffers);
 		assertEquals(expectedOutput, actualOutput);
 	}
 
@@ -122,7 +119,7 @@ class OrderValidatorTests {
 		double totalCost = 20;
 		double totalCostAfterOffers = 13.3;
 		double expectedOutput = 6.7;
-		double actualOutput = orderValidator.calculatePaymentChange(changeRequested, totalCost, totalCostAfterOffers);
+		double actualOutput = OrderValidator.calculatePaymentChange(changeRequested, totalCost, totalCostAfterOffers);
 		assertEquals(expectedOutput, actualOutput);
 	}
 
@@ -130,7 +127,7 @@ class OrderValidatorTests {
 	void givenCalculatePaymentChangeMethod_whenNotRequestedChange_thenReturnNull() {
 		double totalCost = 20;
 		double totalCostAfterOffers = 13.3;
-		Double output = orderValidator.calculatePaymentChange(null, totalCost, totalCostAfterOffers);
+		Double output = OrderValidator.calculatePaymentChange(null, totalCost, totalCostAfterOffers);
 		assertNull(output);
 	}
 }
