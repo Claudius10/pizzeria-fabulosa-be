@@ -41,8 +41,6 @@ public class DummyService {
 
 	private final AddressService addressService;
 
-	// TODO - create tests for this class
-
 	@PostConstruct
 	public void init() {
 		setupRoles();
