@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: production
+    active: test
   devtools:
     livereload:
       enabled: false
@@ -29,21 +29,16 @@ spring:
     import: optional:file:local.env[.properties]
 
 db:
-  url: ${DATABASE_URL}
-  username: ${DATABASE_USERNAME}
-  password: ${DATABASE_PASSWORD}
+  url: jdbc:mariadb://localhost:3307/test
+  username: root
+  password:
 
 logging:
+  file:
+    name: /home/claudio/Desktop/logs/pizzeria_logs.log
   level:
+    org.springframework.security: debug
+    org.springframework.test.context.jdbc: debug
     org.hibernate: info
-    org.hibernate.sql: info
-    org.springframework.security: info
-    org.springframework.web: info
-    root: info
-
-
-#    trace enabled – trace, debug, info, warn and error produce log output.
-#    debug enabled – debug, info, warn and error produce log output.
-#    info enabled – info, warn and error produce log output.
-#    warn enabled – warn and error produce log output.
-#    error enabled – Only error produces log output.
+    org.hibernate.sql: debug
+    org.hibernate.orm.jdbc.bind: trace

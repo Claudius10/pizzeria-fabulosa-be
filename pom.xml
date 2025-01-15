@@ -5,14 +5,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
+        <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>PizzaApp</groupId>
-    <artifactId>api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>PizzaApp API</name>
-    <description>Backend for PizzaApp</description>
+    <groupId>com.clau</groupId>
+    <artifactId>pizzeria</artifactId>
+    <version>v2</version>
+    <name>Pizzeria Fabulosa</name>
+    <description>Backend for Pizzeria Fabulosa</description>
     <properties>
         <java.version>21</java.version>
     </properties>
@@ -77,19 +77,26 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- MariaDB -->
+
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.7.2</version>
-            <scope>test</scope>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.4.1</version>
         </dependency>
 
-        <!-- MySQL -->
+        <dependency>
+            <groupId>ch.vorburger.mariaDB4j</groupId>
+            <artifactId>mariaDB4j</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <!-- Database Monitoring -->
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
+            <groupId>net.ttddyy</groupId>
+            <artifactId>datasource-proxy</artifactId>
+            <version>1.10</version>
         </dependency>
 
         <!-- Jackson -->
@@ -108,8 +115,16 @@
             <version>3.7.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.36</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
     <build>
+        <finalName>PizzeriaBackEnd</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

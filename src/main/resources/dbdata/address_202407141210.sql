@@ -1,5 +1,3 @@
-INSERT INTO pizzeria.address (door, floor, gate, staircase, street, street_nr, id)
-VALUES (NULL, NULL, NULL, NULL, 'Calle Alustre', 15, 1);
-
-INSERT INTO pizzeria.address (door, floor, gate, staircase, street, street_nr, id)
-VALUES (NULL, NULL, NULL, NULL, 'Avenida Viciosa', 221, 2);
+INSERT INTO pizzeria.address (id, details, `number`, street)
+VALUES (1, NULL, 15, 'Avenida Alustre'),
+       (2, NULL, 221, 'Calle Viciosa'),
