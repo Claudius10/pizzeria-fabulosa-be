@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -33,7 +34,7 @@ public class Product {
 
 	@Type(JsonType.class)
 	@Column(columnDefinition = "json")
-	private Map<String, String> description;
+	private Map<String, List<String>> description;
 
 	@Type(JsonType.class)
 	@Column(columnDefinition = "json")
@@ -43,4 +44,8 @@ public class Product {
 	@Column(columnDefinition = "json")
 	private Map<String, Map<String, String>> formats; // <"m", <"en": "Medium">, <"es": "Mediana">; "l", <"en": "Familiar">,
 	// <"es": "Familiar">>
+
+	@Type(JsonType.class)
+	@Column(columnDefinition = "json")
+	private Map<String, List<String>> allergens;
 }

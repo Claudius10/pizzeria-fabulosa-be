@@ -69,8 +69,8 @@ class ResourceControllerTests {
 				Map.of(),
 				Map.of(),
 				Map.of("m", 13.3),
-				Map.of("m", Map.of("en", "Medium")
-				)));
+				Map.of("m", Map.of("en", "Medium")),
+				Map.of("es", List.of(""))));
 		offerRepository.save(offer);
 		addressRepository.save(Address.builder().withStreet("Street").withNumber(5).build());
 		storeRepository.save(new Store(null, "", "", 123, Map.of(),
