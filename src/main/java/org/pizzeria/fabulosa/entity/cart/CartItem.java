@@ -1,11 +1,16 @@
 package org.pizzeria.fabulosa.entity.cart;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLength;
 import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.IntegerLength;
+
+import java.util.List;
+import java.util.Map;
 
 @Entity(name = "CartItem")
 @Table(name = "cart_items")
@@ -21,9 +26,20 @@ public class CartItem {
 	@SequenceGenerator(name = "cart_item_generator", sequenceName = "cart_item_seq", allocationSize = 1)
 	private Long id;
 
-	private String code;
+	private String type;
 
-	private String format;
+	@Type(JsonType.class)
+	@Column(columnDefinition = "json")
+	private Map<String, String> name;
+
+	@Type(JsonType.class)
+	@Column(columnDefinition = "json")
+	private Map<String, List<String>> description;
+
+	@Type(JsonType.class)
+	@Column(columnDefinition = "json")
+	private Map<String, Map<String, String>> formats; // <"m", <"en": "Medium">, <"es": "Mediana">; "l", <"en": "Familiar">,
+	// <"es": "Familiar">>
 
 	@DoubleLength(min = 1, max = 5)
 	private Double price;

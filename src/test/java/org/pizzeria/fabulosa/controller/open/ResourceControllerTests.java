@@ -63,13 +63,12 @@ class ResourceControllerTests {
 
 		productRepository.save(new Product(
 				null,
-				"P1",
 				"pizza",
 				"",
 				Map.of(),
 				Map.of(),
-				Map.of("m", 13.3),
 				Map.of("m", Map.of("en", "Medium")),
+				Map.of("m", 13.3),
 				Map.of("es", List.of(""))));
 		offerRepository.save(offer);
 		addressRepository.save(Address.builder().withStreet("Street").withNumber(5).build());

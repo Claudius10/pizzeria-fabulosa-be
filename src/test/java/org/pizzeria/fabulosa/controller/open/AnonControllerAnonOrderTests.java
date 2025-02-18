@@ -427,7 +427,6 @@ class AnonControllerAnonOrderTests {
 								  boolean emptyCart) {
 		Cart cartStub = new Cart.Builder()
 				.withCartItems(List.of(CartItem.builder()
-						.withCode("P2M")
 						.withQuantity(1)
 						.withPrice(14.75)
 						.build()))

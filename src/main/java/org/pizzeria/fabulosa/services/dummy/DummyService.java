@@ -23,6 +23,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -125,8 +126,7 @@ public class DummyService {
 						.withTotalQuantity(1)
 						.withTotalCost(13.30D)
 						.withCartItems(List.of(CartItem.builder()
-								.withCode("P4C")
-								.withFormat("M")
+								.withFormats(Map.of())
 								.withPrice(13.30)
 								.withQuantity(1)
 								.build()))

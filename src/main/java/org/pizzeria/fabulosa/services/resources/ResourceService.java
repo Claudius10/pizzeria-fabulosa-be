@@ -10,7 +10,7 @@ public interface ResourceService {
 
 	List<Product> findAllProducts();
 
-	List<Product> findAllProductsByType(String productType);
+	List<Product> findAllProductsByType(String type);
 
 	List<Offer> findAllOffers();
 

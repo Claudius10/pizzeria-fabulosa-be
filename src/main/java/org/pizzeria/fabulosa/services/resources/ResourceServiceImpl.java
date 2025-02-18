@@ -33,7 +33,7 @@ public class ResourceServiceImpl implements ResourceService {
 	@Cacheable("productsByType")
 	@Override
 	public List<Product> findAllProductsByType(String productType) {
-		return productRepository.findAllByProductType(productType);
+		return productRepository.findAllByType(productType);
 	}
 
 	@Cacheable("offers")

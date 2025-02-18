@@ -89,7 +89,6 @@ class UserOrdersControllerTests {
 		// create DTO object
 		Cart cart = new Cart.Builder()
 				.withCartItems(List.of(CartItem.builder()
-						.withCode("P1M")
 						.withQuantity(1)
 						.withPrice(18.30)
 						.build()))
@@ -174,7 +173,6 @@ class UserOrdersControllerTests {
 		// create DTO object
 		Cart cart = new Cart.Builder()
 				.withCartItems(List.of(CartItem.builder()
-						.withCode("P1L")
 						.withQuantity(1)
 						.withPrice(18.30)
 						.build()))
@@ -493,7 +491,6 @@ class UserOrdersControllerTests {
 	OrderDTO createUserOrderTestSubject(int minutesInThePast, long userId, long addressId, String validAccessToken) throws Exception {
 		Cart cart = new Cart.Builder()
 				.withCartItems(List.of(CartItem.builder()
-						.withCode("P1L")
 						.withQuantity(1)
 						.withPrice(18.30)
 						.build()))

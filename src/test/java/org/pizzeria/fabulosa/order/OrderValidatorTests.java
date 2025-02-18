@@ -67,7 +67,6 @@ class OrderValidatorTests {
 		Cart cart = new Cart.Builder().withCartItems
 						(Collections.singletonList(CartItem.builder()
 								.withPrice(5D)
-								.withCode("B3L")
 								.withQuantity(1)
 								.build()))
 				.withTotalQuantity(1)
