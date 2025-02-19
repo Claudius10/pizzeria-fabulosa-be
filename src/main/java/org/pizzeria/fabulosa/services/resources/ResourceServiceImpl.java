@@ -24,12 +24,6 @@ public class ResourceServiceImpl implements ResourceService {
 
 	private final OfferRepository offerRepository;
 
-	@Cacheable("allProducts")
-	@Override
-	public List<Product> findAllProducts() {
-		return productRepository.findAll();
-	}
-
 	@Cacheable("productsByType")
 	@Override
 	public List<Product> findAllProductsByType(String productType) {
