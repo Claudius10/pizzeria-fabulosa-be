@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.services.user.UserService;
+import org.pizzeria.fabulosa.utils.Constants;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.constants.SecurityResponses;
 import org.pizzeria.fabulosa.web.dto.api.Response;
@@ -66,8 +67,8 @@ class LoginTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(response.getCookies()).isNotEmpty();
-		assertThat(response.getCookie("token")).isNotNull();
-		assertThat(response.getCookie("idToken")).isNotNull();
+		assertThat(response.getCookie(Constants.AUTH_TOKEN)).isNotNull();
+		assertThat(response.getCookie(Constants.ID_TOKEN)).isNotNull();
 	}
 
 	@Test

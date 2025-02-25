@@ -91,7 +91,7 @@ class UserIdValidationTests {
 
 		MockHttpServletResponse response = mockMvc.perform(get(
 						ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID, nonMatchingUserId)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 1800, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 1800, true, false)))
 				.andReturn()
 				.getResponse();
 
@@ -128,7 +128,7 @@ class UserIdValidationTests {
 
 		MockHttpServletResponse response = mockMvc.perform(get(
 						ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID, testUserId)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 1800, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 1800, true, false)))
 				.andReturn()
 				.getResponse();
 

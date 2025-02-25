@@ -12,7 +12,7 @@ public final class CookieBearerTokenResolver implements BearerTokenResolver {
 
 	@Override
 	public String resolve(HttpServletRequest request) {
-		Cookie accessToken = WebUtils.getCookie(request, Constants.TOKEN_COOKIE_NAME);
+		Cookie accessToken = WebUtils.getCookie(request, Constants.AUTH_TOKEN);
 		if (accessToken != null) {
 			return accessToken.getValue();
 		}

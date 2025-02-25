@@ -112,7 +112,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ORDER, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		Response responseObj = getResponse(response, objectMapper);
@@ -148,7 +148,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ORDER, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		Response responseObj = getResponse(response, objectMapper);
@@ -196,7 +196,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ORDER, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		Response responseObj = getResponse(response, objectMapper);
@@ -213,7 +213,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID,
 						userId, createdOrder.id())
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -248,7 +248,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, 99)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -285,7 +285,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, order.id())
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
@@ -325,7 +325,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, order.id())
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
@@ -356,7 +356,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, 995678)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
@@ -396,7 +396,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}", userId, pageNumber, pageSize)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
@@ -429,7 +429,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}", userId, pageNumber, pageSize)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
@@ -462,7 +462,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}", 0, pageNumber, pageSize)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
@@ -481,7 +481,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, orderId)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, validAccessToken, 1800, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 1800, true, false)))
 				.andReturn().getResponse();
 
 		Response responseObj = getResponse(response, objectMapper);
@@ -510,7 +510,7 @@ class UserOrdersControllerTests {
 						"/api/tests/user/{userId}/order?minusMin={minutesInThePast}", userId, minutesInThePast)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, validAccessToken, 1800, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 1800, true, false)))
 				.andReturn().getResponse();
 
 		Long orderId = Long.valueOf(response.getContentAsString());

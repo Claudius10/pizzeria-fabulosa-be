@@ -81,7 +81,7 @@ class UserControllerTests {
 		// get api call to find user
 		MockHttpServletResponse response =
 				mockMvc.perform(get(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID, 99)
-								.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+								.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 						.andReturn().getResponse();
 
 		// Assert
@@ -104,7 +104,7 @@ class UserControllerTests {
 		// Act
 
 		MockHttpServletResponse response = mockMvc.perform(get(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID, userId)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -140,7 +140,7 @@ class UserControllerTests {
 				mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content(objectMapper.writeValueAsString(address))
-								.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+								.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 						.andReturn().getResponse();
 
 		// Assert
@@ -178,7 +178,7 @@ class UserControllerTests {
 						999)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(address))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -206,7 +206,7 @@ class UserControllerTests {
 						.withStreet("Street")
 						.withNumber(1)
 						.build()))
-				.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)));
+				.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)));
 
 		// post api call to add address to user
 		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
@@ -215,7 +215,7 @@ class UserControllerTests {
 						.withStreet("Street")
 						.withNumber(2)
 						.build()))
-				.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)));
+				.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)));
 
 		// post api call to add address to user
 		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
@@ -224,7 +224,7 @@ class UserControllerTests {
 						.withStreet("Street")
 						.withNumber(3)
 						.build()))
-				.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)));
+				.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)));
 
 		// Act
 
@@ -235,7 +235,7 @@ class UserControllerTests {
 								.withStreet("Street")
 								.withNumber(4)
 								.build()))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -269,13 +269,13 @@ class UserControllerTests {
 						.withStreet("Street")
 						.withNumber(1)
 						.build()))
-				.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)));
+				.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)));
 
 		// Act
 
 		// get api call to find user address list
 		MockHttpServletResponse response = mockMvc.perform(get(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -305,7 +305,7 @@ class UserControllerTests {
 								+ ApiRoutes.USER_BASE
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ADDRESS, 3)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -335,7 +335,7 @@ class UserControllerTests {
 		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(address))
-				.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)));
+				.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)));
 
 		// confirm address was added
 		Set<Address> userAddressList = userRepository.findUserAddressListById(userId);
@@ -357,7 +357,7 @@ class UserControllerTests {
 										ApiRoutes.USER_ADDRESS +
 										ApiRoutes.USER_ADDRESS_ID, userId,
 								dbAddress.get().getId())
-								.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+								.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 						.andReturn().getResponse();
 
 		// Assert
@@ -389,7 +389,7 @@ class UserControllerTests {
 								ApiRoutes.USER_ADDRESS_ID,
 						userId,
 						2L)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -418,7 +418,7 @@ class UserControllerTests {
 								ApiRoutes.USER_ADDRESS_ID,
 						99L,
 						2L)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -453,7 +453,7 @@ class UserControllerTests {
 						userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(nameChangeDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 
 				// Assert
 
@@ -492,7 +492,7 @@ class UserControllerTests {
 						userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(nameChangeDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -525,7 +525,7 @@ class UserControllerTests {
 								ApiRoutes.USER_EMAIL, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(emailChangeDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 
 				// Assert
 
@@ -563,7 +563,7 @@ class UserControllerTests {
 								ApiRoutes.USER_EMAIL, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(emailChangeDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -599,7 +599,7 @@ class UserControllerTests {
 								ApiRoutes.USER_EMAIL, userIdTwo)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(emailChangeDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -633,7 +633,7 @@ class UserControllerTests {
 								ApiRoutes.USER_NUMBER, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(contactNumberChangeDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 
 				// Assert
 
@@ -671,7 +671,7 @@ class UserControllerTests {
 								ApiRoutes.USER_NUMBER, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(contactNumberChangeDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 60, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -709,7 +709,7 @@ class UserControllerTests {
 								ApiRoutes.USER_PASSWORD, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(passwordChangeDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 1800, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 1800, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -746,7 +746,7 @@ class UserControllerTests {
 								ApiRoutes.USER_PASSWORD, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(passwordChangeDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 1800, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 1800, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -777,7 +777,7 @@ class UserControllerTests {
 						ApiRoutes.BASE +
 								ApiRoutes.V1 +
 								ApiRoutes.USER_BASE + "?id={userId}&password={password}", userId, password)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 1800, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 1800, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -810,7 +810,7 @@ class UserControllerTests {
 						ApiRoutes.BASE +
 								ApiRoutes.V1 +
 								ApiRoutes.USER_BASE + "?id={userId}&password={password}", userId, password)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, accessToken, 1800, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 1800, true, false)))
 				.andReturn().getResponse();
 
 		// Assert

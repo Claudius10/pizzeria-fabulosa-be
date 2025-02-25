@@ -59,7 +59,7 @@ public class GlobalExceptionHandlerTests {
 		assertThat(errorCount).isZero();
 
 		MockHttpServletResponse response = mockMvc.perform(post("/api/tests/error")
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 30, true, false)))
 				.andReturn().getResponse();
 
 		// Assert

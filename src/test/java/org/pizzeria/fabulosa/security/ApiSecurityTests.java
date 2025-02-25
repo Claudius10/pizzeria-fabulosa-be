@@ -52,14 +52,14 @@ class ApiSecurityTests {
 
 		// post api call to log-out
 		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.AUTH_BASE + ApiRoutes.AUTH_LOGOUT)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 30, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(200);
-		assertThat(Objects.requireNonNull(response.getCookie(Constants.TOKEN_COOKIE_NAME)).getMaxAge()).isZero();
-		assertThat(Objects.requireNonNull(response.getCookie(Constants.TOKEN_COOKIE_NAME)).getValue()).isEmpty();
+		assertThat(Objects.requireNonNull(response.getCookie(Constants.AUTH_TOKEN)).getMaxAge()).isZero();
+		assertThat(Objects.requireNonNull(response.getCookie(Constants.AUTH_TOKEN)).getValue()).isEmpty();
 	}
 
 	@Test
@@ -76,7 +76,7 @@ class ApiSecurityTests {
 
 		// post api call to check csrf protection
 		MockHttpServletResponse response = mockMvc.perform(get("/api/tests")
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 30, true, false)))
 				.andReturn().getResponse();
 
 		Response responseObj = getResponse(response, objectMapper);
@@ -101,7 +101,7 @@ class ApiSecurityTests {
 
 		// post api call to check csrf protection
 		MockHttpServletResponse response = mockMvc.perform(get("/api/tests/admin")
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.TOKEN_COOKIE_NAME, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 30, true, false)))
 
 
 				.andReturn().getResponse();

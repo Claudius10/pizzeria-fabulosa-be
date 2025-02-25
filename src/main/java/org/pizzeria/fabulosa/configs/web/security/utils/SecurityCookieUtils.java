@@ -14,7 +14,7 @@ public final class SecurityCookieUtils {
 
 	public static Cookie prepareCookie(String name, String value, int maxAge, boolean httpOnly, boolean secure) {
 		Cookie cookie = new Cookie(name, value);
-		cookie.setPath("/");
+		cookie.setPath(Constants.PATH);
 		cookie.setMaxAge(maxAge);
 		cookie.setHttpOnly(httpOnly);
 		cookie.setSecure(secure);
@@ -23,25 +23,33 @@ public final class SecurityCookieUtils {
 
 	public static ResponseCookie bakeCookie(String name, String value, int maxAge, boolean httpOnly, boolean secure) {
 		return ResponseCookie.from(name, value)
-				.path("/")
+				.path(Constants.PATH)
 				.maxAge(maxAge)
 				.httpOnly(httpOnly)
 				.secure(secure)
 				.sameSite("Lax")
-				.domain("up.railway.app") // NOTE - on for prod fe
+				.domain(Constants.DOMAIN) // NOTE - on for prod fe
 				.build();
 	}
 
 	public static void serveCookies(HttpServletResponse response, String accessToken, String idToken) {
 		// access token cookie
 		response.addHeader(HttpHeaders.SET_COOKIE,
-				bakeCookie("token", accessToken, Constants.ONE_DAY_MS, true,
+				bakeCookie(
+						Constants.AUTH_TOKEN,
+						accessToken,
+						Constants.ONE_DAY_MS,
+						true,
 						true) // NOTE - true for prod
 						.toString());
 
 		// id token cookie
 		response.addHeader(HttpHeaders.SET_COOKIE,
-				bakeCookie("idToken", idToken, Constants.ONE_DAY_MS, false,
+				bakeCookie(
+						Constants.ID_TOKEN,
+						idToken,
+						Constants.ONE_DAY_MS,
+						false,
 						true) // NOTE - true for prod
 						.toString());
 	}
@@ -50,12 +58,14 @@ public final class SecurityCookieUtils {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null)
 			for (Cookie cookie : cookies) {
-				cookie.setSecure(true); // NOTE - on for prod
-				cookie.setDomain("up.railway.app"); // NOTE - on for prod
-				cookie.setValue("");
-				cookie.setPath("/");
-				cookie.setMaxAge(0);
-				response.addCookie(cookie);
+				if (cookie.getName().equals(Constants.AUTH_TOKEN) || cookie.getName().equals(Constants.ID_TOKEN)) {
+					cookie.setSecure(true); // NOTE - on for prod
+					cookie.setDomain(Constants.DOMAIN); // NOTE - on for prod
+					cookie.setValue("");
+					cookie.setPath(Constants.PATH);
+					cookie.setMaxAge(0);
+					response.addCookie(cookie);
+				}
 			}
 	}
 }
