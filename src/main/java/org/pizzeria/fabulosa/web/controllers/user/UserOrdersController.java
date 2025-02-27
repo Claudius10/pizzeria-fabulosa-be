@@ -2,7 +2,7 @@ package org.pizzeria.fabulosa.web.controllers.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.services.order.OrderService;
 import org.pizzeria.fabulosa.web.aop.annotations.ValidateUserId;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.ORDER_BASE)
 @Validated

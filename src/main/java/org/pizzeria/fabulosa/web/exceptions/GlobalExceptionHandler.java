@@ -1,7 +1,8 @@
 package org.pizzeria.fabulosa.web.exceptions;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pizzeria.fabulosa.configs.properties.SecurityProperties;
 import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
 import org.pizzeria.fabulosa.entity.error.Error;
 import org.pizzeria.fabulosa.repos.error.ErrorRepository;
@@ -34,13 +35,15 @@ import java.util.List;
 import java.util.UUID;
 
 @RestControllerAdvice
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private static final String CLASS_NAME_SHORT = "G.E.H";
 
 	private final ErrorRepository errorRepository;
+
+	private final SecurityProperties securityProperties;
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -183,7 +186,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		}
 
 		if (deleteCookies) {
-			SecurityCookieUtils.eatAllCookies(((ServletWebRequest) request).getRequest(), ((ServletWebRequest) request).getResponse());
+			SecurityCookieUtils.eatAllCookies(((ServletWebRequest) request).getRequest(),
+					((ServletWebRequest) request).getResponse(), securityProperties.getCookies().getDomain());
 		}
 
 		Response response = Response.builder()

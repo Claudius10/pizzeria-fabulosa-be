@@ -2,7 +2,7 @@ package org.pizzeria.fabulosa.web.controllers.open;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pizzeria.fabulosa.services.order.OrderService;
 import org.pizzeria.fabulosa.services.user.UserService;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.ANON_BASE)
 @Validated
@@ -30,7 +30,7 @@ public class AnonController {
 	private final UserService userService;
 
 	private final OrderService orderService;
-	
+
 	@PostMapping(ApiRoutes.ANON_REGISTER)
 	public ResponseEntity<Response> registerAnonUser(@RequestBody @Valid RegisterDTO registerDTO, HttpServletRequest request) {
 		userService.createUser(registerDTO);

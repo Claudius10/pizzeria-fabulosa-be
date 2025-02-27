@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa.services.order;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.cart.Cart;
 import org.pizzeria.fabulosa.entity.order.Order;
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class OrderServiceImpl implements OrderService {
 

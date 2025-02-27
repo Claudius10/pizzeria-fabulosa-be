@@ -6,6 +6,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import lombok.RequiredArgsConstructor;
+import org.pizzeria.fabulosa.configs.properties.SecurityProperties;
 import org.pizzeria.fabulosa.configs.web.security.access.AccessDeniedHandler;
 import org.pizzeria.fabulosa.configs.web.security.access.AuthenticationHandler;
 import org.pizzeria.fabulosa.configs.web.security.access.ClearCookiesLogoutHandler;
@@ -39,7 +41,10 @@ import java.util.Arrays;
 import static org.pizzeria.fabulosa.utils.Constants.ISSUER;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final SecurityProperties securityProperties;
 
 	@Bean
 	SecurityFilterChain securityFilterChain(
@@ -141,8 +146,7 @@ public class SecurityConfig {
 	*/
 	private CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(
-				Arrays.asList("http://192.168.1.128:4200", "https://pizzeriaangularfe-production.up.railway.app"));
+		configuration.setAllowedOrigins(securityProperties.getAllowedOrigins());
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		configuration.setExposedHeaders(Arrays.asList("Content-Type"));
 		configuration.setAllowedHeaders(Arrays.asList("Content-Type"));

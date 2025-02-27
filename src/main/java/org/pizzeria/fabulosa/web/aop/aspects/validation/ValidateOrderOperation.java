@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa.web.aop.aspects.validation;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Aspect
 public class ValidateOrderOperation {
 

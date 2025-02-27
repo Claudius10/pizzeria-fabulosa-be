@@ -28,11 +28,6 @@ spring:
   config:
     import: optional:file:local.env[.properties]
 
-db:
-  url: ${DATABASE_URL}
-  username: ${DATABASE_USERNAME}
-  password: ${DATABASE_PASSWORD}
-
 logging:
   level:
     org.hibernate: info
@@ -41,6 +36,20 @@ logging:
     org.springframework.web: info
     root: info
 
+db:
+  url: ${DATABASE_URL}
+  username: ${DATABASE_USERNAME}
+  password: ${DATABASE_PASSWORD}
+
+security:
+  cookies:
+    domain: test.net
+    sameSite: Lax
+    httpOnly: true
+    secure: true
+  allowedOrigins:
+    - "http://192.168.1.128:4200"
+    - "http://localhost:4200"
 
 #    trace enabled – trace, debug, info, warn and error produce log output.
 #    debug enabled – debug, info, warn and error produce log output.

@@ -1,5 +1,6 @@
 package org.pizzeria.fabulosa.configs.web.security.auth;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -14,15 +15,12 @@ import java.util.stream.Collectors;
 import static org.pizzeria.fabulosa.utils.Constants.ISSUER;
 
 @Component
+@RequiredArgsConstructor
 public class JWTTokenManager {
 
 	private final static Instant ACCESS_TOKEN_EXPIRE_DATE = Instant.now().plus(1, ChronoUnit.DAYS);
 
 	private final JwtEncoder jwtEncoder;
-
-	public JWTTokenManager(JwtEncoder jwtEncoder) {
-		this.jwtEncoder = jwtEncoder;
-	}
 
 	public String getAccessToken(String subject, Collection<? extends GrantedAuthority> roles, Long userId) {
 		JwtClaimsSet claims = JwtClaimsSet.builder()

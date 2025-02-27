@@ -9,8 +9,6 @@ import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.constants.ValidationRules;
 import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLengthNullable;
 
-import java.util.Objects;
-
 @Entity(name = "OrderDetails")
 @Table(name = "order_details")
 @AllArgsConstructor

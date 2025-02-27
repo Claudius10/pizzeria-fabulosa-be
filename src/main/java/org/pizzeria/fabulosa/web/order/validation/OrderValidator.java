@@ -11,6 +11,7 @@ public final class OrderValidator {
 	private final static int UPDATE_TIME_LIMIT_MIN = 10;
 
 	public static OrderValidationResult validate(Cart cart, OrderDetails orderDetails) {
+
 		if (isCartEmpty(cart)) {
 			return OrderValidationResult.builder().invalid(ValidationResponses.CART_IS_EMPTY).build();
 		}
@@ -24,6 +25,7 @@ public final class OrderValidator {
 	}
 
 	public static OrderValidationResult validateDelete(LocalDateTime createdOn) {
+
 		LocalDateTime limit = createdOn.plusMinutes(UPDATE_TIME_LIMIT_MIN);
 
 		if (limit.isBefore(LocalDateTime.now())) {

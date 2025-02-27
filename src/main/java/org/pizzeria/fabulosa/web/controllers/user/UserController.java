@@ -3,7 +3,8 @@ package org.pizzeria.fabulosa.web.controllers.user;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.pizzeria.fabulosa.configs.properties.SecurityProperties;
 import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
 import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.error.Error;
@@ -23,13 +24,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE)
 @Validated
 public class UserController {
 
 	private final UserService userService;
+
+	private final SecurityProperties securityProperties;
 
 	@ValidateUserId
 	@GetMapping(ApiRoutes.USER_ID)
@@ -142,7 +145,7 @@ public class UserController {
 						.build())
 				.build();
 
-		SecurityCookieUtils.eatAllCookies(request, response);
+		SecurityCookieUtils.eatAllCookies(request, response, securityProperties.getCookies().getDomain());
 
 		return ResponseEntity.ok(responseObj);
 	}
@@ -182,7 +185,7 @@ public class UserController {
 						.build())
 				.build();
 
-		SecurityCookieUtils.eatAllCookies(request, response);
+		SecurityCookieUtils.eatAllCookies(request, response, securityProperties.getCookies().getDomain());
 
 		return ResponseEntity.ok(responseObj);
 	}
@@ -218,7 +221,7 @@ public class UserController {
 		}
 
 		if (!isError) {
-			SecurityCookieUtils.eatAllCookies(request, response);
+			SecurityCookieUtils.eatAllCookies(request, response, securityProperties.getCookies().getDomain());
 		}
 
 		return ResponseEntity.ok(responseObj);

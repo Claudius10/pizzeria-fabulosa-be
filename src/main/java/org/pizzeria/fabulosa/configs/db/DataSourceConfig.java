@@ -2,8 +2,9 @@ package org.pizzeria.fabulosa.configs.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.RequiredArgsConstructor;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import org.springframework.beans.factory.annotation.Value;
+import org.pizzeria.fabulosa.configs.properties.DBProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,16 +12,10 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
+@RequiredArgsConstructor
 public class DataSourceConfig {
 
-	@Value("${db.url}")
-	private String url;
-
-	@Value("${db.username}")
-	private String username;
-
-	@Value("${db.password}")
-	private String password;
+	private final DBProperties dbProperties;
 
 	@Bean
 	DataSource dataSource() {
@@ -29,9 +24,9 @@ public class DataSourceConfig {
 
 		DataSource actualDataSource = DataSourceBuilder
 				.create()
-				.url(url)
-				.username(username)
-				.password(password)
+				.url(dbProperties.getUrl())
+				.username(dbProperties.getUsername())
+				.password(dbProperties.getPassword())
 				.build();
 
 		DataSource proxyDataSource = ProxyDataSourceBuilder

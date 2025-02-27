@@ -42,3 +42,13 @@ logging:
     org.hibernate: info
     org.hibernate.sql: debug
     org.hibernate.orm.jdbc.bind: trace
+
+security:
+  cookies:
+    domain: test.net
+    sameSite: Lax
+    httpOnly: true
+    secure: true
+  allowedOrigins:
+    - "http://192.168.1.128:4200"
+    - "http://localhost:4200"

@@ -1,6 +1,6 @@
 package org.pizzeria.fabulosa.services.address;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.repos.address.AddressRepository;
 import org.springframework.data.domain.Example;
@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class AddressServiceImpl implements AddressService {
 
-	private AddressRepository addressRepository;
+	private final AddressRepository addressRepository;
 
 	@Override
 	public Address findReference(Long addressId) {

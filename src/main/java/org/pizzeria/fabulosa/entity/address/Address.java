@@ -5,8 +5,6 @@ import jakarta.validation.Valid;
 import lombok.*;
 import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.ValidAddress;
 
-import java.util.Objects;
-
 @Entity(name = "Address")
 @Table(name = "address")
 @Getter

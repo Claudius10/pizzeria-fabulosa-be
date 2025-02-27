@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa.services.dummy;
 
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.cart.Cart;
@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Profile("production")
 @Slf4j
 public class DummyService {

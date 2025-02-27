@@ -21,18 +21,25 @@ public final class SecurityCookieUtils {
 		return cookie;
 	}
 
-	public static ResponseCookie bakeCookie(String name, String value, int maxAge, boolean httpOnly, boolean secure) {
+	public static ResponseCookie bakeCookie(
+			String name,
+			String value,
+			int maxAge,
+			boolean httpOnly,
+			boolean secure,
+			String sameSite,
+			String domain) {
 		return ResponseCookie.from(name, value)
 				.path(Constants.PATH)
 				.maxAge(maxAge)
 				.httpOnly(httpOnly)
 				.secure(secure)
-				.sameSite("Lax")
-				.domain(Constants.DOMAIN) // NOTE - on for prod fe
+				.sameSite(sameSite)
+				.domain(domain)
 				.build();
 	}
 
-	public static void serveCookies(HttpServletResponse response, String accessToken, String idToken) {
+	public static void serveCookies(HttpServletResponse response, String accessToken, String idToken, String sameSite, String domain) {
 		// access token cookie
 		response.addHeader(HttpHeaders.SET_COOKIE,
 				bakeCookie(
@@ -40,7 +47,9 @@ public final class SecurityCookieUtils {
 						accessToken,
 						Constants.ONE_DAY_MS,
 						true,
-						true) // NOTE - true for prod
+						true, // NOTE - true for prod
+						sameSite,
+						domain)
 						.toString());
 
 		// id token cookie
@@ -50,17 +59,19 @@ public final class SecurityCookieUtils {
 						idToken,
 						Constants.ONE_DAY_MS,
 						false,
-						true) // NOTE - true for prod
+						true, // NOTE - true for prod
+						sameSite,
+						domain)
 						.toString());
 	}
 
-	public static void eatAllCookies(HttpServletRequest request, HttpServletResponse response) {
+	public static void eatAllCookies(HttpServletRequest request, HttpServletResponse response, String domain) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null)
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals(Constants.AUTH_TOKEN) || cookie.getName().equals(Constants.ID_TOKEN)) {
 					cookie.setSecure(true); // NOTE - on for prod
-					cookie.setDomain(Constants.DOMAIN); // NOTE - on for prod
+					cookie.setDomain(domain); // NOTE - on for prod
 					cookie.setValue("");
 					cookie.setPath(Constants.PATH);
 					cookie.setMaxAge(0);

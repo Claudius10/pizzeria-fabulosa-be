@@ -1,6 +1,6 @@
 package org.pizzeria.fabulosa.web.aop.aspects.validation;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,11 +12,11 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Aspect
 public class ValidateUserAccountUpdate {
 
-	private AuthenticationManager authenticationManager;
+	private final AuthenticationManager authenticationManager;
 
 	@Before(value = "(org.pizzeria.fabulosa.web.aop.pointcuts.UserPointCuts.userAccountUpdate() || org.pizzeria.fabulosa.web.aop.pointcuts.UserPointCuts" +
 			".userAccountDelete()) && args(password, ..)", argNames = "password")
