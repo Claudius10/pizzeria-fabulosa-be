@@ -38,8 +38,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-import static org.pizzeria.fabulosa.utils.Constants.ISSUER;
-
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -136,7 +134,7 @@ public class SecurityConfig {
 	@Bean
 	JwtDecoder jwtDecoder(RSAKeyPair keys) {
 		NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(keys.getPublicKey()).build();
-		decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(ISSUER));
+		decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(securityProperties.getTokenIssuer()));
 		return decoder;
 	}
 

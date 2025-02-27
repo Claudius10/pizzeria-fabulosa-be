@@ -7,6 +7,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.junit.jupiter.api.Test;
+import org.pizzeria.fabulosa.configs.properties.SecurityProperties;
 import org.pizzeria.fabulosa.configs.web.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.configs.web.security.keys.RSAKeyPair;
 import org.pizzeria.fabulosa.entity.role.Role;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.pizzeria.fabulosa.utils.Constants.ISSUER;
 
 public class JWTTokenManagerTests {
 
@@ -32,7 +32,9 @@ public class JWTTokenManagerTests {
 
 		RSAKeyPair rsaKeyPair = new RSAKeyPair();
 		JwtDecoder jwtDecoder = jwtDecoder(rsaKeyPair);
-		JWTTokenManager tokenManager = new JWTTokenManager(jwtEncoder(rsaKeyPair));
+		SecurityProperties securityProperties = new SecurityProperties();
+		securityProperties.setTokenIssuer("test");
+		JWTTokenManager tokenManager = new JWTTokenManager(jwtEncoder(rsaKeyPair), securityProperties);
 
 		// Act
 
@@ -53,7 +55,7 @@ public class JWTTokenManagerTests {
 
 	JwtDecoder jwtDecoder(RSAKeyPair keys) {
 		NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(keys.getPublicKey()).build();
-		decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(ISSUER));
+		decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer("test"));
 		return decoder;
 	}
 }

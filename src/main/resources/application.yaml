@@ -42,6 +42,7 @@ db:
   password: ${DATABASE_PASSWORD}
 
 security:
+  tokenIssuer: https://test.net
   cookies:
     domain: test.net
     sameSite: Lax

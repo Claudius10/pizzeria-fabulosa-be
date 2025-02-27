@@ -14,6 +14,8 @@ import java.util.List;
 @Getter
 public class SecurityProperties {
 
+	private String tokenIssuer;
+
 	private Cookies cookies;
 
 	private List<String> allowedOrigins;

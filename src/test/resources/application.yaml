@@ -44,6 +44,7 @@ logging:
     org.hibernate.orm.jdbc.bind: trace
 
 security:
+  tokenIssuer: https://test.net
   cookies:
     domain: test.net
     sameSite: Lax

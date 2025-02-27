@@ -1,37 +1,34 @@
 package org.pizzeria.fabulosa.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
+import org.springframework.boot.context.event.ApplicationPreparedEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-@Component
 @Slf4j
-public class PropertiesLogger {
+public class PropertiesLogger implements ApplicationListener<ApplicationPreparedEvent> {
 
-	@EventListener
-	public void handleContextRefresh(ContextRefreshedEvent event) {
-		String userProperties = "Config resource 'class path resource [application.yaml]' via location 'optional:classpath:/'";
-		String serverPorts = "server.ports";
-		String applicationInfo = "applicationInfo";
-		List<String> props = List.of(userProperties, serverPorts, applicationInfo);
+	@Override
+	public void onApplicationEvent(ApplicationPreparedEvent event) {
+		logProps(event.getApplicationContext().getEnvironment());
+	}
 
-		final Environment env = event.getApplicationContext().getEnvironment();
+	private void logProps(Environment env) {
 		final MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
 
-		log.info("====== Environment and configuration ======");
+		log.info("====== {} {} ======", Constants.APP_NAME, Constants.APP_VERSION);
+		log.info("====== Configuration ======");
 		log.info("Active profiles: {}", Arrays.toString(env.getActiveProfiles()));
 
 		StreamSupport.stream(sources.spliterator(), false)
-				.filter(ps -> ps instanceof MapPropertySource && props.contains(ps.getName()))
+				.filter(ps -> ps instanceof MapPropertySource && getPropsToLog().contains(ps.getName()))
 				.map(ps -> ((MapPropertySource) ps).getPropertyNames())
 				.flatMap(Arrays::stream)
 				.distinct()
@@ -39,5 +36,17 @@ public class PropertiesLogger {
 				.forEach(prop -> log.info("{}: {}", prop, env.getProperty(prop)));
 
 		log.info("===========================================");
+	}
+
+	@Override
+	public boolean supportsAsyncExecution() {
+		return ApplicationListener.super.supportsAsyncExecution();
+	}
+
+	private List<String> getPropsToLog() {
+		String applicationInfo = "applicationInfo";
+		String localProps = "Config resource 'class path resource [application.yaml]' via location 'optional:classpath:/'";
+		String remoteProps = "Config resource 'file [config/application.yaml]' via location 'optional:file:./config/'";
+		return List.of(localProps, remoteProps, applicationInfo);
 	}
 }

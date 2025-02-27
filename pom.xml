@@ -11,7 +11,7 @@
     <groupId>com.clau</groupId>
     <artifactId>pizzeria</artifactId>
     <version>v2</version>
-    <name>Pizzeria Fabulosa</name>
+    <name>PizzeriaFabulosaBackend</name>
     <description>Backend for Pizzeria Fabulosa</description>
     <properties>
         <java.version>21</java.version>
@@ -125,6 +125,17 @@
 
     <build>
         <finalName>PizzeriaBackEnd</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/*.yaml</exclude>
+                    <exclude>**/*.xml</exclude>
+                    <exclude>**/*.sql</exclude>
+                    <exclude>**/*.sh</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
