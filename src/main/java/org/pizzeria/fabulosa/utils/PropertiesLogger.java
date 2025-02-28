@@ -46,7 +46,7 @@ public class PropertiesLogger implements ApplicationListener<ApplicationPrepared
 	private List<String> getPropsToLog() {
 		String applicationInfo = "applicationInfo";
 		String localProps = "Config resource 'class path resource [application.yaml]' via location 'optional:classpath:/'";
-		String remoteProps = "Config resource 'file [config/application.yaml]' via location 'optional:file:./config/'";
+		String remoteProps = "Config resource 'file [application.yaml]' via location 'optional:file:./'";
 		return List.of(localProps, remoteProps, applicationInfo);
 	}
 }
