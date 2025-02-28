@@ -127,10 +127,8 @@ public class DummyService {
 						.withTotalCost(13.30D)
 						.withCartItems(List.of(CartItem.builder()
 								.withFormats(
-										Map.of("m",
-												Map.of("es", "Mediana", "en", "Medium"),
-												"l",
-												Map.of("es", "Familiar", "en", "Large"),
+										Map.of("m", Map.of("es", "Mediana", "en", "Medium"),
+												"l", Map.of(),
 												"s", Map.of()))
 								.withPrice(13.30)
 								.withQuantity(1)
