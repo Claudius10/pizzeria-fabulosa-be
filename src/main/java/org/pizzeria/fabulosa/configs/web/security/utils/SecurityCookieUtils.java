@@ -39,27 +39,15 @@ public final class SecurityCookieUtils {
 				.build();
 	}
 
-	public static void serveCookies(HttpServletResponse response, String accessToken, String idToken, String sameSite, String domain) {
-		// access token cookie
+	public static void serveCookies(HttpServletResponse response, String name, String value, int duration,
+									boolean httpOnly, boolean secure, String sameSite, String domain) {
 		response.addHeader(HttpHeaders.SET_COOKIE,
 				bakeCookie(
-						Constants.AUTH_TOKEN,
-						accessToken,
-						Constants.ONE_DAY_MS,
-						true,
-						true, // NOTE - true for prod
-						sameSite,
-						domain)
-						.toString());
-
-		// id token cookie
-		response.addHeader(HttpHeaders.SET_COOKIE,
-				bakeCookie(
-						Constants.ID_TOKEN,
-						idToken,
-						Constants.ONE_DAY_MS,
-						false,
-						true, // NOTE - true for prod
+						name,
+						value,
+						duration,
+						httpOnly,
+						secure,
 						sameSite,
 						domain)
 						.toString());
@@ -70,7 +58,7 @@ public final class SecurityCookieUtils {
 		if (cookies != null)
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals(Constants.AUTH_TOKEN) || cookie.getName().equals(Constants.ID_TOKEN)) {
-					cookie.setSecure(true); // NOTE - on for prod
+					cookie.setSecure(false); // NOTE - on for prod
 					cookie.setDomain(domain); // NOTE - on for prod
 					cookie.setValue("");
 					cookie.setPath(Constants.PATH);

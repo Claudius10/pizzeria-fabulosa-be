@@ -126,9 +126,20 @@ public class DummyService {
 						.withTotalQuantity(1)
 						.withTotalCost(13.30D)
 						.withCartItems(List.of(CartItem.builder()
-								.withFormats(Map.of())
+								.withFormats(
+										Map.of("m",
+												Map.of("es", "Mediana", "en", "Medium"),
+												"l",
+												Map.of("es", "Familiar", "en", "Large"),
+												"s", Map.of()))
 								.withPrice(13.30)
 								.withQuantity(1)
+								.withName(Map.of("es", "Cuatro Quesos", "en", "Cuatro Quesos"))
+								.withType("pizza")
+								.withDescription(Map.of("es", List.of("Salsa de Tomate", "Mozzarella 100%", "Parmesano",
+												"Emmental", "Queso Azul"),
+										"en", List.of("Tomato Sauce", "100% Mozzarella", "Parmesan " +
+												"Cheese", "Emmental Cheese", "Blue Cheese")))
 								.build()))
 						.build()
 		);
