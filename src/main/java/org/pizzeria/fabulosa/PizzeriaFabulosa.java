@@ -5,10 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class App {
+public class PizzeriaFabulosa {
 
 	public static void main(String[] args) {
-		SpringApplication springApplication = new SpringApplication(App.class);
+		SpringApplication springApplication = new SpringApplication(PizzeriaFabulosa.class);
 		springApplication.addListeners(new PropertiesLogger());
 		springApplication.run(args);
 	}

@@ -8,7 +8,6 @@ import org.pizzeria.fabulosa.entity.resources.Store;
 import org.pizzeria.fabulosa.repos.resources.OfferRepository;
 import org.pizzeria.fabulosa.repos.resources.ProductRepository;
 import org.pizzeria.fabulosa.repos.resources.StoreRepository;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,19 +23,16 @@ public class ResourceServiceImpl implements ResourceService {
 
 	private final OfferRepository offerRepository;
 
-	@Cacheable("productsByType")
 	@Override
 	public List<Product> findAllProductsByType(String productType) {
 		return productRepository.findAllByType(productType);
 	}
 
-	@Cacheable("offers")
 	@Override
 	public List<Offer> findAllOffers() {
 		return offerRepository.findAll();
 	}
 
-	@Cacheable("stores")
 	@Override
 	public List<Store> findAllStores() {
 		return storeRepository.findAll();

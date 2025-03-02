@@ -25,9 +25,6 @@ spring:
     hibernate:
       ddl-auto: update
 
-  config:
-    import: optional:file:local.env[.properties]
-
 logging:
   level:
     org.hibernate: info
@@ -37,17 +34,17 @@ logging:
     root: info
 
 db:
-  url: ${DATABASE_URL}
-  username: ${DATABASE_USERNAME}
-  password: ${DATABASE_PASSWORD}
+  url: jdbc:mariadb://localhost:3306/pizzeria
+  username: root
+  password: root
 
 security:
-  tokenIssuer: https://test.net
+  tokenIssuer: http://192.168.1.128
   cookies:
-    domain: test.net
+    domain: 192.168.1.128
     sameSite: Lax
     httpOnly: true
-    secure: true
+    secure: false
   allowedOrigins:
     - "http://192.168.1.128:4200"
     - "http://localhost:4200"
