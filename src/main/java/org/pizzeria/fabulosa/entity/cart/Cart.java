@@ -109,11 +109,6 @@ public class Cart {
 			this.cart = new Cart();
 		}
 
-		public Builder withId(Long id) {
-			cart.id = id;
-			return this;
-		}
-
 		public Builder withTotalQuantity(Integer totalQuantity) {
 			cart.totalQuantity = totalQuantity;
 			return this;
