@@ -30,6 +30,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -98,7 +99,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.id(UUID.randomUUID().getMostSignificantBits())
 				.cause(!fatal ? ApiResponses.USER_EMAIL_ALREADY_EXISTS : ex.getClass().getSimpleName())
 				.origin(CLASS_NAME_SHORT + ".dataAccessException")
-				.path(((ServletWebRequest) request).getRequest().getServletPath())
+				.path(((ServletWebRequest) request).getRequest().getPathInfo())
 				.message(!fatal ? null : ex.getMessage())
 				.logged(fatal)
 				.fatal(fatal)
@@ -106,6 +107,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		if (fatal) {
 			error.setId(null);
+			error.setCreatedOn(LocalDateTime.now());
 			Error savedError = errorRepository.save(error);
 			error.setId(savedError.getId());
 		}
@@ -174,13 +176,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.cause(ex.getClass().getSimpleName())
 				.message(errorMessage)
 				.origin(CLASS_NAME_SHORT + ".authenticationException")
-				.path(((ServletWebRequest) request).getRequest().getServletPath())
+				.path(((ServletWebRequest) request).getRequest().getPathInfo())
 				.logged(fatal)
 				.fatal(fatal)
 				.build();
 
 		if (fatal) {
 			error.setId(null);
+			error.setCreatedOn(LocalDateTime.now());
 			Error savedError = this.errorRepository.save(error);
 			error.setId(savedError.getId());
 		}

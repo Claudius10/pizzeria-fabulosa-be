@@ -2,7 +2,7 @@ package org.pizzeria.fabulosa.services.user;
 
 import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.user.User;
-import org.pizzeria.fabulosa.web.dto.auth.RegisterDTO;
+import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
 import org.pizzeria.fabulosa.web.dto.user.dto.UserDTO;
 
 import java.util.Optional;

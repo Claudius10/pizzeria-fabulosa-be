@@ -58,8 +58,8 @@ public final class SecurityCookieUtils {
 		if (cookies != null)
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals(Constants.AUTH_TOKEN) || cookie.getName().equals(Constants.ID_TOKEN)) {
-					cookie.setSecure(false); // NOTE - on for prod
-					cookie.setDomain(domain); // NOTE - on for prod
+					cookie.setSecure(false);
+					cookie.setDomain(domain);
 					cookie.setValue("");
 					cookie.setPath(Constants.PATH);
 					cookie.setMaxAge(0);

@@ -16,7 +16,6 @@ import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.constants.SecurityResponses;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.auth.RegisterDTO;
 import org.pizzeria.fabulosa.web.dto.user.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -145,7 +144,7 @@ class UserControllerTests {
 
 		// Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
 		assertThat(userRepository.count()).isEqualTo(1);
 		assertThat(addressRepository.count()).isEqualTo(1);
@@ -240,7 +239,7 @@ class UserControllerTests {
 
 		// Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(addressRepository.count()).isEqualTo(3);
 
 		Set<Address> userAddressList = userRepository.findUserAddressListById(userId);

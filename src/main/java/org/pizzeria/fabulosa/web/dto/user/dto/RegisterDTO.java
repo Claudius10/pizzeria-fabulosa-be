@@ -1,4 +1,4 @@
-package org.pizzeria.fabulosa.web.dto.auth;
+package org.pizzeria.fabulosa.web.dto.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

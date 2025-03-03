@@ -3,6 +3,8 @@ package org.pizzeria.fabulosa.entity.error;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 @Setter
@@ -30,4 +32,6 @@ public class Error {
 	private boolean logged;
 
 	private boolean fatal;
+
+	private LocalDateTime createdOn;
 }

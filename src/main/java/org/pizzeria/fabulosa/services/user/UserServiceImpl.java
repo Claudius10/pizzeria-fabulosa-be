@@ -9,7 +9,7 @@ import org.pizzeria.fabulosa.repos.user.UserRepository;
 import org.pizzeria.fabulosa.services.address.AddressService;
 import org.pizzeria.fabulosa.services.role.RoleService;
 import org.pizzeria.fabulosa.utils.Constants;
-import org.pizzeria.fabulosa.web.dto.auth.RegisterDTO;
+import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
 import org.pizzeria.fabulosa.web.dto.user.dto.UserDTO;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;

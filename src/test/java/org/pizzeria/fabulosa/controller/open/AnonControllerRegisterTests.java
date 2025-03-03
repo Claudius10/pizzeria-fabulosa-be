@@ -7,7 +7,7 @@ import org.pizzeria.fabulosa.web.constants.ApiResponses;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.auth.RegisterDTO;
+import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
