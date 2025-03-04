@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.pizzeria.fabulosa.utils.Constants;
+import org.pizzeria.fabulosa.utils.ServerUtils;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -26,7 +27,8 @@ public class CookielessRequestFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		try {
-			String path = resolvePath(request.getServletPath(), request.getRequestURI());
+			String path = ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI());
+			log.info("Filtered --> {}", path);
 
 			if (path.contains(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE)) {
 
@@ -53,30 +55,8 @@ public class CookielessRequestFilter extends OncePerRequestFilter {
 		}
 	}
 
-	private String resolvePath(String one, String two) {
-		boolean isOneInvalid = (null == one || one.isBlank());
-		boolean isTwoInvalid = (null == two || two.isBlank());
-
-		if (isOneInvalid && isTwoInvalid) {
-			throw new RuntimeException();
-		}
-
-		if (isOneInvalid) {
-			logPath(two);
-			return two;
-		}
-
-		logPath(one);
-		return one;
-	}
-
-	private void logPath(String path) {
-		log.info("Filtered --> {}", path);
-	}
-
 	private void goodbye(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String message = String.format("Request rejected: cannot find cookies to attempt authentication for path: %s",
-				request.getPathInfo());
+		String message = String.format("No cookies to attempt authentication for path: %s", ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI()));
 		authenticationEntryPoint.commence(request, response, new AuthenticationCredentialsNotFoundException(message));
 	}
 }

@@ -1,4 +1,4 @@
-package org.pizzeria.fabulosa.utils;
+package org.pizzeria.fabulosa.utils.loggers;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.pizzeria.fabulosa.web.dto.api.Response;

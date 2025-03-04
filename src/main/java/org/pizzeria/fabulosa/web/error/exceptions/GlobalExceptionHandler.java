@@ -1,12 +1,14 @@
 package org.pizzeria.fabulosa.web.error.exceptions;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pizzeria.fabulosa.configs.properties.SecurityProperties;
 import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
 import org.pizzeria.fabulosa.entity.error.Error;
 import org.pizzeria.fabulosa.repos.error.ErrorRepository;
-import org.pizzeria.fabulosa.utils.ExceptionLogger;
+import org.pizzeria.fabulosa.utils.ServerUtils;
+import org.pizzeria.fabulosa.utils.loggers.ExceptionLogger;
 import org.pizzeria.fabulosa.web.constants.ApiResponses;
 import org.pizzeria.fabulosa.web.constants.SecurityResponses;
 import org.pizzeria.fabulosa.web.dto.api.Response;
@@ -19,7 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
@@ -156,6 +160,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		String errorMessage;
 		boolean fatal = false;
+		boolean logged = false;
 		boolean deleteCookies = false;
 
 		switch (ex) {
@@ -163,21 +168,33 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			case UsernameNotFoundException ignored -> errorMessage = SecurityResponses.USER_NOT_FOUND;
 			case InvalidBearerTokenException ignored -> {
 				errorMessage = SecurityResponses.INVALID_TOKEN;
+				logged = true;
 				deleteCookies = true;
+			}
+			case AuthenticationCredentialsNotFoundException ignored -> {
+				errorMessage = ex.getMessage();
+				logged = true;
+			}
+			case InternalAuthenticationServiceException ignored -> {
+				errorMessage = ex.getMessage();
+				logged = true;
 			}
 			default -> {
 				fatal = true;
+				logged = true;
 				errorMessage = ex.getMessage();
 			}
 		}
+
+		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
 
 		Error error = Error.builder()
 				.id(UUID.randomUUID().getMostSignificantBits())
 				.cause(ex.getClass().getSimpleName())
 				.message(errorMessage)
 				.origin(CLASS_NAME_SHORT + ".authenticationException")
-				.path(((ServletWebRequest) request).getRequest().getPathInfo())
-				.logged(fatal)
+				.path(ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI()))
+				.logged(logged)
 				.fatal(fatal)
 				.build();
 

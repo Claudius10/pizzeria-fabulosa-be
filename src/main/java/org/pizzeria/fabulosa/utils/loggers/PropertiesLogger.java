@@ -1,6 +1,7 @@
-package org.pizzeria.fabulosa.utils;
+package org.pizzeria.fabulosa.utils.loggers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.pizzeria.fabulosa.utils.Constants;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.AbstractEnvironment;

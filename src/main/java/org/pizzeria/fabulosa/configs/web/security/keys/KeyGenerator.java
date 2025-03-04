@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa.configs.web.security.keys;
 
 import lombok.extern.slf4j.Slf4j;
-import org.pizzeria.fabulosa.utils.ExceptionLogger;
+import org.pizzeria.fabulosa.utils.loggers.ExceptionLogger;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

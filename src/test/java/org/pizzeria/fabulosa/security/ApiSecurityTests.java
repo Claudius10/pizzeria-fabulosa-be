@@ -137,7 +137,6 @@ class ApiSecurityTests {
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		assertThat(responseObj.getStatus().isError()).isTrue();
-		assertThat(responseObj.getError().isFatal()).isTrue();
 	}
 
 	@Test
@@ -153,6 +152,17 @@ class ApiSecurityTests {
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		assertThat(responseObj.getStatus().isError()).isTrue();
-		assertThat(responseObj.getError().isFatal()).isTrue();
+	}
+
+	@Test
+	void givenApiUnknownPath_thenReturnUnauthorized() throws Exception {
+		// Act
+
+		// get api call to check security
+		MockHttpServletResponse response = mockMvc.perform(get("/")).andReturn().getResponse();
+		Response responseObj = getResponse(response, objectMapper);
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(responseObj.getStatus().isError()).isTrue();
 	}
 }

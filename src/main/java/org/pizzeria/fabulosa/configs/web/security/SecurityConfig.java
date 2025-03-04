@@ -15,6 +15,7 @@ import org.pizzeria.fabulosa.configs.web.security.access.CookieBearerTokenResolv
 import org.pizzeria.fabulosa.configs.web.security.access.login.InvalidLoginHandler;
 import org.pizzeria.fabulosa.configs.web.security.access.login.ValidLoginHandler;
 import org.pizzeria.fabulosa.configs.web.security.filters.CookielessRequestFilter;
+import org.pizzeria.fabulosa.configs.web.security.filters.UnknownPathFilter;
 import org.pizzeria.fabulosa.configs.web.security.keys.RSAKeyPair;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.springframework.context.annotation.Bean;
@@ -78,6 +79,7 @@ public class SecurityConfig {
 		});*/
 
 		http.addFilterBefore(new CookielessRequestFilter(authenticationHandler), ExceptionTranslationFilter.class);
+		http.addFilterBefore(new UnknownPathFilter(authenticationHandler), CookielessRequestFilter.class);
 
 		http.authorizeHttpRequests(authorize -> {
 			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.RESOURCE_BASE + ApiRoutes.ALL).permitAll();
