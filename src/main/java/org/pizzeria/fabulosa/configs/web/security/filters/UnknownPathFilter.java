@@ -62,7 +62,6 @@ public class UnknownPathFilter extends OncePerRequestFilter {
 	}
 
 	private void goodbye(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String message = String.format("Path is not known to us: %s", ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI()));
-		authenticationEntryPoint.commence(request, response, new InternalAuthenticationServiceException(message));
+		authenticationEntryPoint.commence(request, response, new InternalAuthenticationServiceException("Unmapped path"));
 	}
 }

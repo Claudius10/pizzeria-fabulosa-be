@@ -56,7 +56,7 @@ public class CookielessRequestFilter extends OncePerRequestFilter {
 	}
 
 	private void goodbye(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String message = String.format("No cookies to attempt authentication for path: %s", ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI()));
-		authenticationEntryPoint.commence(request, response, new AuthenticationCredentialsNotFoundException(message));
+		authenticationEntryPoint.commence(request, response,
+				new AuthenticationCredentialsNotFoundException("Missing AUTH_TOKEN"));
 	}
 }
