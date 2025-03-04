@@ -1,8 +1,8 @@
-package org.pizzeria.fabulosa.web.exceptions.constraints.annotation;
+package org.pizzeria.fabulosa.web.error.constraints.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import org.pizzeria.fabulosa.web.exceptions.constraints.DoubleLengthNullableValidator;
+import org.pizzeria.fabulosa.web.error.constraints.DoubleLengthNullableValidator;
 
 import java.lang.annotation.*;
 

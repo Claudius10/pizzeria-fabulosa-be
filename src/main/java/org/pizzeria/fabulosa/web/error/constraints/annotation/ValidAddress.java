@@ -1,8 +1,8 @@
-package org.pizzeria.fabulosa.web.exceptions.constraints.annotation;
+package org.pizzeria.fabulosa.web.error.constraints.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import org.pizzeria.fabulosa.web.exceptions.constraints.AddressValidator;
+import org.pizzeria.fabulosa.web.error.constraints.AddressValidator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

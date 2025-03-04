@@ -5,13 +5,13 @@ import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class ControllerPointcuts {
-	/**
-	 * A join point in the user controller if the method is defined
-	 * in the org.pizzeria.api.controllers.locked.user package or any sub-package
-	 * under that.
-	 */
-	@Pointcut("within(org.pizzeria.fabulosa.web.controllers.user)")
+
+	@Pointcut("within(org.pizzeria.fabulosa.web.controllers.user.UserController)")
 	public void isUserController() {
+	}
+
+	@Pointcut("within(org.pizzeria.fabulosa.web.controllers.user.UserOrdersController)")
+	public void isUserOrdersController() {
 	}
 
 	/**

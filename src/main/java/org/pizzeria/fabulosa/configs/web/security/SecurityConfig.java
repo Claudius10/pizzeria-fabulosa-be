@@ -14,6 +14,7 @@ import org.pizzeria.fabulosa.configs.web.security.access.ClearCookiesLogoutHandl
 import org.pizzeria.fabulosa.configs.web.security.access.CookieBearerTokenResolver;
 import org.pizzeria.fabulosa.configs.web.security.access.login.InvalidLoginHandler;
 import org.pizzeria.fabulosa.configs.web.security.access.login.ValidLoginHandler;
+import org.pizzeria.fabulosa.configs.web.security.filters.CookielessRequestFilter;
 import org.pizzeria.fabulosa.configs.web.security.keys.RSAKeyPair;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,7 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -74,6 +76,8 @@ public class SecurityConfig {
 				}
 			});
 		});*/
+
+		http.addFilterBefore(new CookielessRequestFilter(authenticationHandler), ExceptionTranslationFilter.class);
 
 		http.authorizeHttpRequests(authorize -> {
 			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.RESOURCE_BASE + ApiRoutes.ALL).permitAll();

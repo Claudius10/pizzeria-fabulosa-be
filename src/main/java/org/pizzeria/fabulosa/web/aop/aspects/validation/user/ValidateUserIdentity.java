@@ -1,4 +1,4 @@
-package org.pizzeria.fabulosa.web.aop.aspects.validation;
+package org.pizzeria.fabulosa.web.aop.aspects.validation.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;

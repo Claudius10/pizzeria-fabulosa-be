@@ -3,7 +3,7 @@ package org.pizzeria.fabulosa.entity.address;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.ValidAddress;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.ValidAddress;
 
 @Entity(name = "Address")
 @Table(name = "address")

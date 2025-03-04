@@ -1,8 +1,8 @@
-package org.pizzeria.fabulosa.web.exceptions.constraints;
+package org.pizzeria.fabulosa.web.error.constraints;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.IntegerLength;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.IntegerLength;
 
 public class IntegerLengthValidator implements ConstraintValidator<IntegerLength, Integer> {
 

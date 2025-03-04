@@ -125,4 +125,34 @@ class ApiSecurityTests {
 		assertThat(responseObj.getStatus().isError()).isTrue();
 		assertThat(responseObj.getError().isFatal()).isTrue();
 	}
+
+	@Test
+	void givenApiCallToResource_whenNoCookies_thenReturnUnauthorized() throws Exception {
+		// Act
+
+		// get api call to check security
+		MockHttpServletResponse response =
+				mockMvc.perform(get(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + "/" + "1")).andReturn().getResponse();
+		Response responseObj = getResponse(response, objectMapper);
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(responseObj.getError().isFatal()).isTrue();
+	}
+
+	@Test
+	void givenApiCallToResource_whenCookiesButNoAuth_thenReturnUnauthorized() throws Exception {
+		// Act
+
+		// get api call to check security
+		MockHttpServletResponse response =
+				mockMvc.perform(get(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + "/" + "1")
+						.cookie(SecurityCookieUtils.prepareCookie("randomCookie", "value", 1800, true, false))
+				).andReturn().getResponse();
+		Response responseObj = getResponse(response, objectMapper);
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(responseObj.getError().isFatal()).isTrue();
+	}
 }

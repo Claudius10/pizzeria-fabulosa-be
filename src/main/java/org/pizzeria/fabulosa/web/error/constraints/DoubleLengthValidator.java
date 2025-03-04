@@ -1,8 +1,8 @@
-package org.pizzeria.fabulosa.web.exceptions.constraints;
+package org.pizzeria.fabulosa.web.error.constraints;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLength;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.DoubleLength;
 
 public class DoubleLengthValidator implements ConstraintValidator<DoubleLength, Double> {
 

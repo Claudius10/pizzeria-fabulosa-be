@@ -1,4 +1,4 @@
-package org.pizzeria.fabulosa.web.aop.aspects.validation;
+package org.pizzeria.fabulosa.web.aop.aspects.validation.user;
 
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;

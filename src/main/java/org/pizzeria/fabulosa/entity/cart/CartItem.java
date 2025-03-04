@@ -6,8 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLength;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.IntegerLength;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.DoubleLength;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.IntegerLength;
 
 import java.util.List;
 import java.util.Map;

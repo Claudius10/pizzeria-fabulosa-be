@@ -2,7 +2,7 @@ package org.pizzeria.fabulosa.web.dto.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.FieldMatch;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.FieldMatch;
 
 @FieldMatch.List({
 		@FieldMatch(

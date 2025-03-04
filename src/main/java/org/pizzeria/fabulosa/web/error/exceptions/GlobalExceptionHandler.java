@@ -1,4 +1,4 @@
-package org.pizzeria.fabulosa.web.exceptions;
+package org.pizzeria.fabulosa.web.error.exceptions;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -218,6 +218,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.fatal(true)
 				.build();
 
+		error.setCreatedOn(LocalDateTime.now());
 		errorRepository.save(error);
 
 		Response response = Response.builder()

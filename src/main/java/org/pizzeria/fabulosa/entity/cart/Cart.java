@@ -7,9 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.pizzeria.fabulosa.entity.order.Order;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLength;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLengthNullable;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.IntegerLength;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.DoubleLength;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.DoubleLengthNullable;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.IntegerLength;
 
 import java.util.ArrayList;
 import java.util.List;

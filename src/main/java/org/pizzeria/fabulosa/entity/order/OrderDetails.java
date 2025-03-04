@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.constants.ValidationRules;
-import org.pizzeria.fabulosa.web.exceptions.constraints.annotation.DoubleLengthNullable;
+import org.pizzeria.fabulosa.web.error.constraints.annotation.DoubleLengthNullable;
 
 @Entity(name = "OrderDetails")
 @Table(name = "order_details")
