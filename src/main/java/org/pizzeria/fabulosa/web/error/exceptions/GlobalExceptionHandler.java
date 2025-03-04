@@ -198,7 +198,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.fatal(fatal)
 				.build();
 
-		if (fatal) {
+		if (logged) {
 			error.setId(null);
 			error.setCreatedOn(LocalDateTime.now());
 			Error savedError = this.errorRepository.save(error);
