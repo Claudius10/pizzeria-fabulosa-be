@@ -52,7 +52,6 @@ public class UnknownPathFilter extends OncePerRequestFilter {
 
 	private Set<String> getKnownPaths() {
 		return Set.of(
-				"/error",
 				"/api/tests",
 				"/api/v1/auth",
 				"/api/v1/user",
