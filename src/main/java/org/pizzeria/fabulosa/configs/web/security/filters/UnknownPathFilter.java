@@ -26,7 +26,6 @@ public class UnknownPathFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		try {
 			String path = ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI());
-			log.info("Filtering --> {}", path);
 
 			if (isPathKnown(path)) {
 				filterChain.doFilter(request, response);

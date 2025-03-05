@@ -165,4 +165,13 @@ class ApiSecurityTests {
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		assertThat(responseObj.getStatus().isError()).isTrue();
 	}
+
+	@Test
+	void givenEvilRequest_thenReturnForbidden() throws Exception {
+		// Act
+
+		// get api call to check security
+		MockHttpServletResponse response = mockMvc.perform(get("/;")).andReturn().getResponse();
+		assertThat(response.getStatus()).isEqualTo(404);
+	}
 }
