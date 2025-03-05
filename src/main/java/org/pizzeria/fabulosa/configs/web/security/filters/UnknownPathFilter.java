@@ -31,12 +31,12 @@ public class UnknownPathFilter extends OncePerRequestFilter {
 			if (isPathKnown(path)) {
 				filterChain.doFilter(request, response);
 			} else {
-				log.warn("UnknownPathFilter rejected --> {}", path);
+				log.warn("Rejected --> {}", path);
 				goodbye(request, response);
 			}
 
 		} catch (RuntimeException e) {
-			log.warn("UnknownPathFilter does not have enough information to proceed");
+			log.warn("Not have enough information to proceed");
 			filterChain.doFilter(request, response);
 		}
 	}

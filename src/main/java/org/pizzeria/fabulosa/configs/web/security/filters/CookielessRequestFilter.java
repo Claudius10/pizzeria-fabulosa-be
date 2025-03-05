@@ -33,7 +33,7 @@ public class CookielessRequestFilter extends OncePerRequestFilter {
 			if (path.contains(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE)) {
 
 				if (null == request.getCookies()) {
-					log.warn("CookielessRequestFilter found no cookies");
+					log.warn("Found no cookies");
 					goodbye(request, response);
 				} else {
 					boolean containsAuthCookie = Arrays.stream(request.getCookies()).anyMatch(cookie ->
@@ -42,7 +42,7 @@ public class CookielessRequestFilter extends OncePerRequestFilter {
 					if (containsAuthCookie) {
 						filterChain.doFilter(request, response);
 					} else {
-						log.warn("CookielessRequestFilter did not find {}", Constants.AUTH_TOKEN);
+						log.warn("Did not find {}", Constants.AUTH_TOKEN);
 						goodbye(request, response);
 					}
 				}
@@ -50,7 +50,7 @@ public class CookielessRequestFilter extends OncePerRequestFilter {
 				filterChain.doFilter(request, response);
 			}
 		} catch (RuntimeException e) {
-			log.warn("CookielessRequestFilter does not have enough information to proceed");
+			log.warn("Not have enough information to proceed");
 			filterChain.doFilter(request, response);
 		}
 	}
