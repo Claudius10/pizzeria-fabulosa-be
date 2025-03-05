@@ -10,7 +10,7 @@ public final class ServerUtils {
 		boolean isTwoInvalid = (null == two || two.isBlank());
 
 		if (isOneInvalid && isTwoInvalid) {
-			throw new RuntimeException();
+			throw new RuntimeException("Erreur lors de l'resolution du serveur");
 		}
 
 		if (isOneInvalid) {

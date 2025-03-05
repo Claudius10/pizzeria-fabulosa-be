@@ -16,7 +16,7 @@ import org.pizzeria.fabulosa.configs.web.security.access.login.InvalidLoginHandl
 import org.pizzeria.fabulosa.configs.web.security.access.login.ValidLoginHandler;
 import org.pizzeria.fabulosa.configs.web.security.filters.CookielessRequestFilter;
 import org.pizzeria.fabulosa.configs.web.security.filters.UnknownPathFilter;
-import org.pizzeria.fabulosa.configs.web.security.keys.RSAKeyPair;
+import org.pizzeria.fabulosa.configs.web.security.ssl.JWTKeys;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +33,7 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -78,8 +78,11 @@ public class SecurityConfig {
 			});
 		});*/
 
-		http.addFilterBefore(new CookielessRequestFilter(authenticationHandler), ExceptionTranslationFilter.class);
-		http.addFilterBefore(new UnknownPathFilter(authenticationHandler), CookielessRequestFilter.class);
+		// throw out requests to unmapped paths (first filter in the chain)
+		http.addFilterBefore(new UnknownPathFilter(authenticationHandler), ChannelProcessingFilter.class);
+
+		// throw out requests to protected paths that do not include auth token (second filter in the chain)
+		http.addFilterAfter(new CookielessRequestFilter(authenticationHandler), UnknownPathFilter.class); // second filter
 
 		http.authorizeHttpRequests(authorize -> {
 			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.RESOURCE_BASE + ApiRoutes.ALL).permitAll();
@@ -131,14 +134,14 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	JwtEncoder jwtEncoder(RSAKeyPair keys) {
+	JwtEncoder jwtEncoder(JWTKeys keys) {
 		JWK jwk = new RSAKey.Builder(keys.getPublicKey()).privateKey(keys.getPrivateKey()).build();
 		JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
 		return new NimbusJwtEncoder(jwks);
 	}
 
 	@Bean
-	JwtDecoder jwtDecoder(RSAKeyPair keys) {
+	JwtDecoder jwtDecoder(JWTKeys keys) {
 		NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(keys.getPublicKey()).build();
 		decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(securityProperties.getTokenIssuer()));
 		return decoder;

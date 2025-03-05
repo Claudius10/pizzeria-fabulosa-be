@@ -34,14 +34,18 @@ db:
   password:
 
 logging:
-  file:
-    name: /home/claudio/Desktop/logs/pizzeria_logs.log
   level:
     org.springframework.security: debug
     org.springframework.test.context.jdbc: debug
     org.hibernate: info
     org.hibernate.sql: debug
     org.hibernate.orm.jdbc.bind: trace
+
+ssl:
+  keyStoreType: PKCS12
+  keyStorePath: /test
+  keyStorePassword: test
+  keyAlias: test
 
 security:
   tokenIssuer: https://test.net

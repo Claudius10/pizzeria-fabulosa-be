@@ -7,9 +7,10 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.junit.jupiter.api.Test;
+import org.pizzeria.fabulosa.configs.properties.SSLProperties;
 import org.pizzeria.fabulosa.configs.properties.SecurityProperties;
 import org.pizzeria.fabulosa.configs.web.security.auth.JWTTokenManager;
-import org.pizzeria.fabulosa.configs.web.security.keys.RSAKeyPair;
+import org.pizzeria.fabulosa.configs.web.security.ssl.JWTKeys;
 import org.pizzeria.fabulosa.entity.role.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.*;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JWTTokenManagerTests {
+public class JWTTests {
 
 	@Test
 	public void signatureTest() {
@@ -30,11 +31,15 @@ public class JWTTokenManagerTests {
 		Role role = new Role("USER");
 		roles.add(role);
 
-		RSAKeyPair rsaKeyPair = new RSAKeyPair();
-		JwtDecoder jwtDecoder = jwtDecoder(rsaKeyPair);
+		SSLProperties sslProperties = new SSLProperties();
+		sslProperties.setKeyStoreType("PKCS12");
+		JWTKeys jwtKeys = new JWTKeys(sslProperties);
+
+		jwtKeys.init();
+		JwtDecoder jwtDecoder = jwtDecoder(jwtKeys);
 		SecurityProperties securityProperties = new SecurityProperties();
 		securityProperties.setTokenIssuer("test");
-		JWTTokenManager tokenManager = new JWTTokenManager(jwtEncoder(rsaKeyPair), securityProperties);
+		JWTTokenManager tokenManager = new JWTTokenManager(jwtEncoder(jwtKeys), securityProperties);
 
 		// Act
 
@@ -47,15 +52,53 @@ public class JWTTokenManagerTests {
 		assertThat(claims.get("sub")).isEqualTo("test");
 	}
 
-	JwtEncoder jwtEncoder(RSAKeyPair keys) {
+	JwtEncoder jwtEncoder(JWTKeys keys) {
 		JWK jwk = new RSAKey.Builder(keys.getPublicKey()).privateKey(keys.getPrivateKey()).build();
 		JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
 		return new NimbusJwtEncoder(jwks);
 	}
 
-	JwtDecoder jwtDecoder(RSAKeyPair keys) {
+	JwtDecoder jwtDecoder(JWTKeys keys) {
 		NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(keys.getPublicKey()).build();
 		decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer("test"));
 		return decoder;
+	}
+
+	@Test
+	void givenInValidStoreType_initBackup() {
+
+		// Arrange
+
+		SSLProperties sslProperties = new SSLProperties();
+		sslProperties.setKeyStoreType("error");
+		JWTKeys jwtKeys = new JWTKeys(sslProperties);
+
+		// Act
+
+		jwtKeys.init();
+
+		// Assert
+
+		assertThat(jwtKeys.getPublicKey()).isNotNull();
+		assertThat(jwtKeys.getPrivateKey()).isNotNull();
+	}
+
+	@Test
+	void givenException_initBackup() {
+
+		// Arrange
+
+		SSLProperties sslProperties = new SSLProperties();
+		sslProperties.setKeyStoreType("PKCS12");
+		JWTKeys jwtKeys = new JWTKeys(sslProperties);
+
+		// Act
+
+		jwtKeys.init();
+
+		// Assert
+
+		assertThat(jwtKeys.getPublicKey()).isNotNull();
+		assertThat(jwtKeys.getPrivateKey()).isNotNull();
 	}
 }

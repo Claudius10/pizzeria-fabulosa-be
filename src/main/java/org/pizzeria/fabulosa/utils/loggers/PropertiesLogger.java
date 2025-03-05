@@ -33,7 +33,7 @@ public class PropertiesLogger implements ApplicationListener<ApplicationPrepared
 				.map(ps -> ((MapPropertySource) ps).getPropertyNames())
 				.flatMap(Arrays::stream)
 				.distinct()
-				.filter(prop -> !(prop.contains("credentials") || prop.contains("password")))
+				.filter(prop -> !(prop.contains("credentials") || prop.contains("password") || prop.contains("email") || prop.contains("Password")))
 				.forEach(prop -> log.info("{}: {}", prop, env.getProperty(prop)));
 
 		log.info("===========================================");
