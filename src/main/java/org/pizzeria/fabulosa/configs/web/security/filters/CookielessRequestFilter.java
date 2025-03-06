@@ -23,7 +23,7 @@ public class CookielessRequestFilter extends OncePerRequestFilter {
 		if (path == null) {
 			filterChain.doFilter(request, response);
 		} else {
-			if (path.contains(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE)) {
+			if (path.contains(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE) && !request.getMethod().equals("OPTIONS")) {
 
 				if (null != request.getCookies()) {
 					boolean containsAuthCookie = Arrays.stream(request.getCookies()).anyMatch(cookie ->

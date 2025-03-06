@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JWTTokenManager {
 
-	private final static Instant ACCESS_TOKEN_EXPIRE_DATE = Instant.now().plus(1, ChronoUnit.DAYS);
-
 	private final JwtEncoder jwtEncoder;
 
 	private final SecurityProperties securityProperties;
@@ -27,7 +25,7 @@ public class JWTTokenManager {
 		JwtClaimsSet claims = JwtClaimsSet.builder()
 				.issuedAt(Instant.now())
 				.issuer(securityProperties.getTokenIssuer())
-				.expiresAt(ACCESS_TOKEN_EXPIRE_DATE)
+				.expiresAt(Instant.now().plus(1, ChronoUnit.DAYS))
 				.subject(subject)
 				.claim("roles", parseAuthorities(roles))
 				.claim("userId", String.valueOf(userId))
@@ -39,7 +37,7 @@ public class JWTTokenManager {
 		JwtClaimsSet claims = JwtClaimsSet.builder()
 				.issuedAt(Instant.now())
 				.issuer(securityProperties.getTokenIssuer())
-				.expiresAt(ACCESS_TOKEN_EXPIRE_DATE)
+				.expiresAt(Instant.now().plus(1, ChronoUnit.DAYS))
 				.subject(subject)
 				.claim("name", userName)
 				.claim("id", String.valueOf(userId))

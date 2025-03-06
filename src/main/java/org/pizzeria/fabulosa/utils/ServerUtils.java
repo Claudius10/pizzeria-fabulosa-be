@@ -24,8 +24,7 @@ public final class ServerUtils {
 
 	public static void logRequest(HttpServletRequest request, org.slf4j.Logger log, String origin) {
 		log.warn("----- -- Request START ---- -- ");
-		log.warn("----- --> {}", origin);
-		log.warn("----- --");
+		log.info("----- --");
 
 		log.info("----- {} : {}", "URL", request.getRequestURL());
 		log.info("----- {} : {}", "URI", request.getRequestURI());
@@ -48,7 +47,7 @@ public final class ServerUtils {
 		log.info("----- {} : {}", "LocalName", request.getLocalName());
 		log.info("----- {} : {}", "LocalPort", request.getLocalPort());
 
-		log.warn("----- --");
+		log.info("----- --");
 		log.warn("----- -- Request END ---- -- ");
 	}
 }
