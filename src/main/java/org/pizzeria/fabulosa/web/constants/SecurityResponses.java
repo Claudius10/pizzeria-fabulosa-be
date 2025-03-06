@@ -9,7 +9,7 @@ public final class SecurityResponses {
 	public static final String BAD_CREDENTIALS = "BadCredentialsException";
 
 	public static final String INVALID_TOKEN = "InvalidBearerTokenException";
-
+	
 	private SecurityResponses() {
 	}
 }

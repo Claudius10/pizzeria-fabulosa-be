@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -158,6 +159,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(AuthenticationException.class)
 	protected ResponseEntity<Response> authenticationException(AuthenticationException ex, WebRequest request) {
 
+		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
+
+		if (ex instanceof InsufficientAuthenticationException && "/error".equals(path)) {
+			ServerUtils.logRequest(httpRequest, log, this.getClass().getSimpleName());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+
 		String errorMessage;
 		boolean fatal = false;
 		boolean logged = false;
@@ -186,14 +195,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			}
 		}
 
-		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-
 		Error error = Error.builder()
 				.id(UUID.randomUUID().getMostSignificantBits())
 				.cause(ex.getClass().getSimpleName())
 				.message(errorMessage)
 				.origin(CLASS_NAME_SHORT + ".authenticationException")
-				.path(ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI()))
+				.path(path)
 				.logged(logged)
 				.fatal(fatal)
 				.build();

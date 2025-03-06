@@ -79,10 +79,10 @@ public class SecurityConfig {
 		});*/
 
 		// throw out requests to unmapped paths (first filter in the chain)
-		http.addFilterBefore(new UnknownPathFilter(authenticationHandler), ChannelProcessingFilter.class);
+		http.addFilterBefore(new UnknownPathFilter(), ChannelProcessingFilter.class);
 
 		// throw out requests to protected paths that do not include auth token (second filter in the chain)
-		http.addFilterAfter(new CookielessRequestFilter(authenticationHandler), UnknownPathFilter.class); // second filter
+		http.addFilterAfter(new CookielessRequestFilter(), UnknownPathFilter.class); // second filter
 
 		http.authorizeHttpRequests(authorize -> {
 			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.RESOURCE_BASE + ApiRoutes.ALL).permitAll();

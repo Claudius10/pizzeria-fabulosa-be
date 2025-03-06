@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.pizzeria.fabulosa.utils.ServerUtils;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -16,27 +14,26 @@ import java.util.Set;
 @Slf4j
 public class UnknownPathFilter extends OncePerRequestFilter {
 
-	private final AuthenticationEntryPoint authenticationEntryPoint;
-
-	public UnknownPathFilter(AuthenticationEntryPoint authenticationEntryPoint) {
-		this.authenticationEntryPoint = authenticationEntryPoint;
-	}
-
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		try {
-			String path = ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI());
+		String path = ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI());
 
+		if (path == null) {
+			log.error("HttpServletRequest is broken");
+			ServerUtils.logRequest(request, log, this.getClass().getSimpleName());
+			filterChain.doFilter(request, response);
+		} else {
 			if (isPathKnown(path)) {
+
+				if (path.contains("/api/v1/auth")) {
+					ServerUtils.logRequest(request, log, this.getClass().getSimpleName());
+				}
+
 				filterChain.doFilter(request, response);
 			} else {
 				log.warn("Rejected --> {}", path);
-				goodbye(request, response);
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
-
-		} catch (RuntimeException e) {
-			log.warn("Not have enough information to proceed");
-			filterChain.doFilter(request, response);
 		}
 	}
 
@@ -58,9 +55,5 @@ public class UnknownPathFilter extends OncePerRequestFilter {
 				"/api/v1/resource",
 				"/api/v1/anon"
 		);
-	}
-
-	private void goodbye(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		authenticationEntryPoint.commence(request, response, new InternalAuthenticationServiceException("Unmapped path"));
 	}
 }

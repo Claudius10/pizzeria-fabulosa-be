@@ -133,10 +133,7 @@ class ApiSecurityTests {
 		// get api call to check security
 		MockHttpServletResponse response =
 				mockMvc.perform(get(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + "/" + "1")).andReturn().getResponse();
-		Response responseObj = getResponse(response, objectMapper);
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 	}
 
 	@Test
@@ -148,10 +145,7 @@ class ApiSecurityTests {
 				mockMvc.perform(get(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + "/" + "1")
 						.cookie(SecurityCookieUtils.prepareCookie("randomCookie", "value", 1800, true, false))
 				).andReturn().getResponse();
-		Response responseObj = getResponse(response, objectMapper);
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 	}
 
 	@Test
@@ -160,10 +154,7 @@ class ApiSecurityTests {
 
 		// get api call to check security
 		MockHttpServletResponse response = mockMvc.perform(get("/")).andReturn().getResponse();
-		Response responseObj = getResponse(response, objectMapper);
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 	}
 
 	@Test
