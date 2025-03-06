@@ -26,6 +26,7 @@ public class UnknownPathFilter extends OncePerRequestFilter {
 			if (isPathKnown(path)) {
 
 				if (path.contains("/api/v1/auth")) {
+					log.info("----- --> Logging auth path request");
 					ServerUtils.logRequest(request, log, this.getClass().getSimpleName());
 				}
 
