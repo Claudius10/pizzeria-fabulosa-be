@@ -19,17 +19,10 @@ public class UnknownPathFilter extends OncePerRequestFilter {
 		String path = ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI());
 
 		if (path == null) {
-			log.error("HttpServletRequest is broken");
-			ServerUtils.logRequest(request, log, this.getClass().getSimpleName());
+			log.error("Unable to resolve path for URL {}", request.getRequestURL());
 			filterChain.doFilter(request, response);
 		} else {
 			if (isPathKnown(path)) {
-
-				if (path.contains("/api/v1/auth")) {
-					log.info("----- --> Logging auth path request");
-					ServerUtils.logRequest(request, log, this.getClass().getSimpleName());
-				}
-
 				filterChain.doFilter(request, response);
 			} else {
 				log.warn("Rejected --> {}", path);

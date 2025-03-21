@@ -6,8 +6,6 @@ public interface OrderSummaryProjection {
 
 	String getFormattedCreatedOn();
 
-	String getFormattedUpdatedOn();
-
 	OrderDetailsView getOrderDetails();
 
 	CartView getCart();

@@ -35,6 +35,8 @@ public class OrderDetails {
 	@Pattern(regexp = ValidationRules.COMPLEX_LETTERS_NUMBERS_MAX_150_OPTIONAL, message = ValidationResponses.ORDER_DETAILS_COMMENT)
 	private String comment;
 
+	private Boolean storePickUp;
+
 	@OneToOne(fetch = FetchType.LAZY)
 	@MapsId
 	@JsonBackReference

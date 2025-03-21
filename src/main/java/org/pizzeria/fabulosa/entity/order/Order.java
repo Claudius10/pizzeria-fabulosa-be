@@ -25,11 +25,7 @@ public class Order {
 
 	private LocalDateTime createdOn;
 
-	private LocalDateTime updatedOn;
-
 	private String formattedCreatedOn;
-
-	private String formattedUpdatedOn;
 
 	private String anonCustomerName;
 

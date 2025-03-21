@@ -116,11 +116,11 @@ public class UserServiceImpl implements UserService {
 		User user = findUserOrThrow(userId);
 
 		if (Constants.DUMMY_ACCOUNT_EMAIL.equals(user.getEmail())) {
-			return true;
+			return true; // cannot delete dummy account
 		}
 
 		userRepository.deleteById(user.getId());
-		return false;
+		return false; // no error otherwise
 	}
 
 	@Override

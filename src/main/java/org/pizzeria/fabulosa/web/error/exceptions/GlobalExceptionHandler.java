@@ -163,7 +163,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 
 		if (ex instanceof InsufficientAuthenticationException && "/error".equals(path)) {
-			ServerUtils.logRequest(httpRequest, log, this.getClass().getSimpleName());
+			log.warn("AuthenticationException redirected to /error, URL {}", httpRequest.getRequestURL());
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 

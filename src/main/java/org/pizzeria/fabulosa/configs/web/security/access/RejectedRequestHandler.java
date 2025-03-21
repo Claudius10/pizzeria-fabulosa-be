@@ -21,8 +21,6 @@ public class RejectedRequestHandler implements RequestRejectedHandler {
 
 		if (path == null) {
 			log.warn(logMsg);
-			log.error("HttpServletRequest is broken");
-			ServerUtils.logRequest(request, log, this.getClass().getSimpleName());
 		} else {
 			log.warn("{}{}", logMsg, path);
 		}
