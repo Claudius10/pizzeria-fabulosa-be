@@ -1,3 +1,7 @@
 Pizzeria Fabulosa back-end
 
-OpenJDK 21. Spring Boot starter-parent version 3.4.1. MariaDB. 
+Java 21. 
+
+Spring Web + Spring Security.
+
+Spring Data JPA w/ Hibernate <--> MariaDB.
