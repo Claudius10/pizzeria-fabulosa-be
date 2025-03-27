@@ -1,10 +1,13 @@
 package org.pizzeria.fabulosa.web.controllers.open;
 
 import lombok.RequiredArgsConstructor;
+import org.pizzeria.fabulosa.entity.resources.Product;
 import org.pizzeria.fabulosa.services.resources.ResourceService;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.api.Status;
+import org.pizzeria.fabulosa.web.dto.resource.ProductListDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +23,20 @@ public class ResourceController {
 	private final ResourceService resourceService;
 
 	@GetMapping(path = ApiRoutes.RESOURCE_PRODUCT, params = ApiRoutes.RESOURCE_PRODUCT_PARAM)
-	public ResponseEntity<Response> findAllProductsByType(@RequestParam String type) {
+	public ResponseEntity<Response> findAllProductsByType(
+			@RequestParam String type,
+			@RequestParam(name = ApiRoutes.PAGE_NUMBER) Integer pageNumber,
+			@RequestParam(name = ApiRoutes.PAGE_SIZE) Integer pageSize) {
+
+		Page<Product> allProductsByType = resourceService.findAllProductsByType(type, pageSize, pageNumber);
+
+		ProductListDTO productListDTO = new ProductListDTO(
+				allProductsByType.getContent(),
+				allProductsByType.getTotalPages(),
+				allProductsByType.getPageable().getPageSize(),
+				allProductsByType.getTotalElements(),
+				allProductsByType.hasNext()
+		);
 
 		Response response = Response.builder()
 				.status(Status.builder()
@@ -28,7 +44,7 @@ public class ResourceController {
 						.code(HttpStatus.OK.value())
 						.isError(false)
 						.build())
-				.payload(resourceService.findAllProductsByType(type))
+				.payload(productListDTO)
 				.build();
 
 		return ResponseEntity.ok(response);

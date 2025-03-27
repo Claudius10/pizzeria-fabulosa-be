@@ -85,15 +85,16 @@ class ResourceControllerTests {
 						ApiRoutes.BASE +
 								ApiRoutes.V1 +
 								ApiRoutes.RESOURCE_BASE +
-								ApiRoutes.RESOURCE_PRODUCT + "?type=pizza"))
+								ApiRoutes.RESOURCE_PRODUCT + "?type=pizza&pageNumber=0&pageSize=10"))
 				.andReturn().getResponse();
 
 		// Assert
 
 		Response responseObj = getResponse(response, objectMapper);
-		List<Product> productList = objectMapper.convertValue(responseObj.getPayload(), List.class);
-		assertThat(productList).hasSize(1);
+		Map payload = objectMapper.convertValue(responseObj.getPayload(), Map.class);
+		List productList = objectMapper.convertValue(payload.get("productList"), List.class);
 		Product product = objectMapper.convertValue(productList.get(0), Product.class);
+		assertThat(productList).hasSize(1);
 		assertThat(product.getFormats().get("m").get("en")).isEqualTo("Medium");
 		assertThat(product.getPrices().get("m")).isEqualTo(13.3);
 	}

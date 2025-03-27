@@ -82,8 +82,8 @@ public class UserOrdersController {
 	@ValidateUserId
 	@GetMapping(ApiRoutes.ORDER_SUMMARY)
 	public ResponseEntity<Response> findUserOrdersSummary(
-			@RequestParam(name = ApiRoutes.ORDER_SUMMARY_PAGE_NUMBER) Integer pageNumber,
-			@RequestParam(name = ApiRoutes.ORDER_SUMMARY_PAGE_SIZE) Integer pageSize,
+			@RequestParam(name = ApiRoutes.PAGE_NUMBER) Integer pageNumber,
+			@RequestParam(name = ApiRoutes.PAGE_SIZE) Integer pageSize,
 			@PathVariable Long userId,
 			HttpServletRequest request) {
 		Page<OrderSummaryProjection> orderSummaryPage = orderService.findUserOrderSummary(userId, pageSize, pageNumber);

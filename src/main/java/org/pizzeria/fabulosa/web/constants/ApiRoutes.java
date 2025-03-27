@@ -63,8 +63,11 @@ public final class ApiRoutes {
 	public static final String ORDER_ID = "/{orderId}";
 
 	public static final String ORDER_SUMMARY = "/summary";
-	public static final String ORDER_SUMMARY_PAGE_NUMBER = "pageNumber";
-	public static final String ORDER_SUMMARY_PAGE_SIZE = "pageSize";
+
+	// MISC
+
+	public static final String PAGE_NUMBER = "pageNumber";
+	public static final String PAGE_SIZE = "pageSize";
 
 	private ApiRoutes() {
 		// no init
