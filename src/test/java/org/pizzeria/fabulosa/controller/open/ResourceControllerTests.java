@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -136,21 +137,20 @@ class ResourceControllerTests {
 		assertThat(offerList).hasSize(1);
 	}
 
-//	@Test
-//	void givenGetAllProducts_thenReturnResource() throws Exception {
-//		// Act
-//
-//		// get api call to find offer list
-//		MockHttpServletResponse response = mockMvc.perform(get(ApiRoutes.BASE +
-//				ApiRoutes.V1 +
-//				ApiRoutes.RESOURCE_BASE +
-//				ApiRoutes.RESOURCE_PRODUCT
-//		)).andReturn().getResponse();
-//
-//		// Assert
-//
-//		Response responseObj = getResponse(response, objectMapper);
-//		List<Product> productList = objectMapper.convertValue(responseObj.getPayload(), List.class);
-//		assertThat(productList).hasSize(1);
-//	}
+	@Test
+	void givenGetNow_thenReturnResource() throws Exception {
+		// Act
+
+		MockHttpServletResponse response = mockMvc.perform(get(ApiRoutes.BASE +
+				ApiRoutes.V1 +
+				ApiRoutes.RESOURCE_BASE +
+				ApiRoutes.LOCAL_DATE_TIME_NOW
+		)).andReturn().getResponse();
+
+		// Assert
+
+		Response responseObj = getResponse(response, objectMapper);
+		LocalDateTime date = objectMapper.convertValue(responseObj.getPayload(), LocalDateTime.class);
+		assertThat(date).isNotNull();
+	}
 }

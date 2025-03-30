@@ -3,6 +3,7 @@ package org.pizzeria.fabulosa.web.controllers.open;
 import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.entity.resources.Product;
 import org.pizzeria.fabulosa.services.resources.ResourceService;
+import org.pizzeria.fabulosa.utils.TimeUtils;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.api.Status;
@@ -75,6 +76,21 @@ public class ResourceController {
 						.isError(false)
 						.build())
 				.payload(resourceService.findAllOffers())
+				.build();
+
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping(ApiRoutes.LOCAL_DATE_TIME_NOW)
+	public ResponseEntity<Response> getNowAccountingDST() {
+
+		Response response = Response.builder()
+				.status(Status.builder()
+						.description(HttpStatus.OK.name())
+						.code(HttpStatus.OK.value())
+						.isError(false)
+						.build())
+				.payload(TimeUtils.getNowAccountingDST())
 				.build();
 
 		return ResponseEntity.ok(response);

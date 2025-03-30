@@ -51,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
 
 		Order anonOrder = new Order.Builder()
 				.withCreatedOn(LocalDateTime.now())
-				.withFormattedCreatedOn(TimeUtils.getNowAsStringAccountingDST())
+				.withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
 				.withAnonCustomer(
 						newAnonOrder.customer().name(),
 						newAnonOrder.customer().contactNumber(),
@@ -97,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
 
 		Order order = new Order.Builder()
 				.withCreatedOn(LocalDateTime.now())
-				.withFormattedCreatedOn(TimeUtils.getNowAsStringAccountingDST())
+				.withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
 				.withUser(user)
 				.withAddress(address.orElse(null))
 				.withCart(cart)

@@ -42,6 +42,8 @@ public final class ApiRoutes {
 
 	public static final String RESOURCE_OFFER = "/offer";
 
+	public static final String LOCAL_DATE_TIME_NOW = "/now";
+
 	// USER
 
 	public static final String USER_BASE = "/user";
