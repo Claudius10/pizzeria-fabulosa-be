@@ -10,13 +10,11 @@ import org.pizzeria.fabulosa.repos.order.OrderRepository;
 import org.pizzeria.fabulosa.services.address.AddressService;
 import org.pizzeria.fabulosa.services.user.UserService;
 import org.pizzeria.fabulosa.utils.TimeUtils;
-import org.pizzeria.fabulosa.web.constants.SecurityResponses;
 import org.pizzeria.fabulosa.web.dto.order.dto.*;
 import org.pizzeria.fabulosa.web.dto.order.projection.OrderSummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -85,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public CreatedOrderDTO createUserOrder(Long userId, NewUserOrderDTO newUserOrder) {
-		User user = userService.findUserOrThrow(userId);
+		User user = userService.findUserById(userId);
 		Optional<Address> address = addressService.findAddressById(newUserOrder.addressId());
 
 		Cart cart = new Cart.Builder()
@@ -126,10 +124,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public Page<OrderSummaryProjection> findUserOrderSummary(Long userId, int size, int page) {
-		if (!userService.existsById(userId)) {
-			throw new UsernameNotFoundException(SecurityResponses.USER_NOT_FOUND); // this ends up as AuthenticationException
-		}
-
+		userService.existsOrThrow(userId);
 		Sort.TypedSort<Order> order = Sort.sort(Order.class);
 		Sort sort = order.by(Order::getId).descending();
 		PageRequest pageRequest = PageRequest.of(page, size, sort);

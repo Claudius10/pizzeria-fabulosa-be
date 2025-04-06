@@ -7,10 +7,11 @@ import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.cart.Cart;
 import org.pizzeria.fabulosa.entity.cart.CartItem;
 import org.pizzeria.fabulosa.entity.order.OrderDetails;
-import org.pizzeria.fabulosa.repos.order.OrderRepository;
+import org.pizzeria.fabulosa.repos.address.AddressRepository;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.CustomerDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewAnonOrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +44,57 @@ class AnonControllerAnonOrderTests {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private OrderRepository orderRepository;
+	private AddressRepository addressRepository;
 
 	@Test
 	void givenAnonOrderPostApiCall_whenAllOk_thenReturnOrder() throws Exception {
 		// Act
 
 		// post api call to create anon order
-		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.ANON_BASE + ApiRoutes.ANON_ORDER)
+		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.ANON_BASE + ApiRoutes.ANON_ORDER)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(anonOrderStub(
+								"customerName",
+								111222333,
+								"customerEmail@gmail.com",
+								"Street",
+								5,
+								"15",
+								"E",
+								null,
+								"ASAP",
+								"Cash",
+								null,
+								false))))
+				.andReturn().getResponse();
+
+		// Assert
+
+		Response responseObj = getResponse(response, objectMapper);
+		assertThat(responseObj.getStatus().getDescription()).isEqualTo(HttpStatus.CREATED.name());
+		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.CREATED.value());
+		CreatedOrderDTO order = objectMapper.convertValue(responseObj.getPayload(), CreatedOrderDTO.class);
+		assertThat(order.customer().name()).isEqualTo("customerName");
+	}
+
+	@Test
+	void givenAnonOrderPostApiCall_whenAddressExists_thenUseExistingAddressAndReturnOrder() throws Exception {
+
+		// Arrange
+
+		// create address object
+		Address address = Address.builder()
+				.withStreet("Street")
+				.withNumber(5)
+				.withDetails("Floor Door")
+				.build();
+
+		addressRepository.save(address);
+
+		// Act
+
+		// post api call to create anon order
+		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.ANON_BASE + ApiRoutes.ANON_ORDER)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(anonOrderStub(
 								"customerName",
@@ -65,12 +109,16 @@ class AnonControllerAnonOrderTests {
 								"Cash",
 								null,
 								false))))
-				.andReturn().getResponse().getContentAsString();
-
+				.andReturn().getResponse();
 		// Assert
 
-		long count = orderRepository.count();
-		assertThat(count).isEqualTo(1);
+		long addressCount = addressRepository.count();
+		assertThat(addressCount).isEqualTo(1);
+		Response responseObj = getResponse(response, objectMapper);
+		assertThat(responseObj.getStatus().getDescription()).isEqualTo(HttpStatus.CREATED.name());
+		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.CREATED.value());
+		CreatedOrderDTO order = objectMapper.convertValue(responseObj.getPayload(), CreatedOrderDTO.class);
+		assertThat(order.customer().name()).isEqualTo("customerName");
 	}
 
 	@Test

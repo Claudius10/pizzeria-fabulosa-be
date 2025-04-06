@@ -154,6 +154,47 @@ class UserControllerTests {
 	}
 
 	@Test
+	void givenCreateAddressPostApiCall_whenAddressExists_thenAddExistingAddress() throws Exception {
+		// Arrange
+
+		// post api call to register new user in database
+		Long userId = createUser("Tester@gmail.com");
+
+		// create access token
+		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+
+		// create address object
+		Address address = Address.builder()
+				.withStreet("Street")
+				.withDetails("Gate")
+				.withNumber(1)
+				.build();
+
+		addressRepository.save(address);
+
+		// Act
+
+		// post api call to add address to user
+		MockHttpServletResponse response =
+				mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
+								.contentType(MediaType.APPLICATION_JSON)
+								.content(objectMapper.writeValueAsString(address))
+								.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
+						.andReturn().getResponse();
+
+		// Assert
+
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+
+		assertThat(userRepository.count()).isEqualTo(1);
+		assertThat(addressRepository.count()).isEqualTo(1);
+
+		Set<Address> userAddressList = userRepository.findUserAddressListById(userId);
+		assertThat(userAddressList).hasSize(1);
+		assertThat(userAddressList.iterator().next()).isEqualTo(address);
+	}
+
+	@Test
 	void givenCreateAddressPostApiCall_whenUserNotFound_thenReturnUnauthorizedWithMessage() throws Exception {
 		// Arrange
 
@@ -289,7 +330,7 @@ class UserControllerTests {
 	}
 
 	@Test
-	void givenUserAddressListGetApiCall_whenNotFound_thenReturnAcceptedWithMessage() throws Exception {
+	void givenUserAddressListGetApiCall_whenAddressListIsEmpty_thenReturnNoContent() throws Exception {
 		// Arrange
 
 		// create access token
@@ -818,6 +859,36 @@ class UserControllerTests {
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
 		Optional<User> userAfter = userRepository.findUserByEmailWithRoles("Tester3@gmail.com");
 		assertThat(userAfter).isEmpty();
+	}
+
+	@Test
+	void givenDeleteDummyUserApiCall_thenReturnErrorResponse() throws Exception {
+		// Arrange
+
+		// post api call to register new user in database
+		Long userId = createUser(Constants.DUMMY_ACCOUNT_EMAIL);
+
+		// create JWT token
+		String accessToken = JWTTokenManager.getAccessToken(Constants.DUMMY_ACCOUNT_EMAIL, List.of(new Role("USER")), userId);
+
+		// create dto object
+		String password = "Password1";
+
+		// Act
+
+		// put api call to delete the user
+		MockHttpServletResponse response = mockMvc.perform(delete(
+						ApiRoutes.BASE +
+								ApiRoutes.V1 +
+								ApiRoutes.USER_BASE + "?id={userId}&password={password}", userId, password)
+						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 1800, true, false)))
+				.andReturn().getResponse();
+
+		// Assert
+
+		Response responseObj = getResponse(response, objectMapper);
+		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.DUMMY_ACCOUNT_ERROR);
 	}
 
 	Long createUser(String email) throws Exception {

@@ -1,4 +1,4 @@
-package org.pizzeria.fabulosa.services.user;
+package org.pizzeria.fabulosa.services.user.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import static org.pizzeria.fabulosa.web.constants.SecurityResponses.USER_NOT_FOU
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserAuthenticationService implements UserDetailsService {
+public class UserAuthenticationServiceImpl implements UserDetailsService {
 
 	private final UserRepository userRepository;
 

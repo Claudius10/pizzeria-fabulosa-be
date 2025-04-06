@@ -39,15 +39,11 @@ public class PropertiesLogger implements ApplicationListener<ApplicationPrepared
 		log.info("===========================================");
 	}
 
-	@Override
-	public boolean supportsAsyncExecution() {
-		return ApplicationListener.super.supportsAsyncExecution();
-	}
-
 	private List<String> getPropsToLog() {
+		String test = "test";
 		String applicationInfo = "applicationInfo";
 		String localProps = "Config resource 'class path resource [application.yaml]' via location 'optional:classpath:/'";
 		String remoteProps = "Config resource 'file [application.yaml]' via location 'optional:file:./'";
-		return List.of(localProps, remoteProps, applicationInfo);
+		return List.of(test, localProps, remoteProps, applicationInfo);
 	}
 }

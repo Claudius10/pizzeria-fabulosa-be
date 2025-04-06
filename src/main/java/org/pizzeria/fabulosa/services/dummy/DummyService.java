@@ -13,6 +13,7 @@ import org.pizzeria.fabulosa.repos.user.UserRepository;
 import org.pizzeria.fabulosa.services.address.AddressService;
 import org.pizzeria.fabulosa.services.order.OrderService;
 import org.pizzeria.fabulosa.services.role.RoleService;
+import org.pizzeria.fabulosa.services.user.UserAddressService;
 import org.pizzeria.fabulosa.services.user.UserService;
 import org.pizzeria.fabulosa.utils.Constants;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
@@ -34,6 +35,8 @@ public class DummyService {
 
 	private final UserService userService;
 
+	private final UserAddressService userAddressService;
+	
 	private final UserRepository userRepository;
 
 	private final OrderService orderService;
@@ -98,7 +101,7 @@ public class DummyService {
 
 	private void addAddress(Long userId) {
 		log.info("Adding address to dummy user");
-		userService.addUserAddress(userId, Address.builder()
+		userAddressService.addUserAddress(userId, Address.builder()
 				.withStreet("En un lugar de la Mancha...")
 				.withNumber(1605)
 				.build()

@@ -66,11 +66,4 @@ public class CartItem {
 
 		return id != null && id.equals(((CartItem) obj).getId());
 	}
-
-//	public boolean contentEquals(Object o) {
-//		CartItem cartItem = (CartItem) o;
-//		return Objects.equals(code, cartItem.code)
-//				&& Objects.equals(quantity, cartItem.quantity)
-//				&& Objects.equals(price, cartItem.price);
-//	}
 }

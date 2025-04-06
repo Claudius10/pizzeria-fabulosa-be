@@ -10,7 +10,7 @@ public class UserPointCuts {
 	 * A userAccountUpdate is the execution of any method defined on
 	 * the UserService interface that begins with "update...".
 	 */
-	@Pointcut("execution(* org.pizzeria.fabulosa.services.user.UserService.update*(..))")
+	@Pointcut("execution(* org.pizzeria.fabulosa.services.user.UserDetailsService.update*(..))")
 	public void userAccountUpdate() {
 	}
 

@@ -12,6 +12,7 @@ import org.pizzeria.fabulosa.services.address.AddressService;
 import org.pizzeria.fabulosa.services.dummy.DummyService;
 import org.pizzeria.fabulosa.services.order.OrderService;
 import org.pizzeria.fabulosa.services.role.RoleService;
+import org.pizzeria.fabulosa.services.user.UserAddressService;
 import org.pizzeria.fabulosa.services.user.UserService;
 import org.pizzeria.fabulosa.utils.Constants;
 
@@ -24,6 +25,9 @@ public class DummyServiceTests {
 
 	@Mock
 	private UserService userService;
+
+	@Mock
+	private UserAddressService userAddressService;
 
 	@Mock
 	private UserRepository userRepository;

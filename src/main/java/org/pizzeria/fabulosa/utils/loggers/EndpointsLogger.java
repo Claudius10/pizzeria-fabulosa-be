@@ -31,15 +31,10 @@ public class EndpointsLogger implements ApplicationListener<ContextRefreshedEven
 
 			if (pathPatternsCondition != null) {
 				Set<String> endpoint = pathPatternsCondition.getPatternValues();
-				log.info("{} - {} - {}", k.getMethodsCondition(), endpoint, v.getBean());
+				log.info("{} - {} - {}", k.getMethodsCondition().getMethods(), endpoint, v.getBean());
 			}
 		});
 
 		log.info("===========================================");
-	}
-
-	@Override
-	public boolean supportsAsyncExecution() {
-		return ApplicationListener.super.supportsAsyncExecution();
 	}
 }
