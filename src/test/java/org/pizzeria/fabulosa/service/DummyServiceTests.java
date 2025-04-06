@@ -51,6 +51,7 @@ public class DummyServiceTests {
 
 		User user = new User();
 		user.setId(1L);
+		Optional<User> optionalUser = Optional.of(user);
 
 		Address address = Address.builder()
 				.withStreet("En un lugar de la Mancha...")
@@ -59,7 +60,7 @@ public class DummyServiceTests {
 
 		doReturn(Optional.empty()).when(roleService).findByName("USER");
 		doReturn(Optional.empty()).when(roleService).findByName("ADMIN");
-		doReturn(user).when(userRepository).findUserByEmail(Constants.DUMMY_ACCOUNT_EMAIL);
+		doReturn(optionalUser).when(userRepository).findUserByEmailWithRoles(Constants.DUMMY_ACCOUNT_EMAIL);
 		doReturn(Optional.of(address)).when(addressService).findByExample(address);
 
 		// Act
@@ -70,7 +71,7 @@ public class DummyServiceTests {
 
 		verify(roleService, times(1)).findByName("USER");
 		verify(roleService, times(1)).findByName("ADMIN");
-		verify(userRepository, times(1)).findUserByEmail(Constants.DUMMY_ACCOUNT_EMAIL);
+		verify(userRepository, times(1)).findUserByEmailWithRoles(Constants.DUMMY_ACCOUNT_EMAIL);
 		verify(addressService, times(1)).findByExample(address);
 	}
 

@@ -4,16 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.entity.address.Address;
-import org.pizzeria.fabulosa.entity.cart.Cart;
-import org.pizzeria.fabulosa.entity.cart.CartItem;
-import org.pizzeria.fabulosa.entity.order.OrderDetails;
 import org.pizzeria.fabulosa.repos.address.AddressRepository;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOrderDTO;
-import org.pizzeria.fabulosa.web.dto.order.dto.CustomerDTO;
-import org.pizzeria.fabulosa.web.dto.order.dto.NewAnonOrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +23,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.pizzeria.fabulosa.utils.TestUtils.anonOrderStub;
 import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -467,43 +463,5 @@ class AnonControllerAnonOrderTests {
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		assertThat(responseObj.getError().getCause()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
-	}
-
-	NewAnonOrderDTO anonOrderStub(String customerName, int customerNumber, String customerEmail, String street,
-								  int streetNumber, String floor, String door, Double changeRequested,
-								  String deliveryHour, String paymentType, String comment,
-								  boolean emptyCart) {
-		Cart cartStub = new Cart.Builder()
-				.withCartItems(List.of(CartItem.builder()
-						.withQuantity(1)
-						.withPrice(14.75)
-						.build()))
-				.withTotalQuantity(1)
-				.withTotalCost(14.75)
-				.withTotalCostOffers(0D)
-				.build();
-
-		if (emptyCart) {
-			cartStub = new Cart.Builder().withEmptyItemList().build();
-		}
-
-		return new NewAnonOrderDTO(
-				new CustomerDTO(
-						customerName,
-						customerNumber,
-						customerEmail),
-				Address.builder()
-						.withStreet(street)
-						.withNumber(streetNumber)
-						.withDetails(floor + " " + door)
-						.build(),
-				OrderDetails.builder()
-						.withDeliveryTime(deliveryHour)
-						.withPaymentMethod(paymentType)
-						.withBillToChange(changeRequested)
-						.withComment(comment)
-						.build(),
-				cartStub
-		);
 	}
 }

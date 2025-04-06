@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.services.order.OrderService;
+import org.pizzeria.fabulosa.utils.enums.OrderState;
 import org.pizzeria.fabulosa.web.aop.annotations.ValidateUserId;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.dto.api.Response;
@@ -64,9 +65,10 @@ public class UserOrdersController {
 	}
 
 	@ValidateUserId
-	@DeleteMapping(ApiRoutes.ORDER_ID)
-	public ResponseEntity<Response> deleteUserOrderById(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
-		orderService.deleteUserOrderById(orderId);
+	@PutMapping(ApiRoutes.ORDER_ID)
+	public ResponseEntity<Response> cancelUserOrderById(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
+		orderService.setState(orderId, OrderState.CANCELLED);
+
 		Response response = Response.builder()
 				.status(Status.builder()
 						.description(HttpStatus.OK.name())

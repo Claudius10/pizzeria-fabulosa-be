@@ -9,6 +9,8 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.cart.Cart;
 import org.pizzeria.fabulosa.entity.user.User;
+import org.pizzeria.fabulosa.utils.TimeUtils;
+import org.pizzeria.fabulosa.utils.enums.OrderState;
 
 import java.time.LocalDateTime;
 
@@ -52,8 +54,17 @@ public class Order {
 	@OnDelete(action = OnDeleteAction.SET_NULL)
 	private User user;
 
+	@Enumerated(EnumType.STRING)
+	private OrderState state;
+
 	public Order() {
 		// The JPA specification requires all Entity classes to have a default no-arg constructor.
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		this.state = OrderState.PREPARING;
+		this.formattedCreatedOn = TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST());
 	}
 
 	public void setOrderDetails(OrderDetails orderDetails) {
@@ -104,11 +115,6 @@ public class Order {
 
 		public Builder withCreatedOn(LocalDateTime createdOn) {
 			order.createdOn = createdOn;
-			return this;
-		}
-
-		public Builder withFormattedCreatedOn(String formattedCreatedOn) {
-			order.formattedCreatedOn = formattedCreatedOn;
 			return this;
 		}
 

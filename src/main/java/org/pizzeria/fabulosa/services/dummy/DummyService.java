@@ -36,7 +36,7 @@ public class DummyService {
 	private final UserService userService;
 
 	private final UserAddressService userAddressService;
-	
+
 	private final UserRepository userRepository;
 
 	private final OrderService orderService;
@@ -66,10 +66,10 @@ public class DummyService {
 	private void setupDummyUser() {
 		if (!exists()) {
 			createDummyUser();
-			User user = userRepository.findUserByEmail(Constants.DUMMY_ACCOUNT_EMAIL);
-			log.info("Dummy user setup: id is {}", user.getId());
-			addAddress(user.getId());
-			addOrder(user.getId());
+			Optional<User> user = userRepository.findUserByEmailWithRoles(Constants.DUMMY_ACCOUNT_EMAIL);
+			log.info("Dummy user setup: id is {}", user.get().getId());
+			addAddress(user.get().getId());
+			addOrder(user.get().getId());
 			log.info("Dummy user setup: done");
 		} else {
 			log.info("Dummy user setup: nothing to do");

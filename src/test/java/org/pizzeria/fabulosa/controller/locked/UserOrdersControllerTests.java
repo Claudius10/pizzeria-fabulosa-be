@@ -1,21 +1,18 @@
 package org.pizzeria.fabulosa.controller.locked;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.configs.web.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
-import org.pizzeria.fabulosa.entity.address.Address;
 import org.pizzeria.fabulosa.entity.cart.Cart;
 import org.pizzeria.fabulosa.entity.cart.CartItem;
 import org.pizzeria.fabulosa.entity.order.OrderDetails;
 import org.pizzeria.fabulosa.entity.role.Role;
-import org.pizzeria.fabulosa.entity.user.User;
-import org.pizzeria.fabulosa.repos.address.AddressRepository;
-import org.pizzeria.fabulosa.repos.order.OrderRepository;
 import org.pizzeria.fabulosa.repos.user.UserRepository;
+import org.pizzeria.fabulosa.services.address.AddressService;
 import org.pizzeria.fabulosa.utils.Constants;
+import org.pizzeria.fabulosa.utils.TestUtils;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.dto.api.Response;
@@ -23,7 +20,6 @@ import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.OrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.OrderSummaryListDTO;
-import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,17 +28,19 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
+import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@Sql(scripts = {"file:src/test/resources/db/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(scripts = "file:src/test/resources/db/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
+@Sql(scripts = "file:src/test/resources/db/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
 @DirtiesContext
@@ -58,30 +56,20 @@ class UserOrdersControllerTests {
 	private JWTTokenManager JWTTokenManager;
 
 	@Autowired
-	private AddressRepository addressRepository;
+	private AddressService addressService;
 
 	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private OrderRepository orderRepository;
-
-	@AfterEach
-	void cleanUp() {
-		orderRepository.deleteAll();
-		userRepository.deleteAll();
-		addressRepository.deleteAll();
-	}
 
 	@Test
 	void givenPostApiCallToCreateOrder_thenCreateOrder() throws Exception {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = TestUtils.createUserViaAPI(mockMvc, objectMapper, userRepository);
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = TestUtils.createAddress("Test", 1, addressService);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -124,10 +112,10 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = TestUtils.createUserViaAPI(mockMvc, objectMapper, userRepository);
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = TestUtils.createAddress("Test", 1, addressService);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -162,10 +150,10 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = TestUtils.createUserViaAPI(mockMvc, objectMapper, userRepository);
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = TestUtils.createAddress("Test", 1, addressService);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -233,7 +221,7 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = TestUtils.createUserViaAPI(mockMvc, objectMapper, userRepository);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -259,26 +247,26 @@ class UserOrdersControllerTests {
 	}
 
 	@Test
-	void givenOrderDelete_whenWithinTimeLimit_thenReturnDeletedOrderId() throws Exception {
+	void givenOrderCancel_whenWithinTimeLimit_thenReturnDeletedOrderId() throws Exception {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = TestUtils.createUserViaAPI(mockMvc, objectMapper, userRepository);
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = TestUtils.createAddress("Test", 1, addressService);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// create user order
 		int minutesInThePast = 0;
-		OrderDTO order = createUserOrderTestSubject(minutesInThePast, userId, addressId, accessToken);
+		OrderDTO order = TestUtils.createUserOrderViaAPI(minutesInThePast, userId, addressId, accessToken, mockMvc, objectMapper);
 
 		// Act
 
 		// delete api call to delete order
-		MockHttpServletResponse response = mockMvc.perform(delete(
+		MockHttpServletResponse response = mockMvc.perform(put(
 						ApiRoutes.BASE
 								+ ApiRoutes.V1
 								+ ApiRoutes.USER_BASE
@@ -299,26 +287,26 @@ class UserOrdersControllerTests {
 	}
 
 	@Test
-	void givenOrderDelete_whenTimeLimitPassed_thenReturnBadRequestWithMessage() throws Exception {
+	void givenOrderCancel_whenTimeLimitPassed_thenReturnBadRequestWithMessage() throws Exception {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = TestUtils.createUserViaAPI(mockMvc, objectMapper, userRepository);
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = TestUtils.createAddress("Test", 1, addressService);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// create user order
 		int minutesInThePast = 21;
-		OrderDTO order = createUserOrderTestSubject(minutesInThePast, userId, addressId, accessToken);
+		OrderDTO order = TestUtils.createUserOrderViaAPI(minutesInThePast, userId, addressId, accessToken, mockMvc, objectMapper);
 
 		// Act
 
 		// delete api call to delete order
-		MockHttpServletResponse response = mockMvc.perform(delete(
+		MockHttpServletResponse response = mockMvc.perform(put(
 						ApiRoutes.BASE
 								+ ApiRoutes.V1
 								+ ApiRoutes.USER_BASE
@@ -337,11 +325,11 @@ class UserOrdersControllerTests {
 	}
 
 	@Test
-	void givenOrderDelete_whenOrderNotFound_thenReturnNoContent() throws Exception {
+	void givenOrderCancel_whenOrderNotFound_thenReturnNoContent() throws Exception {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = TestUtils.createUserViaAPI(mockMvc, objectMapper, userRepository);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -349,7 +337,7 @@ class UserOrdersControllerTests {
 		// Act
 
 		// delete api call to delete order
-		MockHttpServletResponse response = mockMvc.perform(delete(
+		MockHttpServletResponse response = mockMvc.perform(put(
 						ApiRoutes.BASE
 								+ ApiRoutes.V1
 								+ ApiRoutes.USER_BASE
@@ -371,17 +359,17 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = TestUtils.createUserViaAPI(mockMvc, objectMapper, userRepository);
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = TestUtils.createAddress("Test", 1, addressService);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// create user order
 		int minutesInThePast = 0;
-		createUserOrderTestSubject(minutesInThePast, userId, addressId, accessToken);
+		TestUtils.createUserOrderViaAPI(minutesInThePast, userId, addressId, accessToken, mockMvc, objectMapper);
 
 		int pageSize = 5;
 		int pageNumber = 0;
@@ -411,7 +399,7 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = TestUtils.createUserViaAPI(mockMvc, objectMapper, userRepository);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -471,79 +459,5 @@ class UserOrdersControllerTests {
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		assertThat(responseObj.getError().getCause()).isEqualTo("UsernameNotFoundException");
-	}
-
-	OrderDTO findOrder(Long orderId, long userId, String validAccessToken) throws Exception {
-		MockHttpServletResponse response = mockMvc.perform(get(
-						ApiRoutes.BASE
-								+ ApiRoutes.V1
-								+ ApiRoutes.USER_BASE
-								+ ApiRoutes.USER_ID
-								+ ApiRoutes.USER_ORDER
-								+ ApiRoutes.ORDER_ID, userId, orderId)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 1800, true, false)))
-				.andReturn().getResponse();
-
-		Response responseObj = getResponse(response, objectMapper);
-		return objectMapper.convertValue(responseObj.getPayload(), OrderDTO.class);
-	}
-
-	OrderDTO createUserOrderTestSubject(int minutesInThePast, long userId, long addressId, String validAccessToken) throws Exception {
-		Cart cart = new Cart.Builder()
-				.withCartItems(List.of(CartItem.builder()
-						.withQuantity(1)
-						.withPrice(18.30)
-						.build()))
-				.withTotalQuantity(1)
-				.withTotalCost(18.30)
-				.build();
-
-		OrderDetails orderDetails = OrderDetails.builder()
-				.withDeliveryTime("ASAP")
-				.withPaymentMethod("Card")
-				.build();
-
-		NewUserOrderDTO newUserOrderDTO = new NewUserOrderDTO(addressId, orderDetails, cart);
-
-		// post api call to create user order
-		MockHttpServletResponse response = mockMvc.perform(post(
-						"/api/tests/user/{userId}/order?minusMin={minutesInThePast}", userId, minutesInThePast)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 1800, true, false)))
-				.andReturn().getResponse();
-
-		Long orderId = Long.valueOf(response.getContentAsString());
-		return findOrder(orderId, userId, validAccessToken);
-	}
-
-	Long createUser() throws Exception {
-		mockMvc.perform(post(
-				ApiRoutes.BASE
-						+ ApiRoutes.V1
-						+ ApiRoutes.ANON_BASE
-						+ ApiRoutes.ANON_REGISTER)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(new RegisterDTO(
-						"Tester",
-						"Tester@gmail.com",
-						"Tester@gmail.com",
-						123456789,
-						"Password1",
-						"Password1")
-				)));
-
-		Optional<User> user = userRepository.findUserByEmailWithRoles("Tester@gmail.com");
-		assertThat(user.isPresent()).isTrue();
-		return user.get().getId();
-	}
-
-	Long createAddressTestSubject(String streetName, int streetNumber) {
-		return addressRepository.save(
-						Address.builder()
-								.withStreet(streetName)
-								.withNumber(streetNumber)
-								.build())
-				.getId();
 	}
 }

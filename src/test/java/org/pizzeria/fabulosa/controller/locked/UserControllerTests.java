@@ -11,6 +11,7 @@ import org.pizzeria.fabulosa.entity.user.User;
 import org.pizzeria.fabulosa.repos.address.AddressRepository;
 import org.pizzeria.fabulosa.repos.user.UserRepository;
 import org.pizzeria.fabulosa.utils.Constants;
+import org.pizzeria.fabulosa.utils.TestUtils;
 import org.pizzeria.fabulosa.web.constants.ApiResponses;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
 import org.pizzeria.fabulosa.web.constants.SecurityResponses;
@@ -73,7 +74,7 @@ class UserControllerTests {
 		// Arrange
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), 99L);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), 99L);
 
 		// Act
 
@@ -95,10 +96,10 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -120,10 +121,10 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// create address object
 		Address address = Address.builder()
@@ -158,10 +159,10 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// create address object
 		Address address = Address.builder()
@@ -199,7 +200,7 @@ class UserControllerTests {
 		// Arrange
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), 2L);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), 2L);
 		// create address object
 		Address address = Address.builder()
 				.withStreet("Street")
@@ -234,10 +235,10 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// post api call to add address to user
 		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
@@ -297,10 +298,10 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// post api call to add address to user
 		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
@@ -334,7 +335,7 @@ class UserControllerTests {
 		// Arrange
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), 3L);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), 3L);
 
 		// Act
 
@@ -360,7 +361,7 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create address object
 		Address address = Address.builder()
@@ -369,7 +370,7 @@ class UserControllerTests {
 				.build();
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// post api call to add address to user
 		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
@@ -412,10 +413,10 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -444,7 +445,7 @@ class UserControllerTests {
 		// Arrange
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), 2L);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), 2L);
 
 		// Act
 
@@ -473,13 +474,13 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create dto object
 		NameChangeDTO nameChangeDTO = new NameChangeDTO("dsa$·", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -512,13 +513,13 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester3@gmail.com");
+		Long userId = TestUtils.createUser("Tester3@example.com", mockMvc, objectMapper, userRepository);
 
 		// create dto object
 		NameChangeDTO nameChangeDTO = new NameChangeDTO("NewUserName", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester3@example.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -546,13 +547,13 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create dto object
 		EmailChangeDTO emailChangeDTO = new EmailChangeDTO("invalidEmailFormat", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -584,13 +585,13 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester3@gmail.com");
+		Long userId = TestUtils.createUser("Tester3@example.com", mockMvc, objectMapper, userRepository);
 
 		// create dto object
-		EmailChangeDTO emailChangeDTO = new EmailChangeDTO("validEmailFormat@gmail.com", "Password1");
+		EmailChangeDTO emailChangeDTO = new EmailChangeDTO("validEmailFormat@example.com", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester3@example.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -610,8 +611,8 @@ class UserControllerTests {
 
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
-		User user = userRepository.findUserByEmail(emailChangeDTO.email());
-		assertThat(user.getEmail()).isEqualTo(emailChangeDTO.email());
+		Optional<User> user = userRepository.findUserByEmailWithRoles(emailChangeDTO.email());
+		assertThat(user.get().getEmail()).isEqualTo(emailChangeDTO.email());
 	}
 
 	@Test
@@ -619,14 +620,14 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester3@gmail.com");
-		Long userIdTwo = createUser("Tester4@gmail.com");
+		Long userId = TestUtils.createUser("Tester3@example.com", mockMvc, objectMapper, userRepository);
+		Long userIdTwo = TestUtils.createUser("Tester4@example.com", mockMvc, objectMapper, userRepository);
 
 		// create dto object
-		EmailChangeDTO emailChangeDTO = new EmailChangeDTO("Tester3@gmail.com", "Password1");
+		EmailChangeDTO emailChangeDTO = new EmailChangeDTO("Tester3@example.com", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester4@gmail.com", List.of(new Role("USER")), userIdTwo);
+		String accessToken = JWTTokenManager.getAccessToken("Tester4@example.com", List.of(new Role("USER")), userIdTwo);
 
 		// Act
 
@@ -654,13 +655,13 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create dto object
 		ContactNumberChangeDTO contactNumberChangeDTO = new ContactNumberChangeDTO(123, "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -692,13 +693,13 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester3@gmail.com");
+		Long userId = TestUtils.createUser("Tester3@example.com", mockMvc, objectMapper, userRepository);
 
 		// create dto object
 		ContactNumberChangeDTO contactNumberChangeDTO = new ContactNumberChangeDTO(123456789, "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester3@example.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -718,8 +719,8 @@ class UserControllerTests {
 
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
-		User user = userRepository.findUserByEmail("Tester3@gmail.com");
-		assertThat(user.getContactNumber()).isEqualTo(contactNumberChangeDTO.contactNumber());
+		Optional<User> user = userRepository.findUserByEmailWithRoles("Tester3@example.com");
+		assertThat(user.get().getContactNumber()).isEqualTo(contactNumberChangeDTO.contactNumber());
 	}
 
 	@Test
@@ -727,10 +728,10 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = TestUtils.createUser("Tester@example.com", mockMvc, objectMapper, userRepository);
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester@example.com", List.of(new Role("USER")), userId);
 
 		// create dto object
 		PasswordChangeDTO passwordChangeDTO = new PasswordChangeDTO(
@@ -764,10 +765,10 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester3@gmail.com");
+		Long userId = TestUtils.createUser("Tester3@example.com", mockMvc, objectMapper, userRepository);
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester3@example.com", List.of(new Role("USER")), userId);
 
 		// create dto object
 		PasswordChangeDTO passwordChangeDTO = new PasswordChangeDTO(
@@ -793,8 +794,8 @@ class UserControllerTests {
 
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
-		User user = userRepository.findUserByEmail("Tester3@gmail.com");
-		assertThat(passwordEncoder.matches(passwordChangeDTO.newPassword(), user.getPassword())).isTrue();
+		Optional<User> user = userRepository.findUserByEmailWithRoles("Tester3@example.com");
+		assertThat(passwordEncoder.matches(passwordChangeDTO.newPassword(), user.get().getPassword())).isTrue();
 	}
 
 	@Test
@@ -802,10 +803,10 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester3@gmail.com");
+		Long userId = TestUtils.createUser("Tester3@example.com", mockMvc, objectMapper, userRepository);
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester3@example.com", List.of(new Role("USER")), userId);
 
 		// password
 		String password = "WrongPassword";
@@ -832,13 +833,13 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester3@gmail.com");
+		Long userId = TestUtils.createUser("Tester3@example.com", mockMvc, objectMapper, userRepository);
 
-		Optional<User> user = userRepository.findUserByEmailWithRoles("Tester3@gmail.com");
+		Optional<User> user = userRepository.findUserByEmailWithRoles("Tester3@example.com");
 		assertThat(user).isPresent();
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.getAccessToken("Tester3@example.com", List.of(new Role("USER")), userId);
 
 		// create dto object
 		String password = "Password1";
@@ -857,7 +858,7 @@ class UserControllerTests {
 
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
-		Optional<User> userAfter = userRepository.findUserByEmailWithRoles("Tester3@gmail.com");
+		Optional<User> userAfter = userRepository.findUserByEmailWithRoles("Tester3@example.com");
 		assertThat(userAfter).isEmpty();
 	}
 
@@ -866,7 +867,7 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser(Constants.DUMMY_ACCOUNT_EMAIL);
+		Long userId = TestUtils.createUser(Constants.DUMMY_ACCOUNT_EMAIL, mockMvc, objectMapper, userRepository);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.getAccessToken(Constants.DUMMY_ACCOUNT_EMAIL, List.of(new Role("USER")), userId);
@@ -889,27 +890,5 @@ class UserControllerTests {
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.DUMMY_ACCOUNT_ERROR);
-	}
-
-	Long createUser(String email) throws Exception {
-
-		mockMvc.perform(post(
-				ApiRoutes.BASE
-						+ ApiRoutes.V1
-						+ ApiRoutes.ANON_BASE
-						+ ApiRoutes.ANON_REGISTER)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(new RegisterDTO(
-						"Tester",
-						email,
-						email,
-						123456789,
-						"Password1",
-						"Password1")
-				)));
-
-		Optional<User> user = userRepository.findUserByEmailWithRoles(email);
-		assertThat(user.isPresent()).isTrue();
-		return user.get().getId();
 	}
 }

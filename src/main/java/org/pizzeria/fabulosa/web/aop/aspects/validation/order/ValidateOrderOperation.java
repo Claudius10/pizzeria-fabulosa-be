@@ -84,7 +84,7 @@ public class ValidateOrderOperation {
 		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 	}
 
-	@Around(value = "execution(* org.pizzeria.fabulosa.web.controllers.user.UserOrdersController.deleteUserOrderById(..)) && args" +
+	@Around(value = "execution(* org.pizzeria.fabulosa.web.controllers.user.UserOrdersController.cancelUserOrderById(..)) && args" +
 			"(orderId,userId,request)", argNames = "pjp,orderId,userId,request")
 	public Object validateUserOrderDelete(ProceedingJoinPoint pjp, Long orderId, Long userId, HttpServletRequest request) throws Throwable {
 

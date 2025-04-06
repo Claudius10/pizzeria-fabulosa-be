@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-	void createUser(RegisterDTO registerDTO);
+	Long createUser(RegisterDTO registerDTO);
 
 	Optional<UserDTO> findUserDTOById(Long userId);
 

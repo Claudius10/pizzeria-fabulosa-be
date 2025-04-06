@@ -9,7 +9,7 @@ import org.pizzeria.fabulosa.entity.user.User;
 import org.pizzeria.fabulosa.repos.order.OrderRepository;
 import org.pizzeria.fabulosa.services.address.AddressService;
 import org.pizzeria.fabulosa.services.user.UserService;
-import org.pizzeria.fabulosa.utils.TimeUtils;
+import org.pizzeria.fabulosa.utils.enums.OrderState;
 import org.pizzeria.fabulosa.web.dto.order.dto.*;
 import org.pizzeria.fabulosa.web.dto.order.projection.OrderSummaryProjection;
 import org.springframework.data.domain.Page;
@@ -49,7 +49,6 @@ public class OrderServiceImpl implements OrderService {
 
 		Order anonOrder = new Order.Builder()
 				.withCreatedOn(LocalDateTime.now())
-				.withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
 				.withAnonCustomer(
 						newAnonOrder.customer().name(),
 						newAnonOrder.customer().contactNumber(),
@@ -66,10 +65,10 @@ public class OrderServiceImpl implements OrderService {
 
 		Order order = orderRepository.save(anonOrder);
 
-
 		return new CreatedOrderDTO(
 				order.getId(),
 				order.getFormattedCreatedOn(),
+				order.getState(),
 				new CustomerDTO(
 						order.getAnonCustomerName(),
 						order.getAnonCustomerContactNumber(),
@@ -95,7 +94,6 @@ public class OrderServiceImpl implements OrderService {
 
 		Order order = new Order.Builder()
 				.withCreatedOn(LocalDateTime.now())
-				.withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
 				.withUser(user)
 				.withAddress(address.orElse(null))
 				.withCart(cart)
@@ -103,9 +101,11 @@ public class OrderServiceImpl implements OrderService {
 				.build();
 
 		Order newOrder = orderRepository.save(order);
+
 		return new CreatedOrderDTO(
 				newOrder.getId(),
 				newOrder.getFormattedCreatedOn(),
+				order.getState(),
 				new CustomerDTO(
 						user.getName(),
 						user.getContactNumber(),
@@ -118,8 +118,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public void deleteUserOrderById(Long orderId) {
-		orderRepository.deleteById(orderId);
+	public void setState(Long orderId, OrderState state) {
+		orderRepository.setState(orderId, state);
 	}
 
 	@Override

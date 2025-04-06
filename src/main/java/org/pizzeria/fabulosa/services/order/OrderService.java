@@ -1,5 +1,6 @@
 package org.pizzeria.fabulosa.services.order;
 
+import org.pizzeria.fabulosa.utils.enums.OrderState;
 import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewAnonOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
@@ -17,7 +18,7 @@ public interface OrderService {
 
 	CreatedOrderDTO createUserOrder(Long userId, NewUserOrderDTO newUserOrder);
 
-	void deleteUserOrderById(Long orderId);
+	void setState(Long orderId, OrderState state);
 
 	Page<OrderSummaryProjection> findUserOrderSummary(Long userId, int size, int page);
 }

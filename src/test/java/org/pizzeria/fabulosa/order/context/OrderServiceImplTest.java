@@ -12,7 +12,6 @@ import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Service
 @Transactional
@@ -46,8 +45,6 @@ public class OrderServiceImplTest {
 
 		Order order = new Order.Builder()
 				.withCreatedOn(createdOn)
-				.withFormattedCreatedOn(createdOn.plusHours(1).format(DateTimeFormatter.ofPattern("HH:mm - " +
-						"dd/MM/yyyy")))
 				.withUser(user)
 				.withAddress(address)
 				.withOrderDetails(newUserOrder.orderDetails())

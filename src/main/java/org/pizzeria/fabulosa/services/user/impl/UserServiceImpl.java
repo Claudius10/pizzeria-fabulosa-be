@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 	private final PasswordEncoder bCryptEncoder;
 
 	@Override
-	public void createUser(RegisterDTO registerDTO) {
+	public Long createUser(RegisterDTO registerDTO) {
 		String encodedPassword = bCryptEncoder.encode(registerDTO.password());
 		Optional<Role> userRole = roleService.findByName("USER");
 		Set<Role> roles = new HashSet<>();
@@ -44,7 +44,8 @@ public class UserServiceImpl implements UserService {
 				.withRoles(roles)
 				.build();
 
-		userRepository.save(user);
+		User newUser = userRepository.save(user);
+		return newUser.getId();
 	}
 
 	@Override

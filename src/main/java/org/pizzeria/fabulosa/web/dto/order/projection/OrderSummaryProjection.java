@@ -1,10 +1,14 @@
 package org.pizzeria.fabulosa.web.dto.order.projection;
 
+import org.pizzeria.fabulosa.utils.enums.OrderState;
+
 public interface OrderSummaryProjection {
 
 	Long getId();
 
 	String getFormattedCreatedOn();
+
+	OrderState getState();
 
 	OrderDetailsView getOrderDetails();
 

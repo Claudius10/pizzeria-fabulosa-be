@@ -1,5 +1,9 @@
 DELETE FROM users_roles;
 DELETE FROM users_addresses;
+DELETE FROM cart_items;
+DELETE FROM cart;
+DELETE FROM order_details;
+DELETE FROM orders;
 DELETE FROM address;
 DELETE FROM user;
 DELETE FROM role;
