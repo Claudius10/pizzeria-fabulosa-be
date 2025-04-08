@@ -44,8 +44,7 @@ public class Order {
 	private OrderDetails orderDetails;
 
 	// NOTE - bidirectional OneToOne association's non-owning side
-	//  can only be lazy fetched if the association is never null ->
-	//  optional = false
+	//  can only be lazy fetched if the association is never null -> optional = false
 	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private Cart cart;
@@ -59,12 +58,6 @@ public class Order {
 
 	public Order() {
 		// The JPA specification requires all Entity classes to have a default no-arg constructor.
-	}
-
-	@PrePersist
-	protected void onCreate() {
-		this.state = OrderState.PREPARING;
-		this.formattedCreatedOn = TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST());
 	}
 
 	public void setOrderDetails(OrderDetails orderDetails) {
@@ -111,6 +104,9 @@ public class Order {
 
 		public Builder() {
 			order = new Order();
+			order.state = OrderState.PREPARING;
+			order.createdOn = LocalDateTime.now();
+			order.formattedCreatedOn = TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST());
 		}
 
 		public Builder withCreatedOn(LocalDateTime createdOn) {

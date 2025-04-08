@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -48,7 +47,6 @@ public class OrderServiceImpl implements OrderService {
 				.build();
 
 		Order anonOrder = new Order.Builder()
-				.withCreatedOn(LocalDateTime.now())
 				.withAnonCustomer(
 						newAnonOrder.customer().name(),
 						newAnonOrder.customer().contactNumber(),
@@ -93,7 +91,6 @@ public class OrderServiceImpl implements OrderService {
 				.build();
 
 		Order order = new Order.Builder()
-				.withCreatedOn(LocalDateTime.now())
 				.withUser(user)
 				.withAddress(address.orElse(null))
 				.withCart(cart)
