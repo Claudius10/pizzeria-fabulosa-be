@@ -21,7 +21,7 @@ public class JWTTokenManager {
 
 	private final SecurityProperties securityProperties;
 
-	public String getAccessToken(String subject, Collection<? extends GrantedAuthority> roles, Long userId) {
+	public String generateAccessToken(String subject, Collection<? extends GrantedAuthority> roles, Long userId) {
 		JwtClaimsSet claims = JwtClaimsSet.builder()
 				.issuedAt(Instant.now())
 				.issuer(securityProperties.getTokenIssuer())
@@ -33,7 +33,7 @@ public class JWTTokenManager {
 		return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 	}
 
-	public String getIdToken(String subject, String userName, Long userId, Integer contactNumber) {
+	public String generateIdToken(String subject, String userName, Long userId, Integer contactNumber) {
 		JwtClaimsSet claims = JwtClaimsSet.builder()
 				.issuedAt(Instant.now())
 				.issuer(securityProperties.getTokenIssuer())

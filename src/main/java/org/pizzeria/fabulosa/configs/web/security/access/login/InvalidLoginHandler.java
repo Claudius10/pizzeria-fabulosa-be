@@ -18,10 +18,7 @@ public class InvalidLoginHandler implements AuthenticationFailureHandler {
 	}
 
 	@Override
-	public void onAuthenticationFailure
-			(HttpServletRequest request,
-			 HttpServletResponse response,
-			 AuthenticationException exception) {
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
 		// return an empty ModelAndView so ex can be picked up by @ControllerAdvice
 		resolver.resolveException(request, response, null, exception);
 	}

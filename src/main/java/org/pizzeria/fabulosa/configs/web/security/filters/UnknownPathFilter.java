@@ -14,6 +14,9 @@ import java.util.Set;
 @Slf4j
 public class UnknownPathFilter extends OncePerRequestFilter {
 
+	/**
+	 * Dismiss unmapped paths.
+	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String path = ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI());

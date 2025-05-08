@@ -1,8 +1,6 @@
 package org.pizzeria.fabulosa.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.configs.web.security.auth.JWTTokenManager;
@@ -18,29 +16,40 @@ import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
+import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@Sql(scripts = {"file:src/test/resources/db/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @AutoConfigureMockMvc
-@DirtiesContext
+@Sql(scripts = "file:src/test/resources/db/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
+@Sql(scripts = "file:src/test/resources/db/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 class UserIdValidationTests {
+
+	@Container
+	@ServiceConnection
+	private final static MariaDBContainer db = new MariaDBContainer<>(DockerImageName.parse("mariadb:latest"));
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -52,16 +61,7 @@ class UserIdValidationTests {
 	private JWTTokenManager JWTTokenManager;
 
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
-
-	@Autowired
 	private UserRepository userRepository;
-
-	@BeforeAll
-	@AfterAll
-	void cleanUp() {
-		JdbcTestUtils.deleteFromTables(jdbcTemplate, "users_roles", "users_addresses", "user");
-	}
 
 	// test for ValidateUserIdentity aspect
 	@Test
@@ -80,7 +80,7 @@ class UserIdValidationTests {
 				"Password1"));
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken(
+		String accessToken = JWTTokenManager.generateAccessToken(
 				"UserIdValidationTestNonMatchingCookieUserIdAndJwtuserId@gmail.com",
 				List.of(new Role("USER")),
 				testUserId);
@@ -119,7 +119,7 @@ class UserIdValidationTests {
 
 		// create JWT token
 
-		String accessToken = JWTTokenManager.getAccessToken(
+		String accessToken = JWTTokenManager.generateAccessToken(
 				"UserIdValidationTestMatchingUserIdCookieAndJwtUserIdClaim@gmail.com",
 				List.of(new Role("USER")),
 				testUserId);

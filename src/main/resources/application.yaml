@@ -1,6 +1,8 @@
 spring:
+
   profiles:
     active: production
+
   devtools:
     livereload:
       enabled: false
@@ -24,6 +26,11 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/pizzeria
+    username: root
+    password: root
 
 logging:
   level:

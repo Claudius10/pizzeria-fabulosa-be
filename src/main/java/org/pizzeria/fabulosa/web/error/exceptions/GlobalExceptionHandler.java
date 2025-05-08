@@ -89,7 +89,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 	}
 
-	@ExceptionHandler({DataAccessException.class})
+	@ExceptionHandler(DataAccessException.class)
 	protected ResponseEntity<Response> dataAccessException(DataAccessException ex, WebRequest request) {
 
 		boolean fatal = true;

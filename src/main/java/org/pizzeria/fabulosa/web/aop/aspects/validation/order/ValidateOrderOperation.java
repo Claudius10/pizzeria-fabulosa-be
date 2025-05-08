@@ -13,6 +13,8 @@ import org.pizzeria.fabulosa.web.dto.api.Status;
 import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOnDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewAnonOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
+import org.pizzeria.fabulosa.web.order.validation.OrderCartValidator;
+import org.pizzeria.fabulosa.web.order.validation.OrderDetailsValidator;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidationResult;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidator;
 import org.springframework.http.HttpStatus;
@@ -31,57 +33,97 @@ public class ValidateOrderOperation {
 
 	@Around(value = "execution(* org.pizzeria.fabulosa.web.controllers.open.AnonController.createAnonOrder(..)) && args(newAnonOrder, request)", argNames = "pjp,newAnonOrder,request")
 	public Object validateNewAnonOrder(ProceedingJoinPoint pjp, NewAnonOrderDTO newAnonOrder, HttpServletRequest request) throws Throwable {
-		OrderValidationResult result = OrderValidator.validate(newAnonOrder.cart(), newAnonOrder.orderDetails());
+		OrderValidationResult cart = OrderCartValidator.validate(newAnonOrder.cart());
 
-		if (result.isValid()) {
-			return pjp.proceed();
+		if (!cart.isValid()) {
+			Response response = Response.builder()
+					.status(Status.builder()
+							.description(HttpStatus.BAD_REQUEST.name())
+							.code(HttpStatus.BAD_REQUEST.value())
+							.isError(true)
+							.build())
+					.error(Error.builder()
+							.id(UUID.randomUUID().getMostSignificantBits())
+							.cause(cart.getMessage())
+							.origin(ValidateOrderOperation.class.getSimpleName() + ".validateNewAnonOrder")
+							.path(request.getPathInfo())
+							.logged(false)
+							.fatal(false)
+							.build())
+					.build();
+			return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 		}
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.BAD_REQUEST.name())
-						.code(HttpStatus.BAD_REQUEST.value())
-						.isError(true)
-						.build())
-				.error(Error.builder()
-						.id(UUID.randomUUID().getMostSignificantBits())
-						.cause(result.getMessage())
-						.origin(ValidateOrderOperation.class.getSimpleName() + ".validateNewAnonOrder")
-						.path(request.getPathInfo())
-						.logged(false)
-						.fatal(false)
-						.build())
-				.build();
+		OrderValidationResult orderDetails = OrderDetailsValidator.validate(newAnonOrder.cart(), newAnonOrder.orderDetails());
 
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+		if (!orderDetails.isValid()) {
+			Response response = Response.builder()
+					.status(Status.builder()
+							.description(HttpStatus.BAD_REQUEST.name())
+							.code(HttpStatus.BAD_REQUEST.value())
+							.isError(true)
+							.build())
+					.error(Error.builder()
+							.id(UUID.randomUUID().getMostSignificantBits())
+							.cause(orderDetails.getMessage())
+							.origin(ValidateOrderOperation.class.getSimpleName() + ".validateNewAnonOrder")
+							.path(request.getPathInfo())
+							.logged(false)
+							.fatal(false)
+							.build())
+					.build();
+			return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+		}
+
+		return pjp.proceed();
 	}
 
 	@Around(value = "execution(* org.pizzeria.fabulosa.web.controllers.user.UserOrdersController.createUserOrder(..)) && args" +
 			"(order, userId, request)", argNames = "pjp,order,userId,request")
 	public Object validateNewUserOrder(ProceedingJoinPoint pjp, NewUserOrderDTO order, Long userId, HttpServletRequest request) throws Throwable {
-		OrderValidationResult result = OrderValidator.validate(order.cart(), order.orderDetails());
+		OrderValidationResult cart = OrderCartValidator.validate(order.cart());
 
-		if (result.isValid()) {
-			return pjp.proceed();
+		if (!cart.isValid()) {
+			Response response = Response.builder()
+					.status(Status.builder()
+							.description(HttpStatus.BAD_REQUEST.name())
+							.code(HttpStatus.BAD_REQUEST.value())
+							.isError(true)
+							.build())
+					.error(Error.builder()
+							.id(UUID.randomUUID().getMostSignificantBits())
+							.cause(cart.getMessage())
+							.origin(ValidateOrderOperation.class.getSimpleName() + ".validateNewUserOrder")
+							.path(request.getPathInfo())
+							.logged(false)
+							.fatal(false)
+							.build())
+					.build();
+			return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
 		}
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.BAD_REQUEST.name())
-						.code(HttpStatus.BAD_REQUEST.value())
-						.isError(true)
-						.build())
-				.error(Error.builder()
-						.id(UUID.randomUUID().getMostSignificantBits())
-						.cause(result.getMessage())
-						.origin(ValidateOrderOperation.class.getSimpleName() + ".validateNewUserOrder")
-						.path(request.getPathInfo())
-						.logged(false)
-						.fatal(false)
-						.build())
-				.build();
+		OrderValidationResult orderDetails = OrderDetailsValidator.validate(order.cart(), order.orderDetails());
 
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+		if (!orderDetails.isValid()) {
+			Response response = Response.builder()
+					.status(Status.builder()
+							.description(HttpStatus.BAD_REQUEST.name())
+							.code(HttpStatus.BAD_REQUEST.value())
+							.isError(true)
+							.build())
+					.error(Error.builder()
+							.id(UUID.randomUUID().getMostSignificantBits())
+							.cause(orderDetails.getMessage())
+							.origin(ValidateOrderOperation.class.getSimpleName() + ".validateNewUserOrder")
+							.path(request.getPathInfo())
+							.logged(false)
+							.fatal(false)
+							.build())
+					.build();
+			return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+		}
+
+		return pjp.proceed();
 	}
 
 	@Around(value = "execution(* org.pizzeria.fabulosa.web.controllers.user.UserOrdersController.deleteUserOrderById(..)) && args" +

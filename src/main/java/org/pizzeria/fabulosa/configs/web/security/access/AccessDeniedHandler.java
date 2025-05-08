@@ -17,9 +17,7 @@ public class AccessDeniedHandler implements org.springframework.security.web.acc
 	}
 
 	@Override
-	public void handle(HttpServletRequest request,
-					   HttpServletResponse response,
-					   AccessDeniedException accessDeniedException) {
+	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) {
 		// return an empty ModelAndView so ex can be picked up by @ControllerAdvice
 		resolver.resolveException(request, response, null, accessDeniedException);
 	}

@@ -43,7 +43,7 @@ public class JWTTests {
 
 		// Act
 
-		String test = tokenManager.getAccessToken("test", roles, 1L);
+		String test = tokenManager.generateAccessToken("test", roles, 1L);
 		Jwt decode = jwtDecoder.decode(test);
 
 		// Assert

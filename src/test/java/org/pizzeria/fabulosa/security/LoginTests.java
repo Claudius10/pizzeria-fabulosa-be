@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.pizzeria.fabulosa.entity.role.Role;
+import org.pizzeria.fabulosa.services.role.RoleService;
 import org.pizzeria.fabulosa.services.user.UserService;
 import org.pizzeria.fabulosa.utils.Constants;
 import org.pizzeria.fabulosa.web.constants.ApiRoutes;
@@ -13,22 +15,34 @@ import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
+import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@Sql(scripts = {"file:src/test/resources/db/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @DirtiesContext
+@AutoConfigureMockMvc
+@Sql(scripts = "file:src/test/resources/db/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 class LoginTests {
+
+	@Container
+	@ServiceConnection
+	private final static MariaDBContainer db = new MariaDBContainer<>(DockerImageName.parse("mariadb:latest"));
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -37,10 +51,15 @@ class LoginTests {
 	private UserService userService;
 
 	@Autowired
+	private RoleService roleService;
+
+	@Autowired
 	private ObjectMapper objectMapper;
 
 	@BeforeAll
 	void setUp() {
+		roleService.createRole(new Role("USER"));
+
 		userService.createUser(new RegisterDTO(
 				"tester",
 				"test@gmail.com",

@@ -20,6 +20,7 @@ import org.pizzeria.fabulosa.web.dto.user.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,10 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,13 +47,19 @@ import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+
+@Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@AutoConfigureMockMvc
 @Sql(scripts = "file:src/test/resources/db/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 @Sql(scripts = "file:src/test/resources/db/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@AutoConfigureMockMvc
-@DirtiesContext
 class UserControllerTests {
+
+	@Container
+	@ServiceConnection
+	private final static MariaDBContainer db = new MariaDBContainer<>(DockerImageName.parse("mariadb:latest"));
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -73,7 +84,7 @@ class UserControllerTests {
 		// Arrange
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), 99L);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), 99L);
 
 		// Act
 
@@ -98,7 +109,7 @@ class UserControllerTests {
 		Long userId = createUser("Tester@gmail.com");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -123,7 +134,7 @@ class UserControllerTests {
 		Long userId = createUser("Tester@gmail.com");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// create address object
 		Address address = Address.builder()
@@ -161,7 +172,7 @@ class UserControllerTests {
 		Long userId = createUser("Tester@gmail.com");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// create address object
 		Address address = Address.builder()
@@ -199,7 +210,7 @@ class UserControllerTests {
 		// Arrange
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), 2L);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), 2L);
 		// create address object
 		Address address = Address.builder()
 				.withStreet("Street")
@@ -237,7 +248,7 @@ class UserControllerTests {
 		Long userId = createUser("Tester@gmail.com");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// post api call to add address to user
 		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
@@ -300,7 +311,7 @@ class UserControllerTests {
 		Long userId = createUser("Tester@gmail.com");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// post api call to add address to user
 		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
@@ -334,7 +345,7 @@ class UserControllerTests {
 		// Arrange
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), 3L);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), 3L);
 
 		// Act
 
@@ -369,7 +380,7 @@ class UserControllerTests {
 				.build();
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// post api call to add address to user
 		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS, userId)
@@ -415,7 +426,7 @@ class UserControllerTests {
 		Long userId = createUser("Tester@gmail.com");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -444,7 +455,7 @@ class UserControllerTests {
 		// Arrange
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), 2L);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), 2L);
 
 		// Act
 
@@ -479,7 +490,7 @@ class UserControllerTests {
 		NameChangeDTO nameChangeDTO = new NameChangeDTO("dsa$·", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -518,7 +529,7 @@ class UserControllerTests {
 		NameChangeDTO nameChangeDTO = new NameChangeDTO("NewUserName", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -552,7 +563,7 @@ class UserControllerTests {
 		EmailChangeDTO emailChangeDTO = new EmailChangeDTO("invalidEmailFormat", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -590,7 +601,7 @@ class UserControllerTests {
 		EmailChangeDTO emailChangeDTO = new EmailChangeDTO("validEmailFormat@gmail.com", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -626,7 +637,7 @@ class UserControllerTests {
 		EmailChangeDTO emailChangeDTO = new EmailChangeDTO("Tester3@gmail.com", "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester4@gmail.com", List.of(new Role("USER")), userIdTwo);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester4@gmail.com", List.of(new Role("USER")), userIdTwo);
 
 		// Act
 
@@ -660,7 +671,7 @@ class UserControllerTests {
 		ContactNumberChangeDTO contactNumberChangeDTO = new ContactNumberChangeDTO(123, "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -698,7 +709,7 @@ class UserControllerTests {
 		ContactNumberChangeDTO contactNumberChangeDTO = new ContactNumberChangeDTO(123456789, "Password1");
 
 		// create access token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
 
 		// Act
 
@@ -730,7 +741,7 @@ class UserControllerTests {
 		Long userId = createUser("Tester@gmail.com");
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// create dto object
 		PasswordChangeDTO passwordChangeDTO = new PasswordChangeDTO(
@@ -767,7 +778,7 @@ class UserControllerTests {
 		Long userId = createUser("Tester3@gmail.com");
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
 
 		// create dto object
 		PasswordChangeDTO passwordChangeDTO = new PasswordChangeDTO(
@@ -805,7 +816,7 @@ class UserControllerTests {
 		Long userId = createUser("Tester3@gmail.com");
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
 
 		// password
 		String password = "WrongPassword";
@@ -838,7 +849,7 @@ class UserControllerTests {
 		assertThat(user).isPresent();
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
 
 		// create dto object
 		String password = "Password1";
@@ -869,7 +880,7 @@ class UserControllerTests {
 		Long userId = createUser(Constants.DUMMY_ACCOUNT_EMAIL);
 
 		// create JWT token
-		String accessToken = JWTTokenManager.getAccessToken(Constants.DUMMY_ACCOUNT_EMAIL, List.of(new Role("USER")), userId);
+		String accessToken = JWTTokenManager.generateAccessToken(Constants.DUMMY_ACCOUNT_EMAIL, List.of(new Role("USER")), userId);
 
 		// create dto object
 		String password = "Password1";

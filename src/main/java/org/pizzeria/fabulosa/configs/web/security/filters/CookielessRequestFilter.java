@@ -16,6 +16,9 @@ import java.util.Arrays;
 @Slf4j
 public class CookielessRequestFilter extends OncePerRequestFilter {
 
+	/**
+	 * If requested path is a path that requieres a cookie, but no cookie is present, then dismiss.
+	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String path = ServerUtils.resolvePath(request.getServletPath(), request.getRequestURI());

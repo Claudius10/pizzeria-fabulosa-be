@@ -1,16 +1,19 @@
 package org.pizzeria.fabulosa.configs.db;
 
 import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import lombok.RequiredArgsConstructor;
+import net.ttddyy.dsproxy.listener.SingleQueryCountHolder;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
+import org.hibernate.engine.jdbc.internal.FormatStyle;
 import org.pizzeria.fabulosa.configs.properties.DBProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 
+@Profile("db-debug")
 @Configuration
 @RequiredArgsConstructor
 public class DataSourceConfig {
@@ -32,13 +35,12 @@ public class DataSourceConfig {
 		DataSource proxyDataSource = ProxyDataSourceBuilder
 				.create(actualDataSource)
 				.name("pizzeriaDataSource")
-				//.countQuery(new SingleQueryCountHolder())
-				//.traceMethods()
-				//.formatQuery(FormatStyle.BASIC.getFormatter()::format)
-				//.logQueryToSysOut()
+				.countQuery(new SingleQueryCountHolder())
+				.traceMethods()
+				.formatQuery(FormatStyle.BASIC.getFormatter()::format)
+				.logQueryToSysOut()
 				.buildProxy();
 
-		config.setDataSource(actualDataSource);
-		return new HikariDataSource(config);
+		return proxyDataSource;
 	}
 }

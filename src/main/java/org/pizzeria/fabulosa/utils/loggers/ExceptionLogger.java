@@ -1,6 +1,5 @@
 package org.pizzeria.fabulosa.utils.loggers;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 
 public final class ExceptionLogger {
@@ -37,7 +36,7 @@ public final class ExceptionLogger {
 		log.warn("----- -- ExceptionLogger stack trace ---- -- ");
 
 		if (stackTrace.length > 0) {
-			log.info("Exception stacktrace: {}", ExceptionUtils.getStackTrace(e));
+			log.info("Exception", e);
 		}
 
 		log.warn("----- --");

@@ -1,64 +1,21 @@
 package org.pizzeria.fabulosa.order;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.pizzeria.fabulosa.entity.cart.Cart;
 import org.pizzeria.fabulosa.entity.cart.CartItem;
-import org.pizzeria.fabulosa.web.order.validation.OrderValidator;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.pizzeria.fabulosa.web.order.validation.OrderCartValidator;
+import org.pizzeria.fabulosa.web.order.validation.OrderDetailsValidator;
 
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-/**
- * {@link SpringBootTest} annotation contains @ExtendWith(SpringExtension.class).
- *
- * <p>
- * Annotation that can be specified on a test class that runs Spring Boot based tests. Provides the following features over and above the regular Spring TestContext Framework:
- * <p>
- * Uses SpringBootContextLoader as the default ContextLoader when no specific @ContextConfiguration(loader=...) is defined.
- * <p>
- * Automatically searches for a @SpringBootConfiguration when nested @Configuration is not used, and no explicit classes are specified.
- * <p>
- * Allows custom Environment properties to be defined using the properties attribute.
- * <p>
- * Allows application arguments to be defined using the args attribute.
- * <p>
- * Provides support for different webEnvironment modes, including the ability to start a fully running web server listening on a defined or random port.
- * <p>
- * Registers a TestRestTemplate and/or WebTestClient bean for use in web tests that are using a fully running web server.
- * <p>
- * <p>
- * {@link SpringExtension} {@code @ExtendWith(SpringExtension.class)}
- * <p>
- * SpringExtension integrates the Spring TestContext Framework into JUnit 5's Jupiter programming model.
- * <p>
- * <p>
- * {@link SpringJUnitConfig}
- * <p>
- * {@code @SpringJUnitConfig} is a composed annotation that combines @ExtendWith(SpringExtension.class) from JUnit Jupiter with @ContextConfiguration from the Spring TestContext Framework.
- * <p>
- * <p>
- * {@link ContextConfiguration}
- * <p>
- * {@code @ContextConfiguration} defines class-level metadata that is used to determine how to load and configure an ApplicationContext for integration tests.
- * <p>
- * <p>
- * {@link MockitoExtension} {@code @ExtendWith(MockitoExtension.class)}
- * <p>
- * Extension that initializes mocks and handles strict stubbing.
- */
 
 class OrderValidatorTests {
 
 	@Test
 	void givenIsCartEmptyMethod_whenValidatingEmptyCart_thenReturnTrue() {
 		Cart cart = new Cart.Builder().withEmptyItemList().build();
-		boolean isCartEmpty = OrderValidator.isCartEmpty(cart);
+		boolean isCartEmpty = OrderCartValidator.isCartEmpty(cart);
 		assertTrue(isCartEmpty);
 	}
 
@@ -72,13 +29,13 @@ class OrderValidatorTests {
 				.withTotalQuantity(1)
 				.withTotalCost(5D)
 				.build();
-		boolean isCartEmpty = OrderValidator.isCartEmpty(cart);
+		boolean isCartEmpty = OrderCartValidator.isCartEmpty(cart);
 		assertFalse(isCartEmpty);
 	}
 
 	@Test
 	void givenIsCartEmptyMethod_whenValidatingNullCart_thenReturnTrue() {
-		boolean isCartEmpty = OrderValidator.isCartEmpty(null);
+		boolean isCartEmpty = OrderCartValidator.isCartEmpty(null);
 		assertTrue(isCartEmpty);
 	}
 
@@ -88,7 +45,7 @@ class OrderValidatorTests {
 		double changeRequested = 10;
 		double totalCost = 20;
 		double totalCostAfterOffers = 13.3;
-		boolean isChangeRequestedValid = OrderValidator.isChangeRequestedValid(changeRequested, totalCostAfterOffers, totalCost);
+		boolean isChangeRequestedValid = OrderDetailsValidator.isChangeRequestedValid(changeRequested, totalCostAfterOffers, totalCost);
 		assertFalse(isChangeRequestedValid);
 	}
 
@@ -98,7 +55,7 @@ class OrderValidatorTests {
 		double changeRequested = 20;
 		double totalCost = 20;
 		double totalCostAfterOffers = 13.3;
-		boolean isChangeRequestedValid = OrderValidator.isChangeRequestedValid(changeRequested, totalCostAfterOffers, totalCost);
+		boolean isChangeRequestedValid = OrderDetailsValidator.isChangeRequestedValid(changeRequested, totalCostAfterOffers, totalCost);
 		assertTrue(isChangeRequestedValid);
 	}
 
@@ -108,7 +65,7 @@ class OrderValidatorTests {
 		double totalCost = 10;
 		double totalCostAfterOffers = 0;
 		double expectedOutput = 10;
-		double actualOutput = OrderValidator.calculatePaymentChange(changeRequested, totalCost, totalCostAfterOffers);
+		double actualOutput = OrderDetailsValidator.calculatePaymentChange(changeRequested, totalCost, totalCostAfterOffers);
 		assertEquals(expectedOutput, actualOutput);
 	}
 
@@ -118,7 +75,7 @@ class OrderValidatorTests {
 		double totalCost = 20;
 		double totalCostAfterOffers = 13.3;
 		double expectedOutput = 6.7;
-		double actualOutput = OrderValidator.calculatePaymentChange(changeRequested, totalCost, totalCostAfterOffers);
+		double actualOutput = OrderDetailsValidator.calculatePaymentChange(changeRequested, totalCost, totalCostAfterOffers);
 		assertEquals(expectedOutput, actualOutput);
 	}
 
@@ -126,7 +83,7 @@ class OrderValidatorTests {
 	void givenCalculatePaymentChangeMethod_whenNotRequestedChange_thenReturnNull() {
 		double totalCost = 20;
 		double totalCostAfterOffers = 13.3;
-		Double output = OrderValidator.calculatePaymentChange(null, totalCost, totalCostAfterOffers);
+		Double output = OrderDetailsValidator.calculatePaymentChange(null, totalCost, totalCostAfterOffers);
 		assertNull(output);
 	}
 }

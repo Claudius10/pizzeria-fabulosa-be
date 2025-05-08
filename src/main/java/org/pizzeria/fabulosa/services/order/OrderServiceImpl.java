@@ -66,7 +66,6 @@ public class OrderServiceImpl implements OrderService {
 
 		Order order = orderRepository.save(anonOrder);
 
-
 		return new CreatedOrderDTO(
 				order.getId(),
 				order.getFormattedCreatedOn(),
@@ -103,6 +102,7 @@ public class OrderServiceImpl implements OrderService {
 				.build();
 
 		Order newOrder = orderRepository.save(order);
+
 		return new CreatedOrderDTO(
 				newOrder.getId(),
 				newOrder.getFormattedCreatedOn(),
