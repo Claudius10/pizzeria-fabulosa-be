@@ -22,8 +22,6 @@ public final class ApiRoutes {
 
 	public static final String AUTH_LOGOUT = "/logout";
 
-	public static final String AUTH_LOGIN_EMAIL = "/logout";
-
 	// ANON
 
 	public static final String ANON_BASE = "/anon";
@@ -42,8 +40,6 @@ public final class ApiRoutes {
 
 	public static final String RESOURCE_STORE = "/store";
 
-	public static final String RESOURCE_STORE_ID = "/{storeId}";
-
 	public static final String RESOURCE_OFFER = "/offer";
 
 	public static final String LOCAL_DATE_TIME_NOW = "/now";
@@ -57,10 +53,6 @@ public final class ApiRoutes {
 	public static final String USER_ADDRESS_ID = "/{addressId}";
 
 	public static final String USER_ADDRESS = "/address";
-	public static final String USER_EMAIL = "/email";
-	public static final String USER_NAME = "/name";
-	public static final String USER_NUMBER = "/number";
-	public static final String USER_PASSWORD = "/password";
 
 	// ORDER
 

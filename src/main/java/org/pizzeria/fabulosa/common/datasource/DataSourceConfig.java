@@ -32,7 +32,7 @@ public class DataSourceConfig {
 				.password(dbProperties.getPassword())
 				.build();
 
-		DataSource proxyDataSource = ProxyDataSourceBuilder
+		return ProxyDataSourceBuilder
 				.create(actualDataSource)
 				.name("pizzeriaDataSource")
 				.countQuery(new SingleQueryCountHolder())
@@ -40,7 +40,5 @@ public class DataSourceConfig {
 				.formatQuery(FormatStyle.BASIC.getFormatter()::format)
 				.logQueryToSysOut()
 				.buildProxy();
-
-		return proxyDataSource;
 	}
 }

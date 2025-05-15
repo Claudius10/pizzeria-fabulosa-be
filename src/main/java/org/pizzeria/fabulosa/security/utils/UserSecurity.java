@@ -24,11 +24,7 @@ public final class UserSecurity {
 		Authentication authentication = context.getAuthentication();
 		Jwt validatedAccessToken = (Jwt) authentication.getPrincipal();
 
-		if (!String.valueOf(id).equals(validatedAccessToken.getClaimAsString("userId"))) {
-			return false;
-		}
-
-		return true;
+		return String.valueOf(id).equals(validatedAccessToken.getClaimAsString("userId"));
 	}
 
 	public static ResponseEntity<Response> deny(HttpServletRequest request) {

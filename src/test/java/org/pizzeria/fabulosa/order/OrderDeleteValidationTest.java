@@ -11,8 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OrderDeleteValidationTest {
 
-	private final OrderValidator orderValidator = new OrderValidator();
-
 	@Test
 	void givenOrderDeleteRequest_whenDeleteWindowPassed_thenReturnInvalidResult() {
 		// Arrange
@@ -22,7 +20,7 @@ class OrderDeleteValidationTest {
 
 		// Act
 
-		OrderValidationResult isDeleteRequestValid = orderValidator.validateDelete(date);
+		OrderValidationResult isDeleteRequestValid = OrderValidator.validateDelete(date);
 
 		// Assert
 		assertAll(() -> {
@@ -40,7 +38,7 @@ class OrderDeleteValidationTest {
 
 		// Act
 
-		OrderValidationResult isDeleteRequestValid = orderValidator.validateDelete(date);
+		OrderValidationResult isDeleteRequestValid = OrderValidator.validateDelete(date);
 
 		// Assert
 
