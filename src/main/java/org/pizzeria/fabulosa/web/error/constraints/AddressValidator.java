@@ -2,10 +2,10 @@ package org.pizzeria.fabulosa.web.error.constraints;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.pizzeria.fabulosa.entity.address.Address;
-import org.pizzeria.fabulosa.web.constants.ValidationResponses;
-import org.pizzeria.fabulosa.web.constants.ValidationRules;
+import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.web.error.constraints.annotation.ValidAddress;
+import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
+import org.pizzeria.fabulosa.web.util.constant.ValidationRules;
 
 public class AddressValidator implements ConstraintValidator<ValidAddress, Address> {
 

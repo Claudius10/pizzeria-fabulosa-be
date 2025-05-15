@@ -1,8 +1,8 @@
 package org.pizzeria.fabulosa.order;
 
 import org.junit.jupiter.api.Test;
-import org.pizzeria.fabulosa.entity.cart.Cart;
-import org.pizzeria.fabulosa.entity.cart.CartItem;
+import org.pizzeria.fabulosa.common.entity.cart.Cart;
+import org.pizzeria.fabulosa.common.entity.cart.CartItem;
 import org.pizzeria.fabulosa.web.order.validation.OrderCartValidator;
 import org.pizzeria.fabulosa.web.order.validation.OrderDetailsValidator;
 

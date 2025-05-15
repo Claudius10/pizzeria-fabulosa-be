@@ -3,17 +3,17 @@ package org.pizzeria.fabulosa.controller.open;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.pizzeria.fabulosa.entity.address.Address;
-import org.pizzeria.fabulosa.entity.cart.Cart;
-import org.pizzeria.fabulosa.entity.cart.CartItem;
-import org.pizzeria.fabulosa.entity.order.OrderDetails;
-import org.pizzeria.fabulosa.repos.address.AddressRepository;
-import org.pizzeria.fabulosa.web.constants.ApiRoutes;
-import org.pizzeria.fabulosa.web.constants.ValidationResponses;
+import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
+import org.pizzeria.fabulosa.common.entity.address.Address;
+import org.pizzeria.fabulosa.common.entity.cart.Cart;
+import org.pizzeria.fabulosa.common.entity.cart.CartItem;
+import org.pizzeria.fabulosa.common.entity.order.OrderDetails;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.CustomerDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewAnonOrderDTO;
+import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
+import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -80,9 +80,8 @@ class AnonControllerAnonOrderTests {
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getDescription()).isEqualTo(HttpStatus.CREATED.name());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.CREATED.value());
 		CreatedOrderDTO order = objectMapper.convertValue(responseObj.getPayload(), CreatedOrderDTO.class);
 		assertThat(order.customer().name()).isEqualTo("customerName");
 	}
@@ -122,11 +121,10 @@ class AnonControllerAnonOrderTests {
 				.andReturn().getResponse();
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 		long addressCount = addressRepository.count();
 		assertThat(addressCount).isEqualTo(1);
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getDescription()).isEqualTo(HttpStatus.CREATED.name());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.CREATED.value());
 		CreatedOrderDTO order = objectMapper.convertValue(responseObj.getPayload(), CreatedOrderDTO.class);
 		assertThat(order.customer().name()).isEqualTo("customerName");
 	}
@@ -154,7 +152,7 @@ class AnonControllerAnonOrderTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("customer.name");
@@ -186,7 +184,7 @@ class AnonControllerAnonOrderTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("customer.contactNumber");
@@ -218,7 +216,7 @@ class AnonControllerAnonOrderTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("customer.email");
@@ -250,7 +248,7 @@ class AnonControllerAnonOrderTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("address.street");
@@ -282,7 +280,7 @@ class AnonControllerAnonOrderTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("address.number");
@@ -314,7 +312,7 @@ class AnonControllerAnonOrderTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("address.details");
@@ -346,7 +344,7 @@ class AnonControllerAnonOrderTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("orderDetails.deliveryTime");
@@ -378,7 +376,7 @@ class AnonControllerAnonOrderTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("orderDetails.paymentMethod");
@@ -413,8 +411,9 @@ class AnonControllerAnonOrderTests {
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(ValidationResponses.ORDER_DETAILS_BILL);
 	}
 
@@ -441,7 +440,7 @@ class AnonControllerAnonOrderTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("orderDetails.comment");
@@ -474,8 +473,10 @@ class AnonControllerAnonOrderTests {
 				.getResponse();
 
 		// Assert
+
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 	}
 

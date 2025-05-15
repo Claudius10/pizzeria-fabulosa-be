@@ -3,7 +3,6 @@ package org.pizzeria.fabulosa.controller;
 import lombok.AllArgsConstructor;
 import org.pizzeria.fabulosa.order.context.OrderServiceImplTest;
 import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.api.Status;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,28 +19,12 @@ class TestController {
 
 	@GetMapping()
 	ResponseEntity<Response> testGetEndpoint() {
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.OK.name())
-						.code(HttpStatus.OK.value())
-						.isError(false)
-						.build())
-				.build();
-
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+		return ResponseEntity.status(HttpStatus.OK).body(Response.builder().build());
 	}
 
 	@PostMapping()
 	ResponseEntity<Response> testPostEndpoint() {
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.OK.name())
-						.code(HttpStatus.OK.value())
-						.isError(false)
-						.build())
-				.build();
-
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+		return ResponseEntity.status(HttpStatus.OK).body(Response.builder().build());
 	}
 
 	@PostMapping("/error")
@@ -51,15 +34,7 @@ class TestController {
 
 	@GetMapping("/admin")
 	ResponseEntity<Response> adminTestEndPoint() {
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.OK.name())
-						.code(HttpStatus.OK.value())
-						.isError(false)
-						.build())
-				.build();
-
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+		return ResponseEntity.status(HttpStatus.OK).body(Response.builder().build());
 	}
 
 	@PostMapping(path = "/user/{userId}/order", params = "minusMin")

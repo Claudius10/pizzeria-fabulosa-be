@@ -12,7 +12,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        integrator_provider: org.pizzeria.fabulosa.configs.hibernate.ClassImportIntegratorIntegratorProvider
+        integrator_provider: org.pizzeria.fabulosa.common.hibernate.ClassImportIntegratorIntegratorProvider
         jdbc:
           time_zone: UTC
         show_sql: true

@@ -7,11 +7,11 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.junit.jupiter.api.Test;
-import org.pizzeria.fabulosa.configs.properties.SSLProperties;
-import org.pizzeria.fabulosa.configs.properties.SecurityProperties;
-import org.pizzeria.fabulosa.configs.web.security.auth.JWTTokenManager;
-import org.pizzeria.fabulosa.configs.web.security.ssl.JWTKeys;
-import org.pizzeria.fabulosa.entity.role.Role;
+import org.pizzeria.fabulosa.common.entity.role.Role;
+import org.pizzeria.fabulosa.common.property.SSLProperties;
+import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
+import org.pizzeria.fabulosa.security.ssl.JWTKeys;
+import org.pizzeria.fabulosa.web.property.SecurityProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.*;
 

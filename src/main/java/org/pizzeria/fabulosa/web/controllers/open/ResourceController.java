@@ -1,15 +1,13 @@
 package org.pizzeria.fabulosa.web.controllers.open;
 
 import lombok.RequiredArgsConstructor;
-import org.pizzeria.fabulosa.entity.resources.Product;
-import org.pizzeria.fabulosa.services.resources.ResourceService;
-import org.pizzeria.fabulosa.utils.TimeUtils;
-import org.pizzeria.fabulosa.web.constants.ApiRoutes;
+import org.pizzeria.fabulosa.common.entity.resources.Product;
+import org.pizzeria.fabulosa.common.util.TimeUtils;
 import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.api.Status;
 import org.pizzeria.fabulosa.web.dto.resource.ProductListDTO;
+import org.pizzeria.fabulosa.web.service.resources.ResourceService;
+import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,60 +37,21 @@ public class ResourceController {
 				allProductsByType.hasNext()
 		);
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.OK.name())
-						.code(HttpStatus.OK.value())
-						.isError(false)
-						.build())
-				.payload(productListDTO)
-				.build();
-
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(Response.builder().payload(productListDTO).build());
 	}
 
 	@GetMapping(ApiRoutes.RESOURCE_STORE)
 	public ResponseEntity<Response> findAllStores() {
-
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.OK.name())
-						.code(HttpStatus.OK.value())
-						.isError(false)
-						.build())
-				.payload(resourceService.findAllStores())
-				.build();
-
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(Response.builder().payload(resourceService.findAllStores()).build());
 	}
 
 	@GetMapping(ApiRoutes.RESOURCE_OFFER)
 	public ResponseEntity<Response> findAllOffers() {
-
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.OK.name())
-						.code(HttpStatus.OK.value())
-						.isError(false)
-						.build())
-				.payload(resourceService.findAllOffers())
-				.build();
-
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(Response.builder().payload(resourceService.findAllOffers()).build());
 	}
 
 	@GetMapping(ApiRoutes.LOCAL_DATE_TIME_NOW)
 	public ResponseEntity<Response> getNowAccountingDST() {
-
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.OK.name())
-						.code(HttpStatus.OK.value())
-						.isError(false)
-						.build())
-				.payload(TimeUtils.getNowAccountingDST())
-				.build();
-
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(Response.builder().payload(TimeUtils.getNowAccountingDST()).build());
 	}
 }

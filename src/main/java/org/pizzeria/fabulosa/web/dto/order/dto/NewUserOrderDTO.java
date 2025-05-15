@@ -1,8 +1,8 @@
 package org.pizzeria.fabulosa.web.dto.order.dto;
 
 import jakarta.validation.constraints.NotNull;
-import org.pizzeria.fabulosa.entity.cart.Cart;
-import org.pizzeria.fabulosa.entity.order.OrderDetails;
+import org.pizzeria.fabulosa.common.entity.cart.Cart;
+import org.pizzeria.fabulosa.common.entity.order.OrderDetails;
 
 public record NewUserOrderDTO(
 		@NotNull

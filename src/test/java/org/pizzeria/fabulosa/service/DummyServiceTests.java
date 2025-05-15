@@ -5,20 +5,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.pizzeria.fabulosa.entity.address.Address;
-import org.pizzeria.fabulosa.entity.user.User;
-import org.pizzeria.fabulosa.repos.user.UserRepository;
-import org.pizzeria.fabulosa.services.address.AddressService;
-import org.pizzeria.fabulosa.services.dummy.DummyService;
-import org.pizzeria.fabulosa.services.order.OrderService;
-import org.pizzeria.fabulosa.services.role.RoleService;
-import org.pizzeria.fabulosa.services.user.UserAddressService;
-import org.pizzeria.fabulosa.services.user.UserService;
-import org.pizzeria.fabulosa.utils.Constants;
+import org.pizzeria.fabulosa.common.dao.user.UserRepository;
+import org.pizzeria.fabulosa.common.entity.address.Address;
+import org.pizzeria.fabulosa.common.entity.user.User;
+import org.pizzeria.fabulosa.common.service.role.RoleService;
+import org.pizzeria.fabulosa.web.service.address.AddressService;
+import org.pizzeria.fabulosa.web.service.dummy.DummyService;
+import org.pizzeria.fabulosa.web.service.order.OrderService;
+import org.pizzeria.fabulosa.web.service.user.UserAddressService;
+import org.pizzeria.fabulosa.web.service.user.UserService;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
+import static org.pizzeria.fabulosa.common.util.constant.AppConstants.DUMMY_ACCOUNT_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
 public class DummyServiceTests {
@@ -59,7 +59,7 @@ public class DummyServiceTests {
 
 		doReturn(Optional.empty()).when(roleService).findByName("USER");
 		doReturn(Optional.empty()).when(roleService).findByName("ADMIN");
-		doReturn(user).when(userRepository).findUserByEmail(Constants.DUMMY_ACCOUNT_EMAIL);
+		doReturn(user).when(userRepository).findUserByEmail(DUMMY_ACCOUNT_EMAIL);
 		doReturn(Optional.of(address)).when(addressService).findByExample(address);
 
 		// Act
@@ -70,7 +70,7 @@ public class DummyServiceTests {
 
 		verify(roleService, times(1)).findByName("USER");
 		verify(roleService, times(1)).findByName("ADMIN");
-		verify(userRepository, times(1)).findUserByEmail(Constants.DUMMY_ACCOUNT_EMAIL);
+		verify(userRepository, times(1)).findUserByEmail(DUMMY_ACCOUNT_EMAIL);
 		verify(addressService, times(1)).findByExample(address);
 	}
 

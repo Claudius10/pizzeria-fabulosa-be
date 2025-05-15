@@ -2,8 +2,8 @@ package org.pizzeria.fabulosa.repos;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.pizzeria.fabulosa.entity.address.Address;
-import org.pizzeria.fabulosa.repos.address.AddressRepository;
+import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
+import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;

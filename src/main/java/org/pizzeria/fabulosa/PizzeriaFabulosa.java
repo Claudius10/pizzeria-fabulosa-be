@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa;
 
-import org.pizzeria.fabulosa.utils.loggers.EndpointsLogger;
-import org.pizzeria.fabulosa.utils.loggers.PropertiesLogger;
+import org.pizzeria.fabulosa.common.util.logger.PropertiesLogger;
+import org.pizzeria.fabulosa.web.util.logger.EndpointsLogger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

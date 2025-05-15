@@ -1,110 +1,132 @@
 package org.pizzeria.fabulosa.web.controllers.user;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pizzeria.fabulosa.services.order.OrderService;
-import org.pizzeria.fabulosa.web.aop.annotations.ValidateUserId;
-import org.pizzeria.fabulosa.web.constants.ApiRoutes;
+import org.pizzeria.fabulosa.security.utils.UserSecurity;
 import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.api.Status;
-import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOrderDTO;
-import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
-import org.pizzeria.fabulosa.web.dto.order.dto.OrderDTO;
-import org.pizzeria.fabulosa.web.dto.order.dto.OrderSummaryListDTO;
+import org.pizzeria.fabulosa.web.dto.order.dto.*;
 import org.pizzeria.fabulosa.web.dto.order.projection.OrderSummaryProjection;
+import org.pizzeria.fabulosa.web.order.validation.OrderCartValidator;
+import org.pizzeria.fabulosa.web.order.validation.OrderDetailsValidator;
+import org.pizzeria.fabulosa.web.order.validation.OrderValidationResult;
+import org.pizzeria.fabulosa.web.order.validation.OrderValidator;
+import org.pizzeria.fabulosa.web.service.order.OrderService;
+import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
+import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
+import static org.pizzeria.fabulosa.web.util.ResponseUtils.error;
+
 @RestController
 @RequestMapping(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.ORDER_BASE)
+@Tag(name = "User orders", description = "User order CRUD")
+@RequiredArgsConstructor
 @Validated
 public class UserOrdersController {
 
 	private final OrderService orderService;
 
-	@ValidateUserId
 	@PostMapping
-	public ResponseEntity<Response> createUserOrder(@RequestBody @Valid NewUserOrderDTO order, @PathVariable Long userId, HttpServletRequest request) {
+	@Operation(summary = "Create user order")
+	public ResponseEntity<Response> createUserOrder(
+			@RequestBody @Valid NewUserOrderDTO order,
+			@Parameter(description = "Id of the user") @PathVariable Long userId,
+			HttpServletRequest request
+	) {
+
+		if (!UserSecurity.valid(userId)) {
+			return UserSecurity.deny(request);
+		}
+
+		OrderValidationResult cart = OrderCartValidator.validate(order.cart());
+		if (!cart.isValid()) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), cart.getMessage(), request.getPathInfo()));
+		}
+
+		OrderValidationResult orderDetails = OrderDetailsValidator.validate(order.cart(), order.orderDetails());
+		if (!orderDetails.isValid()) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), orderDetails.getMessage(), request.getPathInfo()));
+		}
+
 		CreatedOrderDTO createdOrder = orderService.createUserOrder(userId, order);
-
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.CREATED.name())
-						.code(HttpStatus.CREATED.value())
-						.isError(false)
-						.build())
-				.payload(createdOrder)
-				.build();
-
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		return ResponseEntity.status(HttpStatus.CREATED).body(Response.builder().payload(createdOrder).build());
 	}
 
-	@ValidateUserId
 	@GetMapping(ApiRoutes.ORDER_ID)
 	public ResponseEntity<Response> findUserOrderDTO(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
+		if (!UserSecurity.valid(userId)) {
+			return UserSecurity.deny(request);
+		}
+
 		Optional<OrderDTO> projectionById = orderService.findOrderDTOById(orderId);
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(projectionById.isPresent() ? HttpStatus.OK.name() : HttpStatus.NO_CONTENT.name())
-						.code(projectionById.isPresent() ? HttpStatus.OK.value() : HttpStatus.NO_CONTENT.value())
-						.isError(false)
-						.build())
-				.payload(projectionById.orElse(null))
-				.build();
-
-		return ResponseEntity.ok(response);
+		return projectionById.map(orderDTO -> ResponseEntity.ok().body(Response.builder().payload(orderDTO).build()))
+				.orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).body(error(this.getClass().getSimpleName(), ApiResponses.ORDER_NOT_FOUND, request.getPathInfo())));
 	}
 
-	@ValidateUserId
 	@DeleteMapping(ApiRoutes.ORDER_ID)
 	public ResponseEntity<Response> deleteUserOrderById(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
-		orderService.deleteUserOrderById(orderId);
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.OK.name())
-						.code(HttpStatus.OK.value())
-						.isError(false)
-						.build())
-				.payload(orderId)
-				.build();
 
-		return ResponseEntity.ok(response);
+		if (!UserSecurity.valid(userId)) {
+			return UserSecurity.deny(request);
+		}
+
+		Optional<CreatedOnDTO> createdOnDTOById = orderService.findCreatedOnDTOById(orderId);
+
+		if (createdOnDTOById.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(error(this.getClass().getSimpleName(), ApiResponses.ORDER_NOT_FOUND, request.getPathInfo()));
+		} else {
+			OrderValidationResult result = OrderValidator.validateDelete(createdOnDTOById.get().createdOn());
+			if (!result.isValid()) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), result.getMessage(), request.getPathInfo()));
+			}
+		}
+
+		orderService.deleteUserOrderById(orderId);
+		return ResponseEntity.ok(Response.builder().payload(orderId).build());
 	}
 
-	@ValidateUserId
 	@GetMapping(ApiRoutes.ORDER_SUMMARY)
 	public ResponseEntity<Response> findUserOrdersSummary(
 			@RequestParam(name = ApiRoutes.PAGE_NUMBER) Integer pageNumber,
 			@RequestParam(name = ApiRoutes.PAGE_SIZE) Integer pageSize,
 			@PathVariable Long userId,
 			HttpServletRequest request) {
+		if (!UserSecurity.valid(userId)) {
+			return UserSecurity.deny(request);
+		}
+
 		Page<OrderSummaryProjection> orderSummaryPage = orderService.findUserOrderSummary(userId, pageSize, pageNumber);
 
+		List<OrderSummaryDTO> orderSummaryList = orderSummaryPage.getContent().stream().map(orderSummary -> new OrderSummaryDTO(
+				orderSummary.getId(),
+				orderSummary.getFormattedCreatedOn(),
+				orderSummary.getOrderDetails().getPaymentMethod(),
+				orderSummary.getCart().getTotalQuantity(),
+				orderSummary.getCart().getTotalCost(),
+				orderSummary.getCart().getTotalCostOffers()
+		)).collect(Collectors.toList());
+
 		OrderSummaryListDTO orders = new OrderSummaryListDTO(
-				orderSummaryPage.getContent(),
+				orderSummaryList,
 				orderSummaryPage.getTotalPages(),
 				orderSummaryPage.getPageable().getPageSize(),
 				orderSummaryPage.getTotalElements(),
 				orderSummaryPage.hasNext()
 		);
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.OK.name())
-						.code(HttpStatus.OK.value())
-						.isError(false)
-						.build())
-				.payload(orders)
-				.build();
-
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(Response.builder().payload(orders).build());
 	}
 }

@@ -1,9 +1,9 @@
 package org.pizzeria.fabulosa.order;
 
 import org.junit.jupiter.api.Test;
-import org.pizzeria.fabulosa.web.constants.ValidationResponses;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidationResult;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidator;
+import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 
 import java.time.LocalDateTime;
 

@@ -2,7 +2,7 @@ package org.pizzeria.fabulosa.web.dto.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import org.pizzeria.fabulosa.web.constants.ValidationResponses;
+import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 
 public record EmailChangeDTO(
 		@Email(message = ValidationResponses.EMAIL_INVALID)

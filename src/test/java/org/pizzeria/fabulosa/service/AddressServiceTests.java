@@ -2,9 +2,9 @@ package org.pizzeria.fabulosa.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.pizzeria.fabulosa.entity.address.Address;
-import org.pizzeria.fabulosa.repos.address.AddressRepository;
-import org.pizzeria.fabulosa.services.address.AddressService;
+import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
+import org.pizzeria.fabulosa.common.entity.address.Address;
+import org.pizzeria.fabulosa.web.service.address.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

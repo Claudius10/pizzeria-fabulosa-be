@@ -1,9 +1,9 @@
 package org.pizzeria.fabulosa.utils;
 
 import org.junit.jupiter.api.Test;
-import org.pizzeria.fabulosa.utils.loggers.EndpointsLogger;
-import org.pizzeria.fabulosa.utils.loggers.PropertiesLogger;
+import org.pizzeria.fabulosa.common.util.logger.PropertiesLogger;
 import org.pizzeria.fabulosa.web.controllers.open.AnonController;
+import org.pizzeria.fabulosa.web.util.logger.EndpointsLogger;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;

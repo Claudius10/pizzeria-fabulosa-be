@@ -3,16 +3,15 @@ package org.pizzeria.fabulosa.web.error.exceptions;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pizzeria.fabulosa.configs.properties.SecurityProperties;
-import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
-import org.pizzeria.fabulosa.entity.error.Error;
-import org.pizzeria.fabulosa.repos.error.ErrorRepository;
-import org.pizzeria.fabulosa.utils.ServerUtils;
-import org.pizzeria.fabulosa.utils.loggers.ExceptionLogger;
-import org.pizzeria.fabulosa.web.constants.ApiResponses;
-import org.pizzeria.fabulosa.web.constants.SecurityResponses;
+import org.pizzeria.fabulosa.common.dao.error.ErrorRepository;
+import org.pizzeria.fabulosa.common.entity.error.Error;
+import org.pizzeria.fabulosa.common.util.logger.ExceptionLogger;
+import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.api.Status;
+import org.pizzeria.fabulosa.web.property.SecurityProperties;
+import org.pizzeria.fabulosa.web.util.ServerUtils;
+import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
+import org.pizzeria.fabulosa.web.util.constant.SecurityResponses;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -30,6 +29,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -51,6 +51,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private final SecurityProperties securityProperties;
 
+	@ResponseStatus
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
 			MethodArgumentNotValidException ex,
@@ -69,11 +70,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		});
 
 		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.BAD_REQUEST.name())
-						.code(HttpStatus.BAD_REQUEST.value())
-						.isError(true)
-						.build())
+				.isError(true)
 				.error(Error.builder()
 						.id(UUID.randomUUID().getMostSignificantBits())
 						.cause(ex.getClass().getSimpleName())
@@ -86,9 +83,33 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.build();
 
 		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
 
+	@ResponseStatus(value = HttpStatus.UNAUTHORIZED, code = HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler({AuthenticationException.class, AccessDeniedException.class})
+	protected ResponseEntity<Response> securityException(RuntimeException ex, WebRequest request) {
+		String path = extractPath(request);
+
+		// first handle all the bots trying to access random endpoints
+		if (ex instanceof InsufficientAuthenticationException && "/error".equals(path)) {
+			log.warn("AuthenticationException redirected to /error, URL {}", extractURL(request));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+
+		Response response;
+
+		switch (ex) {
+			case AuthenticationException authenticationException -> response = handleAuthenticationException(authenticationException, request, path);
+			case AccessDeniedException accessDeniedException -> response = handleAccessDenied(accessDeniedException, request);
+			default -> response = handleUnknownError(ex, request);
+		}
+
+		ExceptionLogger.log(ex, log, response);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	}
+
+	@ResponseStatus
 	@ExceptionHandler(DataAccessException.class)
 	protected ResponseEntity<Response> dataAccessException(DataAccessException ex, WebRequest request) {
 
@@ -117,21 +138,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			error.setId(savedError.getId());
 		}
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.BAD_REQUEST.name())
-						.code(HttpStatus.BAD_REQUEST.value())
-						.isError(true)
-						.build())
-				.error(error)
-				.build();
-
+		Response response = Response.builder().isError(true).error(error).build();
 		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
 
-	@ExceptionHandler(AccessDeniedException.class)
-	protected ResponseEntity<Response> accessDeniedException(AccessDeniedException ex, WebRequest request) {
+	@ResponseStatus
+	@ExceptionHandler(Exception.class)
+	protected ResponseEntity<Response> unknownException(Exception ex, WebRequest request) {
+		Response response = handleUnknownError(ex, request);
+		ExceptionLogger.log(ex, log, response);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	}
+
+	private Response handleAccessDenied(AccessDeniedException ex, WebRequest request) {
 
 		Error error = Error.builder()
 				.id(UUID.randomUUID().getMostSignificantBits())
@@ -143,30 +163,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.fatal(true)
 				.build();
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.UNAUTHORIZED.name())
-						.code(HttpStatus.UNAUTHORIZED.value())
-						.isError(true)
-						.build())
-				.error(error)
-				.build();
-
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+		return Response.builder().isError(true).error(error).build();
 	}
 
-	@ExceptionHandler(AuthenticationException.class)
-	protected ResponseEntity<Response> authenticationException(AuthenticationException ex, WebRequest request) {
-
-		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
-
-		if (ex instanceof InsufficientAuthenticationException && "/error".equals(path)) {
-			log.warn("AuthenticationException redirected to /error, URL {}", httpRequest.getRequestURL());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-
+	private Response handleAuthenticationException(AuthenticationException ex, WebRequest request, String path) {
 		String errorMessage;
 		boolean fatal = false;
 		boolean logged = false;
@@ -174,7 +174,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		switch (ex) {
 			case BadCredentialsException ignored -> errorMessage = SecurityResponses.BAD_CREDENTIALS;
-			case UsernameNotFoundException ignored -> errorMessage = SecurityResponses.USER_NOT_FOUND;
+			case UsernameNotFoundException ignored -> errorMessage = ApiResponses.USER_NOT_FOUND;
 			case InvalidBearerTokenException ignored -> {
 				errorMessage = SecurityResponses.INVALID_TOKEN;
 				logged = true;
@@ -213,25 +213,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		}
 
 		if (deleteCookies) {
-			SecurityCookieUtils.eatAllCookies(((ServletWebRequest) request).getRequest(),
+			SecurityCookies.eatAllCookies(((ServletWebRequest) request).getRequest(),
 					((ServletWebRequest) request).getResponse(), securityProperties.getCookies().getDomain());
 		}
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.UNAUTHORIZED.name())
-						.code(HttpStatus.UNAUTHORIZED.value())
-						.isError(true)
-						.build())
-				.error(error)
-				.build();
-
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+		return Response.builder().isError(true).error(error).build();
 	}
 
-	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<Response> unknownException(Exception ex, WebRequest request) {
+	private Response handleUnknownError(Exception ex, WebRequest request) {
 
 		Error error = Error.builder()
 				.cause(ex.getClass().getSimpleName())
@@ -243,18 +232,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.build();
 
 		error.setCreatedOn(LocalDateTime.now());
-		errorRepository.save(error);
+		Error savedError = errorRepository.save(error);
+		error.setId(savedError.getId());
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(HttpStatus.INTERNAL_SERVER_ERROR.name())
-						.code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-						.isError(true)
-						.build())
-				.error(error)
-				.build();
+		return Response.builder().isError(true).error(error).build();
+	}
 
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.OK).body(response); // return OK to get the ResponseDTO in onSuccess callback
+	private String extractPath(WebRequest request) {
+		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+		return ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
+	}
+
+	private String extractURL(WebRequest request) {
+		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+		return httpRequest.getRequestURL().toString();
 	}
 }

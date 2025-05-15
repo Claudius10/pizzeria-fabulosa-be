@@ -1,6 +1,6 @@
 package org.pizzeria.fabulosa.web.order.validation;
 
-import org.pizzeria.fabulosa.web.constants.ValidationResponses;
+import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 
 import java.time.LocalDateTime;
 

@@ -1,14 +1,14 @@
 package org.pizzeria.fabulosa.order.context;
 
 import jakarta.transaction.Transactional;
-import org.pizzeria.fabulosa.entity.address.Address;
-import org.pizzeria.fabulosa.entity.cart.Cart;
-import org.pizzeria.fabulosa.entity.order.Order;
-import org.pizzeria.fabulosa.entity.user.User;
-import org.pizzeria.fabulosa.repos.order.OrderRepository;
-import org.pizzeria.fabulosa.services.address.AddressService;
-import org.pizzeria.fabulosa.services.user.UserService;
+import org.pizzeria.fabulosa.common.dao.order.OrderRepository;
+import org.pizzeria.fabulosa.common.entity.address.Address;
+import org.pizzeria.fabulosa.common.entity.cart.Cart;
+import org.pizzeria.fabulosa.common.entity.order.Order;
+import org.pizzeria.fabulosa.common.entity.user.User;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
+import org.pizzeria.fabulosa.web.service.address.AddressService;
+import org.pizzeria.fabulosa.web.service.user.UserService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

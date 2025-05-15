@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa.web.dto.api;
 
 import lombok.*;
-import org.pizzeria.fabulosa.entity.error.Error;
+import org.pizzeria.fabulosa.common.entity.error.Error;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +16,7 @@ public class Response {
 	@Builder.Default
 	private final String timeStamp = LocalDateTime.now().toString();
 
-	private Status status;
+	private Boolean isError = false;
 
 	private Object payload;
 

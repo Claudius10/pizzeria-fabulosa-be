@@ -4,14 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.pizzeria.fabulosa.entity.role.Role;
-import org.pizzeria.fabulosa.services.role.RoleService;
-import org.pizzeria.fabulosa.services.user.UserService;
-import org.pizzeria.fabulosa.utils.Constants;
-import org.pizzeria.fabulosa.web.constants.ApiRoutes;
-import org.pizzeria.fabulosa.web.constants.SecurityResponses;
+import org.pizzeria.fabulosa.common.entity.role.Role;
+import org.pizzeria.fabulosa.common.service.role.RoleService;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
+import org.pizzeria.fabulosa.web.service.user.UserService;
+import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
+import org.pizzeria.fabulosa.web.util.constant.SecurityResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +28,8 @@ import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ID_TOKEN_NAME;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -86,8 +87,8 @@ class LoginTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(response.getCookies()).isNotEmpty();
-		assertThat(response.getCookie(Constants.AUTH_TOKEN)).isNotNull();
-		assertThat(response.getCookie(Constants.ID_TOKEN)).isNotNull();
+		assertThat(response.getCookie(AUTH_TOKEN_NAME)).isNotNull();
+		assertThat(response.getCookie(ID_TOKEN_NAME)).isNotNull();
 	}
 
 	@Test
@@ -106,9 +107,8 @@ class LoginTests {
 		// Assert
 
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
 		assertThat(response.getCookies()).isEmpty();
 	}
@@ -129,9 +129,8 @@ class LoginTests {
 		// Assert
 
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
 		assertThat(response.getCookies()).isEmpty();
 	}
@@ -152,9 +151,8 @@ class LoginTests {
 		// Assert
 
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
 		assertThat(response.getCookies()).isEmpty();
 	}

@@ -2,12 +2,12 @@ package org.pizzeria.fabulosa.controller.open;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
-import org.pizzeria.fabulosa.repos.user.UserRepository;
-import org.pizzeria.fabulosa.web.constants.ApiResponses;
-import org.pizzeria.fabulosa.web.constants.ApiRoutes;
-import org.pizzeria.fabulosa.web.constants.ValidationResponses;
+import org.pizzeria.fabulosa.common.dao.user.UserRepository;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
+import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
+import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
+import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -110,12 +110,10 @@ class AnonControllerRegisterTests {
 		// Assert
 
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		Response responseObj = objectMapper.readValue(response.getContentAsString(StandardCharsets.UTF_8), Response.class);
-
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.USER_EMAIL_ALREADY_EXISTS);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	}
 
 	@Test
@@ -136,7 +134,7 @@ class AnonControllerRegisterTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("name");
@@ -164,7 +162,7 @@ class AnonControllerRegisterTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("email");
@@ -191,7 +189,7 @@ class AnonControllerRegisterTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("email");
@@ -218,7 +216,7 @@ class AnonControllerRegisterTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("password");
@@ -245,7 +243,7 @@ class AnonControllerRegisterTests {
 				// Assert
 
 				.andExpect(result -> {
-							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+							assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 							MethodArgumentNotValidException exception = (MethodArgumentNotValidException) result.getResolvedException();
 							assert exception != null;
 							List<FieldError> errors = exception.getBindingResult().getFieldErrors("password");

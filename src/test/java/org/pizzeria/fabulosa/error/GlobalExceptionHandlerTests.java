@@ -3,12 +3,11 @@ package org.pizzeria.fabulosa.error;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.pizzeria.fabulosa.configs.web.security.auth.JWTTokenManager;
-import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
-import org.pizzeria.fabulosa.entity.error.Error;
-import org.pizzeria.fabulosa.entity.role.Role;
-import org.pizzeria.fabulosa.repos.error.ErrorRepository;
-import org.pizzeria.fabulosa.utils.Constants;
+import org.pizzeria.fabulosa.common.dao.error.ErrorRepository;
+import org.pizzeria.fabulosa.common.entity.error.Error;
+import org.pizzeria.fabulosa.common.entity.role.Role;
+import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
+import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,6 +27,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Testcontainers
@@ -69,11 +69,12 @@ public class GlobalExceptionHandlerTests {
 		assertThat(errorCount).isZero();
 
 		MockHttpServletResponse response = mockMvc.perform(post("/api/tests/error")
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, validAccessToken, 30, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		long errorCountAfter = errorRepository.count();
 		assertThat(errorCountAfter).isGreaterThan(0);
 
@@ -84,8 +85,6 @@ public class GlobalExceptionHandlerTests {
 		assertThat(error.get().isFatal()).isEqualTo(true);
 
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-		assertThat(responseObj.getStatus().getDescription()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.name());
 		assertThat(responseObj.getError().getCause()).isEqualTo(IllegalArgumentException.class.getSimpleName());
 		assertThat(responseObj.getError().getMessage()).isEqualTo("TestError");
 		assertThat(responseObj.getError().isLogged()).isEqualTo(true);

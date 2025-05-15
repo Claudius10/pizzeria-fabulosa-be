@@ -4,26 +4,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.pizzeria.fabulosa.configs.web.security.auth.JWTTokenManager;
-import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
-import org.pizzeria.fabulosa.entity.address.Address;
-import org.pizzeria.fabulosa.entity.cart.Cart;
-import org.pizzeria.fabulosa.entity.cart.CartItem;
-import org.pizzeria.fabulosa.entity.order.OrderDetails;
-import org.pizzeria.fabulosa.entity.role.Role;
-import org.pizzeria.fabulosa.entity.user.User;
-import org.pizzeria.fabulosa.repos.address.AddressRepository;
-import org.pizzeria.fabulosa.repos.order.OrderRepository;
-import org.pizzeria.fabulosa.repos.user.UserRepository;
-import org.pizzeria.fabulosa.utils.Constants;
-import org.pizzeria.fabulosa.web.constants.ApiRoutes;
-import org.pizzeria.fabulosa.web.constants.ValidationResponses;
+import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
+import org.pizzeria.fabulosa.common.dao.order.OrderRepository;
+import org.pizzeria.fabulosa.common.dao.user.UserRepository;
+import org.pizzeria.fabulosa.common.entity.address.Address;
+import org.pizzeria.fabulosa.common.entity.cart.Cart;
+import org.pizzeria.fabulosa.common.entity.cart.CartItem;
+import org.pizzeria.fabulosa.common.entity.order.OrderDetails;
+import org.pizzeria.fabulosa.common.entity.role.Role;
+import org.pizzeria.fabulosa.common.entity.user.User;
+import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
+import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.OrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.OrderSummaryListDTO;
 import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
+import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
+import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
+import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +45,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -87,7 +88,7 @@ class UserOrdersControllerTests {
 	}
 
 	@Test
-	void givenPostApiCallToCreateOrder_thenCreateOrder() throws Exception {
+	void givenPostApiCallToCreateOrder_thenReturnCreatedAndDTO() throws Exception {
 		// Arrange
 
 		// post api call to register new user in database
@@ -125,15 +126,19 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ORDER, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.CREATED.value());
+		CreatedOrderDTO createdOrderDTO = objectMapper.convertValue(responseObj.getPayload(), CreatedOrderDTO.class);
+		assertThat(createdOrderDTO.customer().name()).isEqualTo("Tester");
+		assertThat(createdOrderDTO.customer().email()).isEqualTo("Tester@gmail.com");
+		assertThat(createdOrderDTO.cart().getCartItems().size()).isGreaterThan(0);
 	}
 
 	@Test
-	void givenPostApiCallToCreateOrder_whenCartIsEmpty_thenReturnBadRequestWithMessage() throws Exception {
+	void givenPostApiCallToCreateOrder_whenCartIsEmpty_thenReturnError() throws Exception {
 		// Arrange
 
 		// post api call to register new user in database
@@ -161,11 +166,12 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ORDER, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 	}
 
@@ -209,9 +215,10 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ORDER, userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 		Response responseObj = getResponse(response, objectMapper);
 		CreatedOrderDTO createdOrder = objectMapper.convertValue(responseObj.getPayload(), CreatedOrderDTO.class);
 
@@ -226,22 +233,19 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID,
 						userId, createdOrder.id())
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
 
+		assertThat(getResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
 		Response responseObjTwo = getResponse(getResponse, objectMapper);
-
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.CREATED.value());
-		assertThat(responseObjTwo.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
-
 		OrderDTO order = objectMapper.convertValue(responseObjTwo.getPayload(), OrderDTO.class);
 		assertThat(order.id()).isEqualTo(createdOrder.id());
 	}
 
 	@Test
-	void givenGetApiCallToFindOrder_whenOrderNotFound_thenReturnAcceptedWithMessage() throws Exception {
+	void givenGetApiCallToFindOrder_whenOrderNotFound_thenReturnNoContent() throws Exception {
 
 		// Arrange
 
@@ -261,14 +265,15 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, 99)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 60, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-		assertThat(responseObj.getStatus().getDescription()).isEqualTo(HttpStatus.NO_CONTENT.name());
+		assertThat(responseObj.getIsError()).isTrue();
+		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.ORDER_NOT_FOUND);
 	}
 
 	@Test
@@ -298,21 +303,20 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, order.id())
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
-
 		Long id = objectMapper.convertValue(responseObj.getPayload(), Long.class);
 		assertThat(id).isEqualTo(order.id());
 	}
 
 	@Test
-	void givenOrderDelete_whenTimeLimitPassed_thenReturnBadRequestWithMessage() throws Exception {
+	void givenOrderDelete_whenTimeLimitPassed_thenReturnError() throws Exception {
 		// Arrange
 
 		// post api call to register new user in database
@@ -338,14 +342,15 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, order.id())
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
 	}
 
@@ -369,14 +374,16 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, 995678)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+		assertThat(responseObj.getIsError()).isTrue();
+		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.ORDER_NOT_FOUND);
 	}
 
 	@Test
@@ -409,14 +416,18 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}", userId, pageNumber, pageSize)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
+		OrderSummaryListDTO orderList = objectMapper.convertValue(responseObj.getPayload(), OrderSummaryListDTO.class);
+		assertThat(orderList).isNotNull();
+		assertThat(orderList.orderList().size()).isGreaterThan(0);
+		assertThat(orderList.totalElements()).isGreaterThan(0);
 	}
 
 	@Test
@@ -442,17 +453,18 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}", userId, pageNumber, pageSize)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
 		OrderSummaryListDTO orderList = objectMapper.convertValue(responseObj.getPayload(), OrderSummaryListDTO.class);
 		assertThat(orderList).isNotNull();
-		assertThat(orderList.orderList()).isEmpty();
+		assertThat(orderList.orderList().size()).isZero();
+		assertThat(orderList.totalElements()).isZero();
 	}
 
 	@Test
@@ -475,16 +487,19 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}", 0, pageNumber, pageSize)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, accessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
 		// Assert
 
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo("UsernameNotFoundException");
 	}
+
+	// ------------------------- HELPERS -------------------------
 
 	OrderDTO findOrder(Long orderId, long userId, String validAccessToken) throws Exception {
 		MockHttpServletResponse response = mockMvc.perform(get(
@@ -494,7 +509,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
 								+ ApiRoutes.ORDER_ID, userId, orderId)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 1800, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, validAccessToken, 1800, true, false)))
 				.andReturn().getResponse();
 
 		Response responseObj = getResponse(response, objectMapper);
@@ -523,7 +538,7 @@ class UserOrdersControllerTests {
 						"/api/tests/user/{userId}/order?minusMin={minutesInThePast}", userId, minutesInThePast)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 1800, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, validAccessToken, 1800, true, false)))
 				.andReturn().getResponse();
 
 		Long orderId = Long.valueOf(response.getContentAsString());

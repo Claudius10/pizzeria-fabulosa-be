@@ -1,6 +1,7 @@
 package org.pizzeria.fabulosa.utils;
 
 import org.junit.jupiter.api.Test;
+import org.pizzeria.fabulosa.web.util.ServerUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

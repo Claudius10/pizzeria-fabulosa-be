@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa.web.order.validation;
 
-import org.pizzeria.fabulosa.entity.cart.Cart;
-import org.pizzeria.fabulosa.web.constants.ValidationResponses;
+import org.pizzeria.fabulosa.common.entity.cart.Cart;
+import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 
 public class OrderCartValidator {
 

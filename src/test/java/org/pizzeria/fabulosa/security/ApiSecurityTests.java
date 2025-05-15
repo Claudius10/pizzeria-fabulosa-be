@@ -3,12 +3,11 @@ package org.pizzeria.fabulosa.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.pizzeria.fabulosa.configs.web.security.auth.JWTTokenManager;
-import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
-import org.pizzeria.fabulosa.entity.role.Role;
-import org.pizzeria.fabulosa.utils.Constants;
-import org.pizzeria.fabulosa.web.constants.ApiRoutes;
+import org.pizzeria.fabulosa.common.entity.role.Role;
+import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
+import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +26,7 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -52,6 +52,7 @@ class ApiSecurityTests {
 
 	@Test
 	void givenLogoutApiCall_whenCredentialsArePresent_thenEraseCredentials() throws Exception {
+
 		// Arrange
 
 		// create access token
@@ -64,18 +65,19 @@ class ApiSecurityTests {
 
 		// post api call to log-out
 		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.AUTH_BASE + ApiRoutes.AUTH_LOGOUT)
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, validAccessToken, 30, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(200);
-		assertThat(Objects.requireNonNull(response.getCookie(Constants.AUTH_TOKEN)).getMaxAge()).isZero();
-		assertThat(Objects.requireNonNull(response.getCookie(Constants.AUTH_TOKEN)).getValue()).isEmpty();
+		assertThat(Objects.requireNonNull(response.getCookie(AUTH_TOKEN_NAME)).getMaxAge()).isZero();
+		assertThat(Objects.requireNonNull(response.getCookie(AUTH_TOKEN_NAME)).getValue()).isEmpty();
 	}
 
 	@Test
 	void givenApiCallToResource_whenValidAccessTokenAndRole_thenReturnOk() throws Exception {
+
 		// Arrange
 
 		// create access token
@@ -88,19 +90,17 @@ class ApiSecurityTests {
 
 		// post api call to check csrf protection
 		MockHttpServletResponse response = mockMvc.perform(get("/api/tests")
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, validAccessToken, 30, true, false)))
 				.andReturn().getResponse();
-
-		Response responseObj = getResponse(response, objectMapper);
 
 		// Assert
 
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.OK.value());
-		assertThat(responseObj.getStatus().isError()).isFalse();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 	}
 
 	@Test
 	void givenApiCallToResource_whenValidAccessTokenAndInvalidRole_thenReturnUnauthorized() throws Exception {
+
 		// Arrange
 
 		// create access token
@@ -113,68 +113,88 @@ class ApiSecurityTests {
 
 		// post api call to check csrf protection
 		MockHttpServletResponse response = mockMvc.perform(get("/api/tests/admin")
-						.cookie(SecurityCookieUtils.prepareCookie(Constants.AUTH_TOKEN, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, validAccessToken, 30, true, false)))
 
 
 				.andReturn().getResponse();
 
+		// Assert
+
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().isFatal()).isTrue();
 	}
 
 	@Test
 	void givenApiCallToResource_whenNoToken_thenReturnUnauthorized() throws Exception {
+
 		// Act
 
 		// get api call to check security
 		MockHttpServletResponse response = mockMvc.perform(get("/api/tests")).andReturn().getResponse();
+
+		// Assert
+
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		assertThat(responseObj.getStatus().getCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getStatus().isError()).isTrue();
+		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().isFatal()).isTrue();
 	}
 
 	@Test
 	void givenApiCallToResource_whenNoCookies_thenReturnUnauthorized() throws Exception {
+
 		// Act
 
 		// get api call to check security
 		MockHttpServletResponse response =
 				mockMvc.perform(get(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + "/" + "1")).andReturn().getResponse();
+
+		// Assert
+
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 	}
 
 	@Test
 	void givenApiCallToResource_whenCookiesButNoAuth_thenReturnUnauthorized() throws Exception {
+
 		// Act
 
 		// get api call to check security
 		MockHttpServletResponse response =
 				mockMvc.perform(get(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + "/" + "1")
-						.cookie(SecurityCookieUtils.prepareCookie("randomCookie", "value", 1800, true, false))
+						.cookie(SecurityCookies.prepareCookie("randomCookie", "value", 1800, true, false))
 				).andReturn().getResponse();
+
+		// Assert
+
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 	}
 
 	@Test
 	void givenApiUnknownPath_thenReturnUnauthorized() throws Exception {
+
 		// Act
 
 		// get api call to check security
 		MockHttpServletResponse response = mockMvc.perform(get("/")).andReturn().getResponse();
+
+		// Assert
+
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 	}
 
 	@Test
 	void givenEvilRequest_thenReturnForbidden() throws Exception {
+
 		// Act
 
 		// get api call to check security
 		MockHttpServletResponse response = mockMvc.perform(get("/;")).andReturn().getResponse();
+
+		// Assert
+
 		assertThat(response.getStatus()).isEqualTo(404);
 	}
 }

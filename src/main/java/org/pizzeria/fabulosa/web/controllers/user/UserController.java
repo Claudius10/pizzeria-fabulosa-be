@@ -3,23 +3,28 @@ package org.pizzeria.fabulosa.web.controllers.user;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.pizzeria.fabulosa.configs.properties.SecurityProperties;
-import org.pizzeria.fabulosa.configs.web.security.utils.SecurityCookieUtils;
-import org.pizzeria.fabulosa.entity.error.Error;
-import org.pizzeria.fabulosa.services.user.UserService;
-import org.pizzeria.fabulosa.web.aop.annotations.ValidateUserId;
-import org.pizzeria.fabulosa.web.constants.ApiResponses;
-import org.pizzeria.fabulosa.web.constants.ApiRoutes;
+import org.pizzeria.fabulosa.security.utils.SecurityCookies;
+import org.pizzeria.fabulosa.security.utils.UserSecurity;
 import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.api.Status;
 import org.pizzeria.fabulosa.web.dto.user.dto.UserDTO;
+import org.pizzeria.fabulosa.web.property.SecurityProperties;
+import org.pizzeria.fabulosa.web.service.user.UserService;
+import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
+import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.UUID;
+
+import static org.pizzeria.fabulosa.web.util.ResponseUtils.error;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,56 +36,47 @@ public class UserController {
 
 	private final SecurityProperties securityProperties;
 
-	@ValidateUserId
+	private final AuthenticationManager authenticationManager;
+
 	@GetMapping(ApiRoutes.USER_ID)
 	public ResponseEntity<Response> findUserById(@PathVariable Long userId, HttpServletRequest request) {
+		if (!UserSecurity.valid(userId)) {
+			return UserSecurity.deny(request);
+		}
+
 		Optional<UserDTO> user = userService.findUserDTOById(userId);
 
-		Response response = Response.builder()
-				.status(Status.builder()
-						.description(user.isPresent() ? HttpStatus.OK.name() : HttpStatus.NO_CONTENT.name())
-						.code(user.isPresent() ? HttpStatus.OK.value() : HttpStatus.NO_CONTENT.value())
-						.isError(false)
-						.build())
-				.payload(user.orElse(null))
-				.build();
-
-		return ResponseEntity.ok(response);
+		return user.map(userDTO -> ResponseEntity.ok(Response.builder().payload(userDTO).build()))
+				.orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).body(error(this.getClass().getSimpleName(), ApiResponses.USER_NOT_FOUND, request.getPathInfo())));
 	}
 
-	@ValidateUserId
 	@DeleteMapping
 	public ResponseEntity<Response> deleteUser(
 			@RequestParam Long id,
 			@RequestParam String password,
 			HttpServletRequest request,
 			HttpServletResponse response) {
+		if (!UserSecurity.valid(id)) {
+			return UserSecurity.deny(request);
+		}
+
+		verifyPassword(password);
 
 		boolean isError = userService.deleteUserById(password, id);
 
-		Response responseObj = Response.builder()
-				.status(Status.builder()
-						.description(isError ? HttpStatus.BAD_REQUEST.name() : HttpStatus.OK.name())
-						.code(isError ? HttpStatus.BAD_REQUEST.value() : HttpStatus.OK.value())
-						.isError(isError)
-						.build())
-				.build();
-
 		if (isError) {
-			responseObj.setError(Error.builder()
-					.id(UUID.randomUUID().getMostSignificantBits())
-					.cause(ApiResponses.DUMMY_ACCOUNT_ERROR)
-					.origin(UserController.class.getSimpleName() + ".deleteUser")
-					.path(request.getPathInfo())
-					.logged(false)
-					.fatal(false)
-					.build());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), ApiResponses.DUMMY_ACCOUNT_ERROR, request.getPathInfo()));
 		}
 
-		if (!isError) {
-			SecurityCookieUtils.eatAllCookies(request, response, securityProperties.getCookies().getDomain());
-		}
+		SecurityCookies.eatAllCookies(request, response, securityProperties.getCookies().getDomain());
 
-		return ResponseEntity.ok(responseObj);
+		return ResponseEntity.ok().build();
+	}
+
+	public void verifyPassword(String password) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		Authentication authentication = context.getAuthentication();
+		Jwt jwt = (Jwt) authentication.getPrincipal();
+		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwt.getSubject(), password));
 	}
 }
