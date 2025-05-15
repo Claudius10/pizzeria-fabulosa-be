@@ -15,7 +15,6 @@ import org.pizzeria.fabulosa.web.order.validation.OrderDetailsValidator;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidationResult;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidator;
 import org.pizzeria.fabulosa.web.service.order.OrderService;
-import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -52,12 +51,12 @@ public class UserOrdersController {
 
 		OrderValidationResult cart = OrderCartValidator.validate(order.cart());
 		if (!cart.isValid()) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), cart.getMessage(), request.getPathInfo()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), cart.getMessage(), request.getPathInfo()));
 		}
 
 		OrderValidationResult orderDetails = OrderDetailsValidator.validate(order.cart(), order.orderDetails());
 		if (!orderDetails.isValid()) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), orderDetails.getMessage(), request.getPathInfo()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), orderDetails.getMessage(), request.getPathInfo()));
 		}
 
 		CreatedOrderDTO createdOrder = orderService.createUserOrder(userId, order);
@@ -72,8 +71,7 @@ public class UserOrdersController {
 
 		Optional<OrderDTO> projectionById = orderService.findOrderDTOById(orderId);
 
-		return projectionById.map(orderDTO -> ResponseEntity.ok().body(Response.builder().payload(orderDTO).build()))
-				.orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).body(error(this.getClass().getSimpleName(), ApiResponses.ORDER_NOT_FOUND, request.getPathInfo())));
+		return projectionById.map(orderDTO -> ResponseEntity.ok().body(Response.builder().payload(orderDTO).build())).orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
 	}
 
 	@DeleteMapping(ApiRoutes.ORDER_ID)
@@ -86,11 +84,11 @@ public class UserOrdersController {
 		Optional<CreatedOnDTO> createdOnDTOById = orderService.findCreatedOnDTOById(orderId);
 
 		if (createdOnDTOById.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(error(this.getClass().getSimpleName(), ApiResponses.ORDER_NOT_FOUND, request.getPathInfo()));
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} else {
 			OrderValidationResult result = OrderValidator.validateDelete(createdOnDTOById.get().createdOn());
 			if (!result.isValid()) {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), result.getMessage(), request.getPathInfo()));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), result.getMessage(), request.getPathInfo()));
 			}
 		}
 

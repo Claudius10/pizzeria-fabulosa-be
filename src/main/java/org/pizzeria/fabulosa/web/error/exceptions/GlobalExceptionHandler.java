@@ -12,9 +12,6 @@ import org.pizzeria.fabulosa.web.property.SecurityProperties;
 import org.pizzeria.fabulosa.web.util.ServerUtils;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.pizzeria.fabulosa.web.util.constant.SecurityResponses;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -51,7 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private final SecurityProperties securityProperties;
 
-	@ResponseStatus
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST, code = HttpStatus.BAD_REQUEST)
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
 			MethodArgumentNotValidException ex,
@@ -83,7 +80,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.build();
 
 		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
 
 	@ResponseStatus(value = HttpStatus.UNAUTHORIZED, code = HttpStatus.UNAUTHORIZED)
@@ -102,7 +99,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		switch (ex) {
 			case AuthenticationException authenticationException -> response = handleAuthenticationException(authenticationException, request, path);
 			case AccessDeniedException accessDeniedException -> response = handleAccessDenied(accessDeniedException, request);
-			default -> response = handleUnknownError(ex, request);
+			default -> response = handleUnknownError(ex, ex.getClass().getSimpleName(), request);
 		}
 
 		ExceptionLogger.log(ex, log, response);
@@ -110,43 +107,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ResponseStatus
-	@ExceptionHandler(DataAccessException.class)
-	protected ResponseEntity<Response> dataAccessException(DataAccessException ex, WebRequest request) {
-
-		boolean fatal = true;
-
-		if (ex instanceof DataIntegrityViolationException && ex.getMessage() != null && ex.getMessage().contains("constraint [USER_EMAIL]")) {
-			fatal = false;
-		} else if (ex instanceof DataRetrievalFailureException && ApiResponses.ORDER_NOT_FOUND.equals(ex.getMessage())) {
-			fatal = false;
-		}
-
-		Error error = Error.builder()
-				.id(UUID.randomUUID().getMostSignificantBits())
-				.cause(!fatal ? ApiResponses.USER_EMAIL_ALREADY_EXISTS : ex.getClass().getSimpleName())
-				.origin(CLASS_NAME_SHORT + ".dataAccessException")
-				.path(((ServletWebRequest) request).getRequest().getPathInfo())
-				.message(!fatal ? null : ex.getMessage())
-				.logged(fatal)
-				.fatal(fatal)
-				.build();
-
-		if (fatal) {
-			error.setId(null);
-			error.setCreatedOn(LocalDateTime.now());
-			Error savedError = errorRepository.save(error);
-			error.setId(savedError.getId());
-		}
-
-		Response response = Response.builder().isError(true).error(error).build();
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	}
-
-	@ResponseStatus
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<Response> unknownException(Exception ex, WebRequest request) {
-		Response response = handleUnknownError(ex, request);
+		Response response = handleUnknownError(ex, "unknownException", request);
 		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
@@ -220,12 +183,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return Response.builder().isError(true).error(error).build();
 	}
 
-	private Response handleUnknownError(Exception ex, WebRequest request) {
+	private Response handleUnknownError(Exception ex, String details, WebRequest request) {
 
 		Error error = Error.builder()
 				.cause(ex.getClass().getSimpleName())
 				.message(ex.getMessage())
-				.origin(CLASS_NAME_SHORT + ".unknownException")
+				.origin(CLASS_NAME_SHORT + details)
 				.path(((ServletWebRequest) request).getRequest().getServletPath())
 				.logged(true)
 				.fatal(true)

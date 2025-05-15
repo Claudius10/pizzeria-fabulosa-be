@@ -21,7 +21,6 @@ import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.OrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.dto.OrderSummaryListDTO;
 import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
-import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +168,7 @@ class UserOrdersControllerTests {
 						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, accessToken, 60, true, false)))
 				.andReturn().getResponse();
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
@@ -271,9 +270,6 @@ class UserOrdersControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
-		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.ORDER_NOT_FOUND);
 	}
 
 	@Test
@@ -348,7 +344,7 @@ class UserOrdersControllerTests {
 
 		// Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getIsError()).isTrue();
 		assertThat(responseObj.getError().getCause()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
@@ -381,9 +377,6 @@ class UserOrdersControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
-		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.ORDER_NOT_FOUND);
 	}
 
 	@Test

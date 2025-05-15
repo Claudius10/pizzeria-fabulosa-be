@@ -236,7 +236,7 @@ public class UserAddressControllerTests {
 
 		// Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
 		assertThat(addressRepository.count()).isEqualTo(3);
 

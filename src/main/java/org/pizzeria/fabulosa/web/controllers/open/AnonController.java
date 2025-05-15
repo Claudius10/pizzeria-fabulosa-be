@@ -13,7 +13,9 @@ import org.pizzeria.fabulosa.web.order.validation.OrderDetailsValidator;
 import org.pizzeria.fabulosa.web.order.validation.OrderValidationResult;
 import org.pizzeria.fabulosa.web.service.order.OrderService;
 import org.pizzeria.fabulosa.web.service.user.UserService;
+import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,8 +38,12 @@ public class AnonController {
 	private final OrderService orderService;
 
 	@PostMapping(ApiRoutes.ANON_REGISTER)
-	public ResponseEntity<?> registerAnonUser(@RequestBody @Valid RegisterDTO registerDTO) {
-		userService.createUser(registerDTO);
+	public ResponseEntity<?> registerAnonUser(@RequestBody @Valid RegisterDTO registerDTO, HttpServletRequest request) {
+		try {
+			userService.createUser(registerDTO);
+		} catch (DataIntegrityViolationException ex) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), ApiResponses.USER_EMAIL_ALREADY_EXISTS, request.getPathInfo()));
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
@@ -46,12 +52,12 @@ public class AnonController {
 
 		OrderValidationResult cart = OrderCartValidator.validate(newAnonOrder.cart());
 		if (!cart.isValid()) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), cart.getMessage(), request.getPathInfo()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), cart.getMessage(), request.getPathInfo()));
 		}
 
 		OrderValidationResult orderDetails = OrderDetailsValidator.validate(newAnonOrder.cart(), newAnonOrder.orderDetails());
 		if (!orderDetails.isValid()) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), orderDetails.getMessage(), request.getPathInfo()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), orderDetails.getMessage(), request.getPathInfo()));
 		}
 
 		CreatedOrderDTO createdOrder = orderService.createAnonOrder(newAnonOrder);

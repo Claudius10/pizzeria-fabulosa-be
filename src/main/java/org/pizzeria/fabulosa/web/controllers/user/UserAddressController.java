@@ -50,7 +50,7 @@ public class UserAddressController {
 		boolean ok = userAddressService.addUserAddress(userId, address);
 
 		if (!ok) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), ApiResponses.ADDRESS_MAX_SIZE, request.getPathInfo()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), ApiResponses.ADDRESS_MAX_SIZE, request.getPathInfo()));
 		}
 
 		return ResponseEntity.status(HttpStatus.CREATED).build();

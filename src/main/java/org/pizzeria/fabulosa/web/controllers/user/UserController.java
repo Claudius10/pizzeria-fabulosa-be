@@ -46,8 +46,7 @@ public class UserController {
 
 		Optional<UserDTO> user = userService.findUserDTOById(userId);
 
-		return user.map(userDTO -> ResponseEntity.ok(Response.builder().payload(userDTO).build()))
-				.orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).body(error(this.getClass().getSimpleName(), ApiResponses.USER_NOT_FOUND, request.getPathInfo())));
+		return user.map(userDTO -> ResponseEntity.ok(Response.builder().payload(userDTO).build())).orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
 	}
 
 	@DeleteMapping
@@ -65,7 +64,7 @@ public class UserController {
 		boolean isError = userService.deleteUserById(password, id);
 
 		if (isError) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error(this.getClass().getSimpleName(), ApiResponses.DUMMY_ACCOUNT_ERROR, request.getPathInfo()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), ApiResponses.DUMMY_ACCOUNT_ERROR, request.getPathInfo()));
 		}
 
 		SecurityCookies.eatAllCookies(request, response, securityProperties.getCookies().getDomain());
