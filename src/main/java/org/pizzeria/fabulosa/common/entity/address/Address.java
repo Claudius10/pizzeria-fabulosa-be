@@ -1,9 +1,8 @@
 package org.pizzeria.fabulosa.common.entity.address;
 
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.*;
-import org.pizzeria.fabulosa.web.error.constraints.annotation.ValidAddress;
+import org.pizzeria.fabulosa.web.dto.order.AddressDTO;
 
 @Entity(name = "Address")
 @Table(name = "address")
@@ -12,8 +11,6 @@ import org.pizzeria.fabulosa.web.error.constraints.annotation.ValidAddress;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
-@Valid
-@ValidAddress
 @EqualsAndHashCode
 public class Address {
 
@@ -30,12 +27,20 @@ public class Address {
 
 	private String details;
 
-//	public boolean contentEquals(Object o) {
-//		if (this == o) return true;
-//		if (o == null || getClass() != o.getClass()) return false;
-//		Address address = (Address) o;
-//		return Objects.equals(street, address.street)
-//				&& Objects.equals(number, address.number)
-//				&& Objects.equals(details, address.details);
-//	}
+	public static FromDTO fromDTOBuilder() {
+		return new FromDTO();
+	}
+
+	public static class FromDTO {
+		private FromDTO() {
+		}
+
+		public Address build(AddressDTO dto) {
+			return Address.builder()
+					.withStreet(dto.street())
+					.withNumber(dto.number())
+					.withDetails(dto.details())
+					.build();
+		}
+	}
 }

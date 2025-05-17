@@ -36,6 +36,8 @@ springdoc:
     path: /api/v1/docs
   swagger-ui:
     path: /api/v1/docs/swagger
+    operations-sorter: method
+  show-login-endpoint: true
 
 logging:
   level:

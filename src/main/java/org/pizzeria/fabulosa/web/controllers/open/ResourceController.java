@@ -3,8 +3,11 @@ package org.pizzeria.fabulosa.web.controllers.open;
 import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.common.entity.resources.Product;
 import org.pizzeria.fabulosa.common.util.TimeUtils;
+import org.pizzeria.fabulosa.web.controllers.open.swagger.ResourceControllerSwagger;
 import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.resource.OfferListDTO;
 import org.pizzeria.fabulosa.web.dto.resource.ProductListDTO;
+import org.pizzeria.fabulosa.web.dto.resource.StoreListDTO;
 import org.pizzeria.fabulosa.web.service.resources.ResourceService;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.data.domain.Page;
@@ -17,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.RESOURCE_BASE)
-public class ResourceController {
+public class ResourceController implements ResourceControllerSwagger {
 
 	private final ResourceService resourceService;
 
@@ -42,12 +45,12 @@ public class ResourceController {
 
 	@GetMapping(ApiRoutes.RESOURCE_STORE)
 	public ResponseEntity<Response> findAllStores() {
-		return ResponseEntity.ok(Response.builder().payload(resourceService.findAllStores()).build());
+		return ResponseEntity.ok(Response.builder().payload(new StoreListDTO(resourceService.findAllStores())).build());
 	}
 
 	@GetMapping(ApiRoutes.RESOURCE_OFFER)
 	public ResponseEntity<Response> findAllOffers() {
-		return ResponseEntity.ok(Response.builder().payload(resourceService.findAllOffers()).build());
+		return ResponseEntity.ok(Response.builder().payload(new OfferListDTO(resourceService.findAllOffers())).build());
 	}
 
 	@GetMapping(ApiRoutes.LOCAL_DATE_TIME_NOW)

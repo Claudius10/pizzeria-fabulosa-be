@@ -5,14 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pizzeria.fabulosa.common.dao.user.UserRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
-import org.pizzeria.fabulosa.common.entity.cart.Cart;
-import org.pizzeria.fabulosa.common.entity.cart.CartItem;
-import org.pizzeria.fabulosa.common.entity.order.OrderDetails;
 import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.common.entity.user.User;
 import org.pizzeria.fabulosa.common.service.role.RoleService;
-import org.pizzeria.fabulosa.web.dto.order.dto.NewUserOrderDTO;
-import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
+import org.pizzeria.fabulosa.web.dto.order.CartDTO;
+import org.pizzeria.fabulosa.web.dto.order.CartItemDTO;
+import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.OrderDetailsDTO;
+import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.service.address.AddressService;
 import org.pizzeria.fabulosa.web.service.order.OrderService;
 import org.pizzeria.fabulosa.web.service.user.UserAddressService;
@@ -120,31 +120,35 @@ public class DummyService {
 		Optional<Address> addressByExample = addressService.findByExample(address);
 		log.info("Dummy user's address exists {}", addressByExample.isPresent());
 
-		NewUserOrderDTO order = new NewUserOrderDTO(
-				addressByExample.get().getId(),
-				OrderDetails.builder()
-						.withDeliveryTime("form.select.time.asap")
-						.withPaymentMethod("form.select.payment.method.cash")
-						.build(),
-				new Cart.Builder()
-						.withTotalQuantity(1)
-						.withTotalCost(13.30D)
-						.withCartItems(List.of(CartItem.builder()
-								.withFormats(
-										Map.of("m", Map.of("es", "Mediana", "en", "Medium"),
-												"l", Map.of(),
-												"s", Map.of()))
-								.withPrice(13.30)
-								.withQuantity(1)
-								.withName(Map.of("es", "Cuatro Quesos", "en", "Cuatro Quesos"))
-								.withType("pizza")
-								.withDescription(Map.of("es", List.of("Salsa de Tomate", "Mozzarella 100%", "Parmesano",
-												"Emmental", "Queso Azul"),
-										"en", List.of("Tomato Sauce", "100% Mozzarella", "Parmesan " +
-												"Cheese", "Emmental Cheese", "Blue Cheese")))
-								.build()))
-						.build()
+		OrderDetailsDTO orderDetailsDTO = new OrderDetailsDTO(
+				"form.select.time.asap",
+				"form.select.payment.method.cash",
+				0D,
+				"",
+				false,
+				0D
 		);
+
+		CartItemDTO cartItemDTO = new CartItemDTO(
+				"pizza",
+				13.30D,
+				1,
+				Map.of("es", "Cuatro Quesos", "en", "Cuatro Quesos"),
+				Map.of(
+						"es", List.of("Salsa de Tomate", "Mozzarella 100%", "Parmesano", "Emmental", "Queso Azul"),
+						"en", List.of("Tomato Sauce", "100% Mozzarella", "Parmesan Cheese", "Emmental Cheese", "Blue Cheese")
+				),
+				Map.of("m", Map.of("es", "Mediana", "en", "Medium"), "l", Map.of(), "s", Map.of())
+		);
+
+		CartDTO cartDTO = new CartDTO(
+				1,
+				13.30D,
+				0D,
+				List.of(cartItemDTO)
+		);
+
+		NewUserOrderDTO order = new NewUserOrderDTO(addressByExample.get().getId(), orderDetailsDTO, cartDTO);
 
 		orderService.createUserOrder(userId, order);
 	}

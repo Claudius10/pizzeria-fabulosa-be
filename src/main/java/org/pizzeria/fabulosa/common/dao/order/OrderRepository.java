@@ -1,9 +1,9 @@
 package org.pizzeria.fabulosa.common.dao.order;
 
+import org.pizzeria.fabulosa.common.entity.dto.CreatedOnDTO;
+import org.pizzeria.fabulosa.common.entity.dto.OrderDTO;
+import org.pizzeria.fabulosa.common.entity.dto.OrderSummaryProjection;
 import org.pizzeria.fabulosa.common.entity.order.Order;
-import org.pizzeria.fabulosa.web.dto.order.dto.CreatedOnDTO;
-import org.pizzeria.fabulosa.web.dto.order.dto.OrderDTO;
-import org.pizzeria.fabulosa.web.dto.order.projection.OrderSummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

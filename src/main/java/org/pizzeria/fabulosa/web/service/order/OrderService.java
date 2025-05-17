@@ -1,14 +1,18 @@
 package org.pizzeria.fabulosa.web.service.order;
 
-import org.pizzeria.fabulosa.web.dto.order.dto.*;
-import org.pizzeria.fabulosa.web.dto.order.projection.OrderSummaryProjection;
+import org.pizzeria.fabulosa.common.entity.dto.CreatedOnDTO;
+import org.pizzeria.fabulosa.common.entity.dto.CreatedOrderDTO;
+import org.pizzeria.fabulosa.common.entity.dto.OrderSummaryProjection;
+import org.pizzeria.fabulosa.web.dto.order.NewAnonOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.UserOrderDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 
 public interface OrderService {
 
-	Optional<OrderDTO> findOrderDTOById(Long orderId);
+	Optional<UserOrderDTO> findOrderDTOById(Long orderId);
 
 	CreatedOrderDTO createAnonOrder(NewAnonOrderDTO newAnonOrder);
 

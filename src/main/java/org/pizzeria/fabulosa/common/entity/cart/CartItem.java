@@ -5,9 +5,6 @@ import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
-import org.pizzeria.fabulosa.web.error.constraints.annotation.DoubleLength;
-import org.pizzeria.fabulosa.web.error.constraints.annotation.IntegerLength;
-import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 
 import java.util.List;
 import java.util.Map;
@@ -41,10 +38,8 @@ public class CartItem {
 	private Map<String, Map<String, String>> formats; // <"m", <"en": "Medium">, <"es": "Mediana">; "l", <"en": "Familiar">,
 	// <"es": "Familiar">>
 
-	@DoubleLength(min = 1, max = 5)
 	private Double price;
 
-	@IntegerLength(min = 1, max = 2, message = ValidationResponses.CART_ITEM_MAX_QUANTITY_ERROR)
 	private Integer quantity;
 
 	@ManyToOne(fetch = FetchType.LAZY)

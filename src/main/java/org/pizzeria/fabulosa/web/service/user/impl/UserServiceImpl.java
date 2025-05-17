@@ -6,8 +6,7 @@ import org.pizzeria.fabulosa.common.dao.user.UserRepository;
 import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.common.entity.user.User;
 import org.pizzeria.fabulosa.common.service.role.RoleService;
-import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
-import org.pizzeria.fabulosa.web.dto.user.dto.UserDTO;
+import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.service.user.UserService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,11 +57,6 @@ public class UserServiceImpl implements UserService {
 
 		userRepository.deleteById(user.getId());
 		return false; // no error otherwise
-	}
-
-	@Override
-	public Optional<UserDTO> findUserDTOById(Long userId) {
-		return userRepository.findUserById(userId);
 	}
 
 	@Override

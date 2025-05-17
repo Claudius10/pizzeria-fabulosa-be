@@ -6,10 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.pizzeria.fabulosa.common.entity.order.Order;
-import org.pizzeria.fabulosa.web.error.constraints.annotation.DoubleLength;
-import org.pizzeria.fabulosa.web.error.constraints.annotation.DoubleLengthNullable;
-import org.pizzeria.fabulosa.web.error.constraints.annotation.IntegerLength;
-import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
+import org.pizzeria.fabulosa.web.dto.order.CartItemDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +20,10 @@ public class Cart {
 	@Id
 	private Long id;
 
-	@IntegerLength(min = 1, max = 2, message = ValidationResponses.CART_MAX_PRODUCTS_QUANTITY_ERROR)
 	private Integer totalQuantity;
 
-	@DoubleLength(min = 1, max = 6, message = "")
 	private Double totalCost;
 
-	@DoubleLengthNullable(min = 0, max = 6, message = "")
 	private Double totalCostOffers;
 
 	// INFO to remember about the Cart/CartItem association:
@@ -62,45 +56,6 @@ public class Cart {
 //		item.setCart(null);
 //	}
 
-//	public boolean contentEquals(Object o) {
-//		if (this == o) return true;
-//		if (o == null || getClass() != o.getClass()) return false;
-//		Cart cart = (Cart) o;
-//
-//		// orderItem contentEquals
-//		List<Boolean> itemEqualityCheck = new ArrayList<>();
-//		for (int i = 0; i < cartItems.size(); i++) {
-//			for (int j = 0; j < cart.getCartItems().size(); j++) {
-//
-//				if (cartItems.get(i).contentEquals(cart.cartItems.get(j))) {
-//					itemEqualityCheck.add(true);
-//
-//					// avoid i value becoming greater than orderItems.size() value
-//					if (i < cartItems.size() - 1) {
-//						// move to next i if i0 is equal to j0
-//						// to avoid comparing i0 to j1
-//						i++;
-//					}
-//				} else {
-//					itemEqualityCheck.add(false);
-//				}
-//			}
-//		}
-//
-//		boolean areItemsEqual = true;
-//		for (Boolean bool : itemEqualityCheck) {
-//			if (!bool) {
-//				areItemsEqual = false;
-//				break;
-//			}
-//		}
-//
-//		return Objects.equals(totalQuantity, cart.totalQuantity) &&
-//				Objects.equals(totalCost, cart.totalCost) &&
-//				Objects.equals(totalCostOffers, cart.totalCostOffers) &&
-//				areItemsEqual;
-//	}
-
 	public static class Builder {
 
 		private final Cart cart;
@@ -124,11 +79,17 @@ public class Cart {
 			return this;
 		}
 
-		public Builder withCartItems(List<CartItem> cartItems) {
+		public Builder withCartItems(List<CartItemDTO> cartItems) {
 			cart.cartItems = new ArrayList<>();
-			for (CartItem item : cartItems) {
-				item.setId(null);
-				cart.addItem(item);
+			for (CartItemDTO item : cartItems) {
+				cart.addItem(CartItem.builder()
+						.withDescription(item.description())
+						.withPrice(item.price())
+						.withQuantity(item.quantity())
+						.withFormats(item.formats())
+						.withType(item.type())
+						.withName(item.name())
+						.build());
 			}
 			return this;
 		}

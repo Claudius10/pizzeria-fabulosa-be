@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
 
 @Slf4j
 public class CookielessRequestFilter extends OncePerRequestFilter {
@@ -31,7 +31,7 @@ public class CookielessRequestFilter extends OncePerRequestFilter {
 
 				if (null != request.getCookies()) {
 					boolean containsAuthCookie = Arrays.stream(request.getCookies()).anyMatch(cookie ->
-							cookie.getName().equals(AUTH_TOKEN_NAME));
+							cookie.getName().equals(ACCESS_TOKEN));
 
 					if (containsAuthCookie) {
 						filterChain.doFilter(request, response);

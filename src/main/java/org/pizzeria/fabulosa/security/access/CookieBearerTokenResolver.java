@@ -6,14 +6,14 @@ import org.springframework.security.oauth2.server.resource.web.BearerTokenResolv
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
-import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
 
 @Component
 public final class CookieBearerTokenResolver implements BearerTokenResolver {
 
 	@Override
 	public String resolve(HttpServletRequest request) {
-		Cookie accessToken = WebUtils.getCookie(request, AUTH_TOKEN_NAME);
+		Cookie accessToken = WebUtils.getCookie(request, ACCESS_TOKEN);
 		if (accessToken != null) {
 			return accessToken.getValue();
 		}

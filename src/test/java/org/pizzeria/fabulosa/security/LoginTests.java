@@ -7,7 +7,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.common.service.role.RoleService;
 import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.user.dto.RegisterDTO;
+import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.service.user.UserService;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.pizzeria.fabulosa.web.util.constant.SecurityResponses;
@@ -27,9 +27,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
-import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
-import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ID_TOKEN_NAME;
+import static org.pizzeria.fabulosa.helpers.TestUtils.getResponse;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ID_TOKEN;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -75,20 +75,15 @@ class LoginTests {
 		// Act
 
 		// post api call to log in
-		MockHttpServletResponse response = mockMvc.perform(post(
-						ApiRoutes.BASE
-								+ ApiRoutes.V1
-								+ ApiRoutes.AUTH_BASE
-								+ ApiRoutes.AUTH_LOGIN
-								+ "?username=test@gmail.com&password=password"))
+		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.AUTH_LOGIN + "?username=test@gmail.com&password=password"))
 				.andReturn().getResponse();
 
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(response.getCookies()).isNotEmpty();
-		assertThat(response.getCookie(AUTH_TOKEN_NAME)).isNotNull();
-		assertThat(response.getCookie(ID_TOKEN_NAME)).isNotNull();
+		assertThat(response.getCookie(ACCESS_TOKEN)).isNotNull();
+		assertThat(response.getCookie(ID_TOKEN)).isNotNull();
 	}
 
 	@Test
@@ -96,12 +91,7 @@ class LoginTests {
 		// Act
 
 		// post api call to log in
-		MockHttpServletResponse response = mockMvc.perform(post(
-						ApiRoutes.BASE
-								+ ApiRoutes.V1
-								+ ApiRoutes.AUTH_BASE
-								+ ApiRoutes.AUTH_LOGIN +
-								"?username=void@email.com&password=randomPassword"))
+		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.AUTH_LOGIN + "?username=void@email.com&password=randomPassword"))
 				.andReturn().getResponse();
 
 		// Assert
@@ -118,12 +108,7 @@ class LoginTests {
 		// Act
 
 		// post api call to log in
-		MockHttpServletResponse response = mockMvc.perform(post(
-						ApiRoutes.BASE
-								+ ApiRoutes.V1
-								+ ApiRoutes.AUTH_BASE
-								+ ApiRoutes.AUTH_LOGIN +
-								"?username=test@gmail.com&password=wrong_password"))
+		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.AUTH_LOGIN + "?username=test@gmail.com&password=wrong_password"))
 				.andReturn().getResponse();
 
 		// Assert
@@ -140,12 +125,7 @@ class LoginTests {
 		// Act
 
 		// post api call to log in
-		MockHttpServletResponse response = mockMvc.perform(post(
-						ApiRoutes.BASE
-								+ ApiRoutes.V1
-								+ ApiRoutes.AUTH_BASE
-								+ ApiRoutes.AUTH_LOGIN +
-								"?username=nottest@gmail.com&password=password"))
+		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.AUTH_LOGIN + "?username=nottest@gmail.com&password=password"))
 				.andReturn().getResponse();
 
 		// Assert

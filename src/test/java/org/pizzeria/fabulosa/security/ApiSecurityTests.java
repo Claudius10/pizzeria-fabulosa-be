@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.pizzeria.fabulosa.utils.TestUtils.getResponse;
-import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
+import static org.pizzeria.fabulosa.helpers.TestUtils.getResponse;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -64,15 +64,15 @@ class ApiSecurityTests {
 		// Act
 
 		// post api call to log-out
-		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.AUTH_BASE + ApiRoutes.AUTH_LOGOUT)
-						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, validAccessToken, 30, true, false)))
+		MockHttpServletResponse response = mockMvc.perform(post(ApiRoutes.AUTH_LOGOUT)
+						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, validAccessToken, 30, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(200);
-		assertThat(Objects.requireNonNull(response.getCookie(AUTH_TOKEN_NAME)).getMaxAge()).isZero();
-		assertThat(Objects.requireNonNull(response.getCookie(AUTH_TOKEN_NAME)).getValue()).isEmpty();
+		assertThat(Objects.requireNonNull(response.getCookie(ACCESS_TOKEN)).getMaxAge()).isZero();
+		assertThat(Objects.requireNonNull(response.getCookie(ACCESS_TOKEN)).getValue()).isEmpty();
 	}
 
 	@Test
@@ -90,7 +90,7 @@ class ApiSecurityTests {
 
 		// post api call to check csrf protection
 		MockHttpServletResponse response = mockMvc.perform(get("/api/tests")
-						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, validAccessToken, 30, true, false)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -113,7 +113,7 @@ class ApiSecurityTests {
 
 		// post api call to check csrf protection
 		MockHttpServletResponse response = mockMvc.perform(get("/api/tests/admin")
-						.cookie(SecurityCookies.prepareCookie(AUTH_TOKEN_NAME, validAccessToken, 30, true, false)))
+						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, validAccessToken, 30, true, false)))
 
 
 				.andReturn().getResponse();

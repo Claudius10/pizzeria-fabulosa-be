@@ -34,6 +34,10 @@ public final class ValidationResponses {
 
 	public static final String CART_MAX_PRODUCTS_QUANTITY_ERROR = "InvalidCartMaxProductsQuantity";
 
+	public static final String TOTAL_COST_ERROR = "InvalidTotalCostLength";
+
+	public static final String TOTAL_COST_AFTER_OFFERS_ERROR = "InvalidTotalCostAfterOffersLength";
+
 	public static final String CART_ITEM_MAX_QUANTITY_ERROR = "InvalidCartItemMaxQuantity";
 
 	private ValidationResponses() {

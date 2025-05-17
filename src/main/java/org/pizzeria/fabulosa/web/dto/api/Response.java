@@ -16,6 +16,7 @@ public class Response {
 	@Builder.Default
 	private final String timeStamp = LocalDateTime.now().toString();
 
+	@Builder.Default
 	private Boolean isError = false;
 
 	private Object payload;

@@ -1,27 +1,26 @@
 package org.pizzeria.fabulosa.web.controllers.user;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.pizzeria.fabulosa.common.entity.dto.*;
 import org.pizzeria.fabulosa.security.utils.UserSecurity;
+import org.pizzeria.fabulosa.web.controllers.user.swagger.UserOrdersControllerSwagger;
 import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.order.dto.*;
-import org.pizzeria.fabulosa.web.dto.order.projection.OrderSummaryProjection;
-import org.pizzeria.fabulosa.web.order.validation.OrderCartValidator;
-import org.pizzeria.fabulosa.web.order.validation.OrderDetailsValidator;
-import org.pizzeria.fabulosa.web.order.validation.OrderValidationResult;
-import org.pizzeria.fabulosa.web.order.validation.OrderValidator;
+import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.UserOrderDTO;
 import org.pizzeria.fabulosa.web.service.order.OrderService;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
+import org.pizzeria.fabulosa.web.validation.order.CompositeValidator;
+import org.pizzeria.fabulosa.web.validation.order.OrderValidatorInput;
+import org.pizzeria.fabulosa.web.validation.order.ValidationResult;
+import org.pizzeria.fabulosa.web.validation.order.Validator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,33 +29,26 @@ import static org.pizzeria.fabulosa.web.util.ResponseUtils.error;
 
 @RestController
 @RequestMapping(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.ORDER_BASE)
-@Tag(name = "User orders", description = "User order CRUD")
 @RequiredArgsConstructor
-@Validated
-public class UserOrdersController {
+public class UserOrdersController implements UserOrdersControllerSwagger {
 
 	private final OrderService orderService;
 
+	private final CompositeValidator<OrderValidatorInput> newOrderValidator;
+
+	private final Validator<LocalDateTime> deleteOrderValidator;
+
 	@PostMapping
-	@Operation(summary = "Create user order")
-	public ResponseEntity<Response> createUserOrder(
-			@RequestBody @Valid NewUserOrderDTO order,
-			@Parameter(description = "Id of the user") @PathVariable Long userId,
-			HttpServletRequest request
-	) {
+	public ResponseEntity<Response> createUserOrder(@RequestBody @Valid NewUserOrderDTO order, @PathVariable Long userId, HttpServletRequest request) {
 
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
 		}
 
-		OrderValidationResult cart = OrderCartValidator.validate(order.cart());
-		if (!cart.isValid()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), cart.getMessage(), request.getPathInfo()));
-		}
+		Optional<ValidationResult> validate = newOrderValidator.validate(new OrderValidatorInput(order.cart(), order.orderDetails()));
 
-		OrderValidationResult orderDetails = OrderDetailsValidator.validate(order.cart(), order.orderDetails());
-		if (!orderDetails.isValid()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), orderDetails.getMessage(), request.getPathInfo()));
+		if (validate.isPresent()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), validate.get().message(), request.getPathInfo()));
 		}
 
 		CreatedOrderDTO createdOrder = orderService.createUserOrder(userId, order);
@@ -65,13 +57,15 @@ public class UserOrdersController {
 
 	@GetMapping(ApiRoutes.ORDER_ID)
 	public ResponseEntity<Response> findUserOrderDTO(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
+
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
 		}
 
-		Optional<OrderDTO> projectionById = orderService.findOrderDTOById(orderId);
+		Optional<UserOrderDTO> order = orderService.findOrderDTOById(orderId);
 
-		return projectionById.map(orderDTO -> ResponseEntity.ok().body(Response.builder().payload(orderDTO).build())).orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+		return order.map(orderDTO -> ResponseEntity.ok().body(Response.builder().payload(orderDTO).build()))
+				.orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
 	}
 
 	@DeleteMapping(ApiRoutes.ORDER_ID)
@@ -86,9 +80,9 @@ public class UserOrdersController {
 		if (createdOnDTOById.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} else {
-			OrderValidationResult result = OrderValidator.validateDelete(createdOnDTOById.get().createdOn());
-			if (!result.isValid()) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), result.getMessage(), request.getPathInfo()));
+			ValidationResult result = deleteOrderValidator.validate(createdOnDTOById.get().createdOn());
+			if (!result.valid()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), result.message(), request.getPathInfo()));
 			}
 		}
 
@@ -102,11 +96,16 @@ public class UserOrdersController {
 			@RequestParam(name = ApiRoutes.PAGE_SIZE) Integer pageSize,
 			@PathVariable Long userId,
 			HttpServletRequest request) {
+
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
 		}
 
 		Page<OrderSummaryProjection> orderSummaryPage = orderService.findUserOrderSummary(userId, pageSize, pageNumber);
+
+		if (orderSummaryPage.getTotalElements() == 0) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		}
 
 		List<OrderSummaryDTO> orderSummaryList = orderSummaryPage.getContent().stream().map(orderSummary -> new OrderSummaryDTO(
 				orderSummary.getId(),

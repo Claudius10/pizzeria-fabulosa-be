@@ -5,24 +5,25 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.security.utils.UserSecurity;
+import org.pizzeria.fabulosa.web.controllers.user.swagger.UserAddressControllerSwagger;
 import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.order.AddressDTO;
 import org.pizzeria.fabulosa.web.service.user.UserAddressService;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.pizzeria.fabulosa.web.util.ResponseUtils.error;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.USER_ID + ApiRoutes.USER_ADDRESS)
-@Validated
-public class UserAddressController {
+public class UserAddressController implements UserAddressControllerSwagger {
 
 	private final UserAddressService userAddressService;
 
@@ -38,16 +39,23 @@ public class UserAddressController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		}
 
-		return ResponseEntity.ok(Response.builder().payload(userAddressList).build());
+		Set<AddressDTO> addresses = userAddressList.stream().map(address -> new AddressDTO(
+						address.getId(),
+						address.getStreet(),
+						address.getNumber(),
+						address.getDetails()))
+				.collect(Collectors.toSet());
+
+		return ResponseEntity.ok(Response.builder().payload(addresses).build());
 	}
 
 	@PostMapping
-	public ResponseEntity<Response> createUserAddress(@RequestBody @Valid Address address, @PathVariable Long userId, HttpServletRequest request) {
+	public ResponseEntity<Response> createUserAddress(@RequestBody @Valid AddressDTO address, @PathVariable Long userId, HttpServletRequest request) {
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
 		}
 
-		boolean ok = userAddressService.addUserAddress(userId, address);
+		boolean ok = userAddressService.addUserAddress(userId, Address.fromDTOBuilder().build(address));
 
 		if (!ok) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), ApiResponses.ADDRESS_MAX_SIZE, request.getPathInfo()));
@@ -65,7 +73,7 @@ public class UserAddressController {
 		boolean result = userAddressService.removeUserAddress(userId, addressId);
 
 		if (!result) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), ApiResponses.ADDRESS_NOT_FOUND, request.getPathInfo()));
 		}
 
 		return ResponseEntity.ok().build();

@@ -7,8 +7,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 
 import static org.pizzeria.fabulosa.common.util.constant.Constants.SLASH;
-import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
-import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ID_TOKEN_NAME;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ID_TOKEN;
 
 public final class SecurityCookies {
 
@@ -60,7 +60,7 @@ public final class SecurityCookies {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null)
 			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals(AUTH_TOKEN_NAME) || cookie.getName().equals(ID_TOKEN_NAME)) {
+				if (cookie.getName().equals(ACCESS_TOKEN) || cookie.getName().equals(ID_TOKEN)) {
 					cookie.setSecure(false);
 					cookie.setDomain(domain);
 					cookie.setValue("");

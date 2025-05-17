@@ -15,6 +15,12 @@ import java.util.UUID;
 
 public final class UserSecurity {
 
+	/**
+	 * Checks if the provided user id as a PathVariable matches the stored user id in the Access Token.
+	 *
+	 * @param id to check
+	 * @return true if matched, false otherwise
+	 */
 	public static boolean valid(Long id) {
 		if (id == null) {
 			return false;

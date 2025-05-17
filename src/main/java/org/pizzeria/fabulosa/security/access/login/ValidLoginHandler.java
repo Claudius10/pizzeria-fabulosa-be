@@ -12,8 +12,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import static org.pizzeria.fabulosa.common.util.constant.Constants.ONE_DAY_MS;
-import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.AUTH_TOKEN_NAME;
-import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ID_TOKEN_NAME;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ID_TOKEN;
 
 @Component
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class ValidLoginHandler implements AuthenticationSuccessHandler {
 		// auth token
 		SecurityCookies.serveCookies(
 				response,
-				AUTH_TOKEN_NAME,
+				ACCESS_TOKEN,
 				accessToken,
 				ONE_DAY_MS,
 				cookies.getHttpOnly(),
@@ -46,7 +46,7 @@ public class ValidLoginHandler implements AuthenticationSuccessHandler {
 		// id token
 		SecurityCookies.serveCookies(
 				response,
-				ID_TOKEN_NAME,
+				ID_TOKEN,
 				idToken,
 				ONE_DAY_MS,
 				false,
