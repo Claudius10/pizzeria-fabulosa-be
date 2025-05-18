@@ -8,14 +8,12 @@ import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
 import org.pizzeria.fabulosa.common.dao.order.OrderRepository;
 import org.pizzeria.fabulosa.common.dao.user.UserRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
-import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.common.entity.dto.OrderDTO;
-import org.pizzeria.fabulosa.web.dto.order.OrderSummaryListDTO;
 import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.common.entity.user.User;
 import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.order.*;
 import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
@@ -103,6 +101,7 @@ class UserOrdersControllerTests {
 				18.30D,
 				0D,
 				List.of(new CartItemDTO(
+						null,
 						"pizza",
 						13.30D,
 						1,
@@ -189,7 +188,7 @@ class UserOrdersControllerTests {
 				.andReturn().getResponse();
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 	}
 
@@ -213,6 +212,7 @@ class UserOrdersControllerTests {
 				18.30D,
 				0D,
 				List.of(new CartItemDTO(
+						null,
 						"pizza",
 						13.30D,
 						1,
@@ -373,7 +373,7 @@ class UserOrdersControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
 	}
 
@@ -513,7 +513,7 @@ class UserOrdersControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo("UsernameNotFoundException");
 	}
 
@@ -539,6 +539,7 @@ class UserOrdersControllerTests {
 				18.30D,
 				0D,
 				List.of(new CartItemDTO(
+						null,
 						"pizza",
 						13.30D,
 						1,

@@ -9,7 +9,7 @@ import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.common.entity.user.User;
 import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
@@ -135,7 +135,7 @@ class UserControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(ApiResponses.DUMMY_ACCOUNT_ERROR);
 	}
 
@@ -165,7 +165,7 @@ class UserControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
 	}
 

@@ -3,7 +3,7 @@ package org.pizzeria.fabulosa.web.controller.open;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.pizzeria.fabulosa.common.dao.user.UserRepository;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
@@ -111,7 +111,7 @@ class AnonControllerRegisterTests {
 
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-		Response responseObj = objectMapper.readValue(response.getContentAsString(StandardCharsets.UTF_8), Response.class);
+		ResponseDTO responseObj = objectMapper.readValue(response.getContentAsString(StandardCharsets.UTF_8), ResponseDTO.class);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(ApiResponses.USER_EMAIL_ALREADY_EXISTS);
 	}
 

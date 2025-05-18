@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -28,17 +28,17 @@ public interface UserControllerSwagger {
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
 			description = "Validation failed or invalid request",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	@ApiResponse(
 			responseCode = UNAUTHORIZED,
 			description = "User authentification failed",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred or attempted to delete dummy account",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	ResponseEntity<?> deleteUser(
 			@RequestParam @Parameter(required = true, description = "Id of the user account to delete") Long id,

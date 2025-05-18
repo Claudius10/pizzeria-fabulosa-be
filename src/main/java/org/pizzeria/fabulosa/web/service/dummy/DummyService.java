@@ -130,6 +130,7 @@ public class DummyService {
 		);
 
 		CartItemDTO cartItemDTO = new CartItemDTO(
+				null,
 				"pizza",
 				13.30D,
 				1,

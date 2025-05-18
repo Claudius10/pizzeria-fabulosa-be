@@ -6,7 +6,6 @@ import org.pizzeria.fabulosa.common.dao.order.OrderRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.common.entity.cart.Cart;
 import org.pizzeria.fabulosa.common.entity.dto.CreatedOnDTO;
-import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.common.entity.dto.OrderDTO;
 import org.pizzeria.fabulosa.common.entity.dto.OrderSummaryProjection;
 import org.pizzeria.fabulosa.common.entity.order.Order;
@@ -72,6 +71,7 @@ public class OrderServiceImpl implements OrderService {
 						order.cart().getTotalCost(),
 						order.cart().getTotalCostOffers(),
 						order.cart().getCartItems().stream().map(cartItem -> new CartItemDTO(
+										cartItem.getId(),
 										cartItem.getType(),
 										cartItem.getPrice(),
 										cartItem.getQuantity(),

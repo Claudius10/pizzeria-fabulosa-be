@@ -6,7 +6,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -121,7 +121,7 @@ class ApiSecurityTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().isFatal()).isTrue();
 	}
 
@@ -136,7 +136,7 @@ class ApiSecurityTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().isFatal()).isTrue();
 	}
 

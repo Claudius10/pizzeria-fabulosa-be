@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.order.NewAnonOrderDTO;
 import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +27,12 @@ public interface AnonControllerSwagger {
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
 			description = "Validation failed or invalid request",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	ResponseEntity<?> registerAnonUser(
 			@RequestBody(
@@ -53,12 +53,12 @@ public interface AnonControllerSwagger {
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
 			description = "Validation failed or invalid request",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	ResponseEntity<?> createAnonOrder(
 			@RequestBody(

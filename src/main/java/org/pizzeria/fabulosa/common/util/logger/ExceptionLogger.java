@@ -1,10 +1,10 @@
 package org.pizzeria.fabulosa.common.util.logger;
 
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 
 public final class ExceptionLogger {
 
-	public static void log(Exception e, org.slf4j.Logger log, Response response) {
+	public static void log(Exception e, org.slf4j.Logger log, ResponseDTO response) {
 		log.warn("----- -- Exception caught ---- -- ");
 		log.warn("----- --");
 		log.warn("----- -- ExceptionLogger START ---- -- ");

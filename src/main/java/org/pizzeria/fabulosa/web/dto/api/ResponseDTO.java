@@ -9,7 +9,7 @@ import org.pizzeria.fabulosa.common.entity.error.APIError;
 @Setter
 @AllArgsConstructor
 @ToString
-public class Response {
+public class ResponseDTO {
 
 	@NotNull
 	private final APIError apiError;

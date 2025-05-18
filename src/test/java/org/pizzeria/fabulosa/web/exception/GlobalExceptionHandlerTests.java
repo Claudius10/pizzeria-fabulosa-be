@@ -8,7 +8,7 @@ import org.pizzeria.fabulosa.common.entity.error.APIError;
 import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -84,7 +84,7 @@ public class GlobalExceptionHandlerTests {
 		assertThat(error.get().isLogged()).isEqualTo(true);
 		assertThat(error.get().isFatal()).isEqualTo(true);
 
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(IllegalArgumentException.class.getSimpleName());
 		assertThat(responseObj.getApiError().getMessage()).isEqualTo("TestError");
 		assertThat(responseObj.getApiError().isLogged()).isEqualTo(true);

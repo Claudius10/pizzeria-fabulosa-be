@@ -8,7 +8,7 @@ import org.pizzeria.fabulosa.common.entity.error.APIError;
 import org.pizzeria.fabulosa.common.util.TimeUtils;
 import org.pizzeria.fabulosa.common.util.logger.ExceptionLogger;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.property.SecurityProperties;
 import org.pizzeria.fabulosa.web.util.ServerUtils;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		APIError savedError = errorRepository.save(error);
 		error.setId(savedError.getId());
 
-		Response response = Response.builder().apiError(error).build();
+		ResponseDTO response = ResponseDTO.builder().apiError(error).build();
 		return new ResponseEntity<>(response, headers, HttpStatus.BAD_REQUEST);
 	}
 
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 					fieldError.getRejectedValue()));
 		});
 
-		Response response = Response.builder()
+		ResponseDTO response = ResponseDTO.builder()
 				.apiError(APIError.builder()
 						.id(UUID.randomUUID().getMostSignificantBits())
 						.cause(exSimpleName)
@@ -107,7 +107,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({AuthenticationException.class, AccessDeniedException.class})
-	protected ResponseEntity<Response> securityException(RuntimeException ex, WebRequest request) {
+	protected ResponseEntity<ResponseDTO> securityException(RuntimeException ex, WebRequest request) {
 		String path = extractPath(request);
 
 		// first handle all the bots trying to access random endpoints
@@ -116,7 +116,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 
-		Response response;
+		ResponseDTO response;
 
 		switch (ex) {
 			case AuthenticationException authenticationException -> response = handleAuthenticationException(authenticationException, request, path);
@@ -129,14 +129,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<Response> unknownException(Exception ex, WebRequest request) {
+	protected ResponseEntity<ResponseDTO> unknownException(Exception ex, WebRequest request) {
 		String path = extractPath(request);
-		Response response = handleUnknownError(ex, "unknownException", path);
+		ResponseDTO response = handleUnknownError(ex, "unknownException", path);
 		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
 
-	private Response handleAccessDenied(AccessDeniedException ex, String path) {
+	private ResponseDTO handleAccessDenied(AccessDeniedException ex, String path) {
 
 		String exSimpleName = ex.getClass().getSimpleName();
 
@@ -150,10 +150,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.fatal(true)
 				.build();
 
-		return Response.builder().apiError(error).build();
+		return ResponseDTO.builder().apiError(error).build();
 	}
 
-	private Response handleAuthenticationException(AuthenticationException ex, WebRequest request, String path) {
+	private ResponseDTO handleAuthenticationException(AuthenticationException ex, WebRequest request, String path) {
 		String exSimpleName = ex.getClass().getSimpleName();
 		String errorMessage;
 		boolean fatal = false;
@@ -205,10 +205,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 					((ServletWebRequest) request).getResponse(), securityProperties.getCookies().getDomain());
 		}
 
-		return Response.builder().apiError(error).build();
+		return ResponseDTO.builder().apiError(error).build();
 	}
 
-	private Response handleUnknownError(Exception ex, String details, String path) {
+	private ResponseDTO handleUnknownError(Exception ex, String details, String path) {
 
 		APIError error = APIError.builder()
 				.cause(ex.getClass().getSimpleName())
@@ -223,7 +223,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		APIError savedError = errorRepository.save(error);
 		error.setId(savedError.getId());
 
-		return Response.builder().apiError(error).build();
+		return ResponseDTO.builder().apiError(error).build();
 	}
 
 	private String extractPath(WebRequest request) {

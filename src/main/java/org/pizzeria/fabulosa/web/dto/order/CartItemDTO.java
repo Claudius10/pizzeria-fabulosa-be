@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public record CartItemDTO(
+		
+		Long id,
 
 		@NotBlank
 		String type,

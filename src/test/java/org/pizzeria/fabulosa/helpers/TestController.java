@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa.helpers;
 
 import lombok.AllArgsConstructor;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,13 @@ class TestController {
 	private final OrderServiceImplTest orderServiceImplTest;
 
 	@GetMapping()
-	ResponseEntity<Response> testGetEndpoint() {
-		return ResponseEntity.status(HttpStatus.OK).body(Response.builder().build());
+	ResponseEntity<ResponseDTO> testGetEndpoint() {
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseDTO.builder().build());
 	}
 
 	@PostMapping()
-	ResponseEntity<Response> testPostEndpoint() {
-		return ResponseEntity.status(HttpStatus.OK).body(Response.builder().build());
+	ResponseEntity<ResponseDTO> testPostEndpoint() {
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseDTO.builder().build());
 	}
 
 	@PostMapping("/error")
@@ -32,8 +32,8 @@ class TestController {
 	}
 
 	@GetMapping("/admin")
-	ResponseEntity<Response> adminTestEndPoint() {
-		return ResponseEntity.status(HttpStatus.OK).body(Response.builder().build());
+	ResponseEntity<ResponseDTO> adminTestEndPoint() {
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseDTO.builder().build());
 	}
 
 	@PostMapping(path = "/user/{userId}/order", params = "minusMin")

@@ -1,6 +1,5 @@
 package org.pizzeria.fabulosa.web.util;
 
-import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.common.entity.order.Order;
 import org.pizzeria.fabulosa.web.dto.order.*;
 
@@ -48,6 +47,7 @@ public final class OrderUtils {
 						order.getCart().getTotalCostOffers(),
 						order.getCart().getCartItems().stream().map(cartItem ->
 										new CartItemDTO(
+												cartItem.getId(),
 												cartItem.getType(),
 												cartItem.getPrice(),
 												cartItem.getQuantity(),

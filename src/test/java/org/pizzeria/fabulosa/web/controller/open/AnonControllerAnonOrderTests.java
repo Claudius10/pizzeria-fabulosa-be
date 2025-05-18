@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
-import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.order.*;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
@@ -407,7 +406,7 @@ class AnonControllerAnonOrderTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_DETAILS_BILL);
 	}
 
@@ -469,7 +468,7 @@ class AnonControllerAnonOrderTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-		Response responseObj = getResponse(response, objectMapper);
+		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 	}
 
@@ -483,6 +482,7 @@ class AnonControllerAnonOrderTests {
 				14.75D,
 				0D,
 				List.of(new CartItemDTO(
+						null,
 						"pizza",
 						14.75D,
 						1,

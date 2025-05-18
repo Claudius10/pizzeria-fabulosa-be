@@ -48,7 +48,7 @@ class OrderValidatorImplTests {
 				1,
 				5D,
 				0D,
-				List.of(new CartItemDTO(null, 5D, 1, null, null, null)));
+				List.of(new CartItemDTO(null, "pizza", 5D, 1, null, null, null)));
 
 		// Act
 
@@ -72,7 +72,7 @@ class OrderValidatorImplTests {
 				1,
 				50D,
 				0D,
-				List.of(new CartItemDTO(null, 50D, 1, null, null, null)));
+				List.of(new CartItemDTO(null, "pizza", 50D, 1, null, null, null)));
 
 		Double billToChange = 10D;
 		OrderDetailsDTO orderDetails = new OrderDetailsDTO("ASAP", "Cash", billToChange, null, false, 0D);
@@ -98,7 +98,7 @@ class OrderValidatorImplTests {
 				1,
 				50D,
 				0D,
-				List.of(new CartItemDTO(null, 50D, 1, null, null, null)));
+				List.of(new CartItemDTO(null, "pizza", 50D, 1, null, null, null)));
 
 		Double billToChange = 100D;
 		OrderDetailsDTO orderDetails = new OrderDetailsDTO("ASAP", "Cash", billToChange, null, false, 0D);

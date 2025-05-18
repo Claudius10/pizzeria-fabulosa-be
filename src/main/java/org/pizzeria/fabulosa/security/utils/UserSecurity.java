@@ -3,7 +3,7 @@ package org.pizzeria.fabulosa.security.utils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.pizzeria.fabulosa.common.entity.error.APIError;
 import org.pizzeria.fabulosa.common.util.TimeUtils;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.util.constant.SecurityResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +34,9 @@ public final class UserSecurity {
 		return String.valueOf(id).equals(validatedAccessToken.getClaimAsString("userId"));
 	}
 
-	public static ResponseEntity<Response> deny(HttpServletRequest request) {
+	public static ResponseEntity<ResponseDTO> deny(HttpServletRequest request) {
 
-		Response response = Response.builder()
+		ResponseDTO response = ResponseDTO.builder()
 				.apiError(APIError.builder()
 						.id(UUID.randomUUID().getMostSignificantBits())
 						.createdOn(TimeUtils.getNowAccountingDST())

@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.pizzeria.fabulosa.web.dto.api.Response;
+import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.resource.OfferListDTO;
 import org.pizzeria.fabulosa.web.dto.resource.ProductListDTO;
 import org.pizzeria.fabulosa.web.dto.resource.StoreListDTO;
@@ -30,12 +30,12 @@ public interface ResourceControllerSwagger {
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
 			description = "Validation failed or invalid request",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	ResponseEntity<ProductListDTO> findAllProductsByType(
 			@Parameter(required = true, description = "Type of the product") @RequestParam String type,
@@ -52,7 +52,7 @@ public interface ResourceControllerSwagger {
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	ResponseEntity<StoreListDTO> findAllStores();
 
@@ -66,7 +66,7 @@ public interface ResourceControllerSwagger {
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	ResponseEntity<OfferListDTO> findAllOffers();
 
@@ -80,7 +80,7 @@ public interface ResourceControllerSwagger {
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
 	ResponseEntity<LocalDateTime> getNowAccountingDST();
 }
