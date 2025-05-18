@@ -1,7 +1,8 @@
 package org.pizzeria.fabulosa.security.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.pizzeria.fabulosa.common.entity.error.Error;
+import org.pizzeria.fabulosa.common.entity.error.APIError;
+import org.pizzeria.fabulosa.common.util.TimeUtils;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.util.constant.SecurityResponses;
 import org.springframework.http.HttpStatus;
@@ -36,9 +37,9 @@ public final class UserSecurity {
 	public static ResponseEntity<Response> deny(HttpServletRequest request) {
 
 		Response response = Response.builder()
-				.isError(true)
-				.error(Error.builder()
+				.apiError(APIError.builder()
 						.id(UUID.randomUUID().getMostSignificantBits())
+						.createdOn(TimeUtils.getNowAccountingDST())
 						.cause(SecurityResponses.USER_ID_NO_MATCH)
 						.origin(UserSecurity.class.getSimpleName())
 						.path(request.getPathInfo())

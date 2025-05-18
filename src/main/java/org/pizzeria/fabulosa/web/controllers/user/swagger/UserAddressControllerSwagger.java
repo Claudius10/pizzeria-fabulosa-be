@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.pizzeria.fabulosa.common.entity.error.Error;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.order.AddressDTO;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +18,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import static org.pizzeria.fabulosa.web.util.constant.ApiResponses.*;
 
 @Tag(name = "User Address API", description = "User address related operations")
-@SecurityRequirement(name = "Bearer Authentication")
+@SecurityRequirement(name = "Bearer_Authentication")
 public interface UserAddressControllerSwagger {
 
 	@Operation(operationId = "findUserAddressListById", summary = "Find user's address list")
 	@ApiResponse(
 			responseCode = OK,
-			description = "Returns user addresses JSON array as payload of the Response object",
+			description = "Returns user addresses JSON array",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = AddressDTO[].class))
 	)
 	@ApiResponse(
@@ -35,20 +34,20 @@ public interface UserAddressControllerSwagger {
 	)
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
-			description = "Validation failed or invalid request: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "Validation failed or invalid request",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = UNAUTHORIZED,
-			description = "User authentification failed: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "User authentification failed",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
-	ResponseEntity<Response> findUserAddressListById(
+	ResponseEntity<?> findUserAddressListById(
 			@Parameter(required = true, description = "Id of the user for which to find the address list") @PathVariable Long userId,
 			HttpServletRequest request);
 
@@ -60,20 +59,20 @@ public interface UserAddressControllerSwagger {
 	)
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
-			description = "Validation failed or user address limit of 3 has been reached: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "Validation failed or user address limit of 3 has been reached",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = UNAUTHORIZED,
-			description = "User authentification failed: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "User authentification failed",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
-	ResponseEntity<Response> createUserAddress(
+	ResponseEntity<?> createUserAddress(
 			@RequestBody(
 					required = true,
 					content = @Content(
@@ -92,20 +91,20 @@ public interface UserAddressControllerSwagger {
 	)
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
-			description = "Validation failed or address to delete is not part of user address list: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "Validation failed or address to delete is not part of user address list",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = UNAUTHORIZED,
-			description = "User authentification failed: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "User authentification failed",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
-	ResponseEntity<Response> deleteUserAddress(
+	ResponseEntity<?> deleteUserAddress(
 			@Parameter(required = true, description = "Id of the address to delete") @PathVariable Long addressId,
 			@Parameter(required = true, description = "Id of the user the address belongs to") @PathVariable Long userId,
 			HttpServletRequest request);

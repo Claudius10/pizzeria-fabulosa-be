@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
-import org.pizzeria.fabulosa.common.entity.dto.CreatedOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.order.*;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
@@ -78,8 +78,7 @@ class AnonControllerAnonOrderTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-		Response responseObj = getResponse(response, objectMapper);
-		CreatedOrderDTO order = objectMapper.convertValue(responseObj.getPayload(), CreatedOrderDTO.class);
+		CreatedOrderDTO order = objectMapper.readValue(response.getContentAsString(), CreatedOrderDTO.class);
 		assertThat(order.customer().name()).isEqualTo("customerName");
 	}
 
@@ -121,8 +120,7 @@ class AnonControllerAnonOrderTests {
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 		long addressCount = addressRepository.count();
 		assertThat(addressCount).isEqualTo(1);
-		Response responseObj = getResponse(response, objectMapper);
-		CreatedOrderDTO order = objectMapper.convertValue(responseObj.getPayload(), CreatedOrderDTO.class);
+		CreatedOrderDTO order = objectMapper.readValue(response.getContentAsString(), CreatedOrderDTO.class);
 		assertThat(order.customer().name()).isEqualTo("customerName");
 	}
 
@@ -410,8 +408,7 @@ class AnonControllerAnonOrderTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(ValidationResponses.ORDER_DETAILS_BILL);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_DETAILS_BILL);
 	}
 
 	@Test
@@ -473,8 +470,7 @@ class AnonControllerAnonOrderTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 	}
 
 	NewAnonOrderDTO anonOrderStub(String customerName, int customerNumber, String customerEmail, String street,

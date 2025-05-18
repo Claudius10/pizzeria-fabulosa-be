@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.security.utils.UserSecurity;
 import org.pizzeria.fabulosa.web.controllers.user.swagger.UserControllerSwagger;
-import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.property.SecurityProperties;
 import org.pizzeria.fabulosa.web.service.user.UserService;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
@@ -38,7 +37,7 @@ public class UserController implements UserControllerSwagger {
 	private final AuthenticationManager authenticationManager;
 
 	@DeleteMapping
-	public ResponseEntity<Response> deleteUser(
+	public ResponseEntity<?> deleteUser(
 			@RequestParam Long id,
 			@RequestParam String password,
 			HttpServletRequest request,

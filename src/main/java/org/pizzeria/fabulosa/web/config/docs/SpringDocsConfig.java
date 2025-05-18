@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @SecurityScheme(
 		type = SecuritySchemeType.HTTP,
 		in = SecuritySchemeIn.COOKIE,
-		name = "Bearer Authentication",
+		name = "Bearer_Authentication",
 		scheme = "bearer",
 		bearerFormat = "JWT",
 		description = """

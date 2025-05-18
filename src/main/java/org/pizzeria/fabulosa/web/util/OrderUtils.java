@@ -1,6 +1,6 @@
 package org.pizzeria.fabulosa.web.util;
 
-import org.pizzeria.fabulosa.common.entity.dto.CreatedOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.common.entity.order.Order;
 import org.pizzeria.fabulosa.web.dto.order.*;
 

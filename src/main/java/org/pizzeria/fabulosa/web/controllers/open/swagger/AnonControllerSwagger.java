@@ -8,8 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.pizzeria.fabulosa.common.entity.dto.CreatedOrderDTO;
-import org.pizzeria.fabulosa.common.entity.error.Error;
+import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.order.NewAnonOrderDTO;
 import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
@@ -27,8 +26,8 @@ public interface AnonControllerSwagger {
 			content = @Content())
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
-			description = "Validation failed or invalid request: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "Validation failed or invalid request",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
@@ -49,19 +48,19 @@ public interface AnonControllerSwagger {
 	@Operation(operationId = "createAnonOrder", summary = "Create order as an anonymous user")
 	@ApiResponse(
 			responseCode = CREATED,
-			description = "Returns created order as payload of Response object.",
+			description = "Returns created order",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = CreatedOrderDTO.class)))
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
-			description = "Validation failed or invalid request: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "Validation failed or invalid request",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
-	ResponseEntity<Response> createAnonOrder(
+	ResponseEntity<?> createAnonOrder(
 			@RequestBody(
 					required = true,
 					content = @Content(mediaType = JSON, schema = @Schema(implementation = NewAnonOrderDTO.class)))

@@ -10,9 +10,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.pizzeria.fabulosa.common.entity.dto.CreatedOrderDTO;
-import org.pizzeria.fabulosa.common.entity.dto.OrderSummaryListDTO;
-import org.pizzeria.fabulosa.common.entity.error.Error;
+import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.OrderSummaryListDTO;
 import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.UserOrderDTO;
@@ -24,31 +23,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static org.pizzeria.fabulosa.web.util.constant.ApiResponses.*;
 
 @Tag(name = "User orders API")
-@SecurityRequirement(name = "Bearer Authentication")
+@SecurityRequirement(name = "Bearer_Authentication")
 public interface UserOrdersControllerSwagger {
 
 	@Operation(operationId = "createUserOrder", summary = "Create user order")
 	@ApiResponse(
 			responseCode = CREATED,
-			description = "Returns created order as payload of Response object",
+			description = "Returns created order",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = CreatedOrderDTO.class))
 	)
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
-			description = "Validation failed or invalid request: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "Validation failed or invalid request",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = UNAUTHORIZED,
-			description = "User authentification failed: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "User authentification failed",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
-	ResponseEntity<Response> createUserOrder(
+	ResponseEntity<?> createUserOrder(
 			@RequestBody(
 					required = true,
 					content = @Content(
@@ -63,7 +62,7 @@ public interface UserOrdersControllerSwagger {
 	@Operation(operationId = "findUserOrderDTO", summary = "Find user order by id")
 	@ApiResponse(
 			responseCode = OK,
-			description = "Returns user order as payload of the Response object",
+			description = "Returns user order",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = UserOrderDTO.class))
 	)
 	@ApiResponse(
@@ -73,20 +72,20 @@ public interface UserOrdersControllerSwagger {
 	)
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
-			description = "Validation failed or invalid request: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "Validation failed or invalid request",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = UNAUTHORIZED,
-			description = "User authentification failed: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "User authentification failed",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
-	ResponseEntity<Response> findUserOrderDTO(
+	ResponseEntity<?> findUserOrderDTO(
 			@Parameter(required = true, description = "Id of the order to find") @PathVariable Long orderId,
 			@Parameter(required = true, description = "Id of the user the order belongs to") @PathVariable Long userId,
 			HttpServletRequest request);
@@ -94,7 +93,7 @@ public interface UserOrdersControllerSwagger {
 	@Operation(operationId = "deleteUserOrderById", summary = "Delete user order by id")
 	@ApiResponse(
 			responseCode = OK,
-			description = "Returns the deleted order's id as payload of the Response object",
+			description = "Returns the deleted order's id",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = Long.class))
 	)
 	@ApiResponse(
@@ -104,20 +103,20 @@ public interface UserOrdersControllerSwagger {
 	)
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
-			description = "Validation failed or invalid request or order delete time-limit passed: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "Validation failed or invalid request or order delete time-limit passed",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = UNAUTHORIZED,
-			description = "User authentification failed: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "User authentification failed",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
-	ResponseEntity<Response> deleteUserOrderById(
+	ResponseEntity<?> deleteUserOrderById(
 			@Parameter(required = true, description = "Id of the order to delete") @PathVariable Long orderId,
 			@Parameter(required = true, description = "Id of the user the order belongs to") @PathVariable Long userId,
 			HttpServletRequest request);
@@ -126,7 +125,7 @@ public interface UserOrdersControllerSwagger {
 	@Operation(operationId = "findUserOrdersSummary", summary = "Returns user orders summary with pagination")
 	@ApiResponse(
 			responseCode = OK,
-			description = "Returns user orders summary as payload of the Response object",
+			description = "Returns user orders summary",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = OrderSummaryListDTO.class))
 	)
 	@ApiResponse(
@@ -136,20 +135,20 @@ public interface UserOrdersControllerSwagger {
 	)
 	@ApiResponse(
 			responseCode = BAD_REQUEST,
-			description = "Validation failed or invalid request: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "Validation failed or invalid request",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = UNAUTHORIZED,
-			description = "User authentification failed: returns Response.Error with details",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = Error.class))
+			description = "User authentification failed",
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
 	@ApiResponse(
 			responseCode = INTERNAL_SERVER_ERROR,
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = JSON, schema = @Schema(implementation = Response.class))
 	)
-	ResponseEntity<Response> findUserOrdersSummary(
+	ResponseEntity<?> findUserOrdersSummary(
 			@Parameter(required = true, description = "Page number starting at 0") @RequestParam(name = ApiRoutes.PAGE_NUMBER) Integer pageNumber,
 			@Parameter(required = true, description = "Page size") @RequestParam(name = ApiRoutes.PAGE_SIZE) Integer pageSize,
 			@Parameter(required = true, description = "Id of the user for which to find the order summary") @PathVariable Long userId,

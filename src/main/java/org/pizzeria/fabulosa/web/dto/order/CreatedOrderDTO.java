@@ -2,17 +2,16 @@ package org.pizzeria.fabulosa.web.dto.order;
 
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
+public record CreatedOrderDTO(
 
-public record UserOrderDTO(
 		@NotNull
 		Long id,
 
 		@NotNull
-		LocalDateTime createdOn,
+		String formattedCreatedOn,
 
 		@NotNull
-		String formattedCreatedOn,
+		CustomerDTO customer,
 
 		@NotNull
 		AddressDTO address,
@@ -21,6 +20,5 @@ public record UserOrderDTO(
 		OrderDetailsDTO orderDetails,
 
 		@NotNull
-		CartDTO cart
-) {
+		CartDTO cart) {
 }

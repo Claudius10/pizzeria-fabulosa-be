@@ -4,7 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pizzeria.fabulosa.common.dao.error.ErrorRepository;
-import org.pizzeria.fabulosa.common.entity.error.Error;
+import org.pizzeria.fabulosa.common.entity.error.APIError;
+import org.pizzeria.fabulosa.common.util.TimeUtils;
 import org.pizzeria.fabulosa.common.util.logger.ExceptionLogger;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.web.dto.api.Response;
@@ -53,19 +54,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		String path = extractPath(request);
 
-		Response response = Response.builder()
-				.isError(true)
-				.error(Error.builder()
-						.id(UUID.randomUUID().getMostSignificantBits())
-						.message("See cause")
-						.cause(body != null ? body.toString() : "unknown")
-						.origin(CLASS_NAME_SHORT)
-						.path(path)
-						.logged(false)
-						.fatal(false)
-						.build())
+		APIError error = APIError.builder()
+				.createdOn(TimeUtils.getNowAccountingDST())
+				.message("See cause")
+				.cause(body != null ? body.toString() : "unknown")
+				.origin(CLASS_NAME_SHORT)
+				.path(path)
+				.logged(true)
+				.fatal(false)
 				.build();
 
+		APIError savedError = errorRepository.save(error);
+		error.setId(savedError.getId());
+
+		Response response = Response.builder().apiError(error).build();
 		return new ResponseEntity<>(response, headers, HttpStatus.BAD_REQUEST);
 	}
 
@@ -89,8 +91,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		});
 
 		Response response = Response.builder()
-				.isError(true)
-				.error(Error.builder()
+				.apiError(APIError.builder()
 						.id(UUID.randomUUID().getMostSignificantBits())
 						.cause(exSimpleName)
 						.message(String.valueOf(errorMessages))
@@ -139,7 +140,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		String exSimpleName = ex.getClass().getSimpleName();
 
-		Error error = Error.builder()
+		APIError error = APIError.builder()
 				.id(UUID.randomUUID().getMostSignificantBits())
 				.cause(exSimpleName)
 				.message(ex.getMessage())
@@ -149,7 +150,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.fatal(true)
 				.build();
 
-		return Response.builder().isError(true).error(error).build();
+		return Response.builder().apiError(error).build();
 	}
 
 	private Response handleAuthenticationException(AuthenticationException ex, WebRequest request, String path) {
@@ -182,7 +183,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			}
 		}
 
-		Error error = Error.builder()
+		APIError error = APIError.builder()
 				.id(UUID.randomUUID().getMostSignificantBits())
 				.cause(exSimpleName)
 				.message(errorMessage)
@@ -195,7 +196,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		if (logged) {
 			error.setId(null);
 			error.setCreatedOn(LocalDateTime.now());
-			Error savedError = this.errorRepository.save(error);
+			APIError savedError = this.errorRepository.save(error);
 			error.setId(savedError.getId());
 		}
 
@@ -204,12 +205,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 					((ServletWebRequest) request).getResponse(), securityProperties.getCookies().getDomain());
 		}
 
-		return Response.builder().isError(true).error(error).build();
+		return Response.builder().apiError(error).build();
 	}
 
 	private Response handleUnknownError(Exception ex, String details, String path) {
 
-		Error error = Error.builder()
+		APIError error = APIError.builder()
 				.cause(ex.getClass().getSimpleName())
 				.message(ex.getMessage())
 				.origin(CLASS_NAME_SHORT + details)
@@ -219,10 +220,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.build();
 
 		error.setCreatedOn(LocalDateTime.now());
-		Error savedError = errorRepository.save(error);
+		APIError savedError = errorRepository.save(error);
 		error.setId(savedError.getId());
 
-		return Response.builder().isError(true).error(error).build();
+		return Response.builder().apiError(error).build();
 	}
 
 	private String extractPath(WebRequest request) {

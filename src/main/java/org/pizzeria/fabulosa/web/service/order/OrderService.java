@@ -1,7 +1,7 @@
 package org.pizzeria.fabulosa.web.service.order;
 
 import org.pizzeria.fabulosa.common.entity.dto.CreatedOnDTO;
-import org.pizzeria.fabulosa.common.entity.dto.CreatedOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.common.entity.dto.OrderSummaryProjection;
 import org.pizzeria.fabulosa.web.dto.order.NewAnonOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;

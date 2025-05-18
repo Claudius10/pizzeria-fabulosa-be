@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.common.dao.error.ErrorRepository;
-import org.pizzeria.fabulosa.common.entity.error.Error;
+import org.pizzeria.fabulosa.common.entity.error.APIError;
 import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
@@ -78,16 +78,16 @@ public class GlobalExceptionHandlerTests {
 		long errorCountAfter = errorRepository.count();
 		assertThat(errorCountAfter).isGreaterThan(0);
 
-		Optional<Error> error = errorRepository.findById(1L);
+		Optional<APIError> error = errorRepository.findById(1L);
 		assertThat(error).isPresent();
 		assertThat(error.get().getMessage()).isEqualTo("TestError");
 		assertThat(error.get().isLogged()).isEqualTo(true);
 		assertThat(error.get().isFatal()).isEqualTo(true);
 
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getError().getCause()).isEqualTo(IllegalArgumentException.class.getSimpleName());
-		assertThat(responseObj.getError().getMessage()).isEqualTo("TestError");
-		assertThat(responseObj.getError().isLogged()).isEqualTo(true);
-		assertThat(responseObj.getError().isFatal()).isEqualTo(true);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(IllegalArgumentException.class.getSimpleName());
+		assertThat(responseObj.getApiError().getMessage()).isEqualTo("TestError");
+		assertThat(responseObj.getApiError().isLogged()).isEqualTo(true);
+		assertThat(responseObj.getApiError().isFatal()).isEqualTo(true);
 	}
 }

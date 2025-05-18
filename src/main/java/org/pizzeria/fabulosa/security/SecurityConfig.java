@@ -88,6 +88,7 @@ public class SecurityConfig {
 			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.RESOURCE_BASE + ApiRoutes.ALL).permitAll();
 			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.ANON_BASE + ApiRoutes.ALL).permitAll();
 			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.DOCS + ApiRoutes.ALL).permitAll();
+			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.DOCS + ".yaml").permitAll();
 			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.ALL).hasAnyRole("USER");
 			authorize.requestMatchers("/api/tests/admin").hasRole("ADMIN");
 			authorize.requestMatchers("/api/tests/**").hasRole("USER");

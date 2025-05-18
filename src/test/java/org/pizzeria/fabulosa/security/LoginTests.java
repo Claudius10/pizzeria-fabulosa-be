@@ -98,8 +98,7 @@ class LoginTests {
 
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
 		assertThat(response.getCookies()).isEmpty();
 	}
 
@@ -115,8 +114,7 @@ class LoginTests {
 
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
 		assertThat(response.getCookies()).isEmpty();
 	}
 
@@ -132,8 +130,7 @@ class LoginTests {
 
 		Response responseObj = getResponse(response, objectMapper);
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
 		assertThat(response.getCookies()).isEmpty();
 	}
 }

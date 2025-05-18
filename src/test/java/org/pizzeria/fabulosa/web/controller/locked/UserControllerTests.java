@@ -136,8 +136,7 @@ class UserControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.DUMMY_ACCOUNT_ERROR);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(ApiResponses.DUMMY_ACCOUNT_ERROR);
 	}
 
 	@Test
@@ -167,8 +166,7 @@ class UserControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
 	}
 
 	// ------------------------- HELPERS -------------------------

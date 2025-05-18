@@ -122,8 +122,7 @@ class ApiSecurityTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().isFatal()).isTrue();
+		assertThat(responseObj.getApiError().isFatal()).isTrue();
 	}
 
 	@Test
@@ -138,8 +137,7 @@ class ApiSecurityTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().isFatal()).isTrue();
+		assertThat(responseObj.getApiError().isFatal()).isTrue();
 	}
 
 	@Test

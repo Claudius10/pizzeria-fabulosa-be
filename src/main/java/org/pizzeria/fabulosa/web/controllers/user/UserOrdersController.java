@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.common.entity.dto.*;
 import org.pizzeria.fabulosa.security.utils.UserSecurity;
 import org.pizzeria.fabulosa.web.controllers.user.swagger.UserOrdersControllerSwagger;
-import org.pizzeria.fabulosa.web.dto.api.Response;
-import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
-import org.pizzeria.fabulosa.web.dto.order.UserOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.*;
 import org.pizzeria.fabulosa.web.service.order.OrderService;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.pizzeria.fabulosa.web.validation.order.CompositeValidator;
@@ -39,7 +37,7 @@ public class UserOrdersController implements UserOrdersControllerSwagger {
 	private final Validator<LocalDateTime> deleteOrderValidator;
 
 	@PostMapping
-	public ResponseEntity<Response> createUserOrder(@RequestBody @Valid NewUserOrderDTO order, @PathVariable Long userId, HttpServletRequest request) {
+	public ResponseEntity<?> createUserOrder(@RequestBody @Valid NewUserOrderDTO order, @PathVariable Long userId, HttpServletRequest request) {
 
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
@@ -52,11 +50,11 @@ public class UserOrdersController implements UserOrdersControllerSwagger {
 		}
 
 		CreatedOrderDTO createdOrder = orderService.createUserOrder(userId, order);
-		return ResponseEntity.status(HttpStatus.CREATED).body(Response.builder().payload(createdOrder).build());
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
 	}
 
 	@GetMapping(ApiRoutes.ORDER_ID)
-	public ResponseEntity<Response> findUserOrderDTO(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
+	public ResponseEntity<?> findUserOrderDTO(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
 
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
@@ -64,12 +62,11 @@ public class UserOrdersController implements UserOrdersControllerSwagger {
 
 		Optional<UserOrderDTO> order = orderService.findOrderDTOById(orderId);
 
-		return order.map(orderDTO -> ResponseEntity.ok().body(Response.builder().payload(orderDTO).build()))
-				.orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+		return order.map(orderDTO -> ResponseEntity.ok().body(orderDTO)).orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
 	}
 
 	@DeleteMapping(ApiRoutes.ORDER_ID)
-	public ResponseEntity<Response> deleteUserOrderById(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
+	public ResponseEntity<?> deleteUserOrderById(@PathVariable Long orderId, @PathVariable Long userId, HttpServletRequest request) {
 
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
@@ -87,11 +84,11 @@ public class UserOrdersController implements UserOrdersControllerSwagger {
 		}
 
 		orderService.deleteUserOrderById(orderId);
-		return ResponseEntity.ok(Response.builder().payload(orderId).build());
+		return ResponseEntity.ok(orderId);
 	}
 
 	@GetMapping(ApiRoutes.ORDER_SUMMARY)
-	public ResponseEntity<Response> findUserOrdersSummary(
+	public ResponseEntity<?> findUserOrdersSummary(
 			@RequestParam(name = ApiRoutes.PAGE_NUMBER) Integer pageNumber,
 			@RequestParam(name = ApiRoutes.PAGE_SIZE) Integer pageSize,
 			@PathVariable Long userId,
@@ -124,6 +121,6 @@ public class UserOrdersController implements UserOrdersControllerSwagger {
 				orderSummaryPage.hasNext()
 		);
 
-		return ResponseEntity.ok(Response.builder().payload(orders).build());
+		return ResponseEntity.ok(orders);
 	}
 }

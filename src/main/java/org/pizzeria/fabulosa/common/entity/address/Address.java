@@ -1,6 +1,7 @@
 package org.pizzeria.fabulosa.common.entity.address;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.pizzeria.fabulosa.web.dto.order.AddressDTO;
 
@@ -20,9 +21,11 @@ public class Address {
 	private Long id;
 
 	@Column(nullable = false)
+	@NotNull
 	private String street;
 
 	@Column(nullable = false)
+	@NotNull
 	private Integer number;
 
 	private String details;

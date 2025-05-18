@@ -79,7 +79,6 @@ class UserIdValidationTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.USER_ID_NO_MATCH);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.USER_ID_NO_MATCH);
 	}
 }

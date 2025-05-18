@@ -4,9 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pizzeria.fabulosa.common.entity.dto.CreatedOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.controllers.open.swagger.AnonControllerSwagger;
-import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.order.NewAnonOrderDTO;
 import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.service.order.OrderService;
@@ -51,7 +50,7 @@ public class AnonController implements AnonControllerSwagger {
 	}
 
 	@PostMapping(ApiRoutes.ANON_ORDER)
-	public ResponseEntity<Response> createAnonOrder(@RequestBody @Valid NewAnonOrderDTO newAnonOrder, HttpServletRequest request) {
+	public ResponseEntity<?> createAnonOrder(@RequestBody @Valid NewAnonOrderDTO newAnonOrder, HttpServletRequest request) {
 
 		Optional<ValidationResult> validate = newOrderValidator.validate(new OrderValidatorInput(newAnonOrder.cart(), newAnonOrder.orderDetails()));
 
@@ -60,6 +59,6 @@ public class AnonController implements AnonControllerSwagger {
 		}
 
 		CreatedOrderDTO createdOrder = orderService.createAnonOrder(newAnonOrder);
-		return ResponseEntity.status(HttpStatus.CREATED).body(Response.builder().payload(createdOrder).build());
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
 	}
 }

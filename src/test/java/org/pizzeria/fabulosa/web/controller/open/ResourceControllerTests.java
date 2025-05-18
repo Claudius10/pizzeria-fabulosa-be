@@ -12,8 +12,8 @@ import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.common.entity.resources.Offer;
 import org.pizzeria.fabulosa.common.entity.resources.Product;
 import org.pizzeria.fabulosa.common.entity.resources.Store;
-import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.resource.OfferListDTO;
+import org.pizzeria.fabulosa.web.dto.resource.ProductListDTO;
 import org.pizzeria.fabulosa.web.dto.resource.StoreListDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.pizzeria.fabulosa.helpers.TestUtils.getResponse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @Testcontainers
@@ -69,6 +68,7 @@ class ResourceControllerTests {
 	@BeforeAll
 	public void init() {
 		Offer offer = new Offer();
+		offer.setImage("");
 		offer.setName(Map.of("name1", "name1", "name2", "name2"));
 		offer.setDescription(Map.of("description1", "description1", "description2", "description2"));
 		offer.setCaveat(Map.of("caveat1", "caveat1", "caveat2", "caveat2"));
@@ -105,13 +105,10 @@ class ResourceControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		Response responseObj = getResponse(response, objectMapper);
-		Map payload = objectMapper.convertValue(responseObj.getPayload(), Map.class);
-		List productList = objectMapper.convertValue(payload.get("productList"), List.class);
-		Product product = objectMapper.convertValue(productList.get(0), Product.class);
-		assertThat(productList).hasSize(1);
-		assertThat(product.getFormats().get("m").get("en")).isEqualTo("Medium");
-		assertThat(product.getPrices().get("m")).isEqualTo(13.3);
+		ProductListDTO products = objectMapper.readValue(response.getContentAsString(), ProductListDTO.class);
+		assertThat(products.productList()).hasSize(1);
+		assertThat(products.productList().getFirst().getFormats().get("m").get("en")).isEqualTo("Medium");
+		assertThat(products.productList().getFirst().getPrices().get("m")).isEqualTo(13.3);
 	}
 
 	@Test
@@ -129,8 +126,7 @@ class ResourceControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		Response responseObj = getResponse(response, objectMapper);
-		StoreListDTO storeList = objectMapper.convertValue(responseObj.getPayload(), StoreListDTO.class);
+		StoreListDTO storeList = objectMapper.readValue(response.getContentAsString(), StoreListDTO.class);
 		assertThat(storeList.stores()).hasSize(1);
 	}
 
@@ -148,8 +144,7 @@ class ResourceControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		Response responseObj = getResponse(response, objectMapper);
-		OfferListDTO offerList = objectMapper.convertValue(responseObj.getPayload(), OfferListDTO.class);
+		OfferListDTO offerList = objectMapper.readValue(response.getContentAsString(), OfferListDTO.class);
 		assertThat(offerList.offers()).hasSize(1);
 	}
 
@@ -166,8 +161,7 @@ class ResourceControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		Response responseObj = getResponse(response, objectMapper);
-		LocalDateTime date = objectMapper.convertValue(responseObj.getPayload(), LocalDateTime.class);
+		LocalDateTime date = objectMapper.readValue(response.getContentAsString(), LocalDateTime.class);
 		assertThat(date).isNotNull();
 	}
 }

@@ -181,8 +181,7 @@ public class UserAddressControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.USER_ID_NO_MATCH);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.USER_ID_NO_MATCH);
 	}
 
 	@Test
@@ -244,8 +243,7 @@ public class UserAddressControllerTests {
 		assertThat(userAddressList).hasSize(3);
 
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.ADDRESS_MAX_SIZE);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(ApiResponses.ADDRESS_MAX_SIZE);
 	}
 
 	@Test
@@ -280,8 +278,7 @@ public class UserAddressControllerTests {
 		assertThat(userRepository.count()).isEqualTo(1);
 		assertThat(addressRepository.count()).isEqualTo(1);
 
-		Response responseObj = getResponse(response, objectMapper);
-		List<Address> userAddressList = objectMapper.convertValue(responseObj.getPayload(), List.class);
+		List<Address> userAddressList = objectMapper.readValue(response.getContentAsString(), List.class);
 		assertThat(userAddressList).hasSize(1);
 	}
 
@@ -390,8 +387,7 @@ public class UserAddressControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(ApiResponses.ADDRESS_NOT_FOUND);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(ApiResponses.ADDRESS_NOT_FOUND);
 	}
 
 	@Test
@@ -420,8 +416,7 @@ public class UserAddressControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		Response responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getIsError()).isTrue();
-		assertThat(responseObj.getError().getCause()).isEqualTo(SecurityResponses.USER_ID_NO_MATCH);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.USER_ID_NO_MATCH);
 	}
 
 	// ------------------------- HELPERS -------------------------

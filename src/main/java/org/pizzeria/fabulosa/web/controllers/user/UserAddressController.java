@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.security.utils.UserSecurity;
 import org.pizzeria.fabulosa.web.controllers.user.swagger.UserAddressControllerSwagger;
-import org.pizzeria.fabulosa.web.dto.api.Response;
 import org.pizzeria.fabulosa.web.dto.order.AddressDTO;
 import org.pizzeria.fabulosa.web.service.user.UserAddressService;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
@@ -28,7 +27,7 @@ public class UserAddressController implements UserAddressControllerSwagger {
 	private final UserAddressService userAddressService;
 
 	@GetMapping
-	public ResponseEntity<Response> findUserAddressListById(@PathVariable Long userId, HttpServletRequest request) {
+	public ResponseEntity<?> findUserAddressListById(@PathVariable Long userId, HttpServletRequest request) {
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
 		}
@@ -46,11 +45,11 @@ public class UserAddressController implements UserAddressControllerSwagger {
 						address.getDetails()))
 				.collect(Collectors.toSet());
 
-		return ResponseEntity.ok(Response.builder().payload(addresses).build());
+		return ResponseEntity.ok(addresses);
 	}
 
 	@PostMapping
-	public ResponseEntity<Response> createUserAddress(@RequestBody @Valid AddressDTO address, @PathVariable Long userId, HttpServletRequest request) {
+	public ResponseEntity<?> createUserAddress(@RequestBody @Valid AddressDTO address, @PathVariable Long userId, HttpServletRequest request) {
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
 		}
@@ -65,7 +64,7 @@ public class UserAddressController implements UserAddressControllerSwagger {
 	}
 
 	@DeleteMapping(ApiRoutes.USER_ADDRESS_ID)
-	public ResponseEntity<Response> deleteUserAddress(@PathVariable Long addressId, @PathVariable Long userId, HttpServletRequest request) {
+	public ResponseEntity<?> deleteUserAddress(@PathVariable Long addressId, @PathVariable Long userId, HttpServletRequest request) {
 		if (!UserSecurity.valid(userId)) {
 			return UserSecurity.deny(request);
 		}
