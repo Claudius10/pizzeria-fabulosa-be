@@ -40,6 +40,7 @@ public class Address {
 
 		public Address build(AddressDTO dto) {
 			return Address.builder()
+					.withId(dto.id())
 					.withStreet(dto.street())
 					.withNumber(dto.number())
 					.withDetails(dto.details())

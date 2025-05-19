@@ -14,9 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.pizzeria.fabulosa.web.util.constant.ApiResponses.*;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
 
 @Tag(name = "User account API", description = "User account related operations")
-@SecurityRequirement(name = "Bearer_Authentication")
+@SecurityRequirement(name = ACCESS_TOKEN)
 public interface UserControllerSwagger {
 
 	@Operation(operationId = "deleteUser", summary = "Delete user account")

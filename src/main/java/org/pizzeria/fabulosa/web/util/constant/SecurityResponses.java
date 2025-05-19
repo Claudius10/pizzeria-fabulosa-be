@@ -8,6 +8,8 @@ public final class SecurityResponses {
 
 	public static final String INVALID_TOKEN = "InvalidBearerTokenException";
 
+	public static final String MISSING_TOKEN = "MissingBearerTokenException";
+
 	private SecurityResponses() {
 	}
 }

@@ -13,7 +13,6 @@ import org.pizzeria.fabulosa.security.access.ClearCookiesLogoutHandler;
 import org.pizzeria.fabulosa.security.access.CookieBearerTokenResolver;
 import org.pizzeria.fabulosa.security.access.login.InvalidLoginHandler;
 import org.pizzeria.fabulosa.security.access.login.ValidLoginHandler;
-import org.pizzeria.fabulosa.security.filters.CookielessRequestFilter;
 import org.pizzeria.fabulosa.security.filters.UnknownPathFilter;
 import org.pizzeria.fabulosa.security.ssl.JWTKeys;
 import org.pizzeria.fabulosa.web.property.SecurityProperties;
@@ -80,9 +79,6 @@ public class SecurityConfig {
 
 		// throw out requests to unmapped paths (first filter in the chain)
 		http.addFilterBefore(new UnknownPathFilter(), ChannelProcessingFilter.class);
-
-		// throw out requests to protected paths that do not include auth token (second filter in the chain)
-		http.addFilterAfter(new CookielessRequestFilter(), UnknownPathFilter.class); // second filter
 
 		http.authorizeHttpRequests(authorize -> {
 			authorize.requestMatchers(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.RESOURCE_BASE + ApiRoutes.ALL).permitAll();

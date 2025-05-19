@@ -15,6 +15,7 @@ public final class ApiResponses {
 	public static final String USER_NOT_FOUND = "UserNotFound"; // when user does not exist in the database
 
 	public static final String JSON = "application/json";
+	public static final String TEXT = "text/plain";
 	public static final String OK = "200";
 	public static final String CREATED = "201";
 	public static final String NO_CONTENT = "204";

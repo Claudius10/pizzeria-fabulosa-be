@@ -8,6 +8,7 @@ import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
+import org.pizzeria.fabulosa.web.util.constant.SecurityResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -122,7 +123,7 @@ class ApiSecurityTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getApiError().isFatal()).isTrue();
+		assertThat(responseObj.getApiError().getMessage()).isEqualTo("Access Denied");
 	}
 
 	@Test
@@ -137,7 +138,7 @@ class ApiSecurityTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getApiError().isFatal()).isTrue();
+		assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponses.MISSING_TOKEN);
 	}
 
 	@Test
@@ -151,7 +152,9 @@ class ApiSecurityTests {
 
 		// Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		ResponseDTO responseObj = getResponse(response, objectMapper);
+		assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponses.MISSING_TOKEN);
 	}
 
 	@Test
@@ -167,7 +170,8 @@ class ApiSecurityTests {
 
 		// Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+		ResponseDTO responseObj = getResponse(response, objectMapper);
+		assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponses.MISSING_TOKEN);
 	}
 
 	@Test

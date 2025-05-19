@@ -33,7 +33,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -93,9 +92,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		ResponseDTO response = ResponseDTO.builder()
 				.apiError(APIError.builder()
 						.id(UUID.randomUUID().getMostSignificantBits())
+						.createdOn(TimeUtils.getNowAccountingDST())
 						.cause(exSimpleName)
 						.message(String.valueOf(errorMessages))
-						.origin(CLASS_NAME_SHORT + exSimpleName)
+						.origin(CLASS_NAME_SHORT + " " + exSimpleName)
 						.path(path)
 						.logged(false)
 						.fatal(false)
@@ -113,7 +113,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		// first handle all the bots trying to access random endpoints
 		if (ex instanceof InsufficientAuthenticationException && "/error".equals(path)) {
 			log.warn("AuthenticationException redirected to /error, URL {}", extractURL(request));
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 
 		ResponseDTO response;
@@ -131,7 +131,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ResponseDTO> unknownException(Exception ex, WebRequest request) {
 		String path = extractPath(request);
-		ResponseDTO response = handleUnknownError(ex, "unknownException", path);
+		ResponseDTO response = handleUnknownError(ex, ex.getClass().getSimpleName(), path);
 		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
@@ -142,9 +142,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		APIError error = APIError.builder()
 				.id(UUID.randomUUID().getMostSignificantBits())
+				.createdOn(TimeUtils.getNowAccountingDST())
 				.cause(exSimpleName)
 				.message(ex.getMessage())
-				.origin(CLASS_NAME_SHORT + exSimpleName)
+				.origin(CLASS_NAME_SHORT + " " + exSimpleName)
 				.path(path)
 				.logged(false)
 				.fatal(true)
@@ -161,6 +162,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		boolean deleteCookies = false;
 
 		switch (ex) {
+			case InsufficientAuthenticationException ignored -> errorMessage = SecurityResponses.MISSING_TOKEN;
 			case BadCredentialsException ignored -> errorMessage = SecurityResponses.BAD_CREDENTIALS;
 			case UsernameNotFoundException ignored -> errorMessage = ApiResponses.USER_NOT_FOUND;
 			case InvalidBearerTokenException ignored -> {
@@ -185,9 +187,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		APIError error = APIError.builder()
 				.id(UUID.randomUUID().getMostSignificantBits())
+				.createdOn(TimeUtils.getNowAccountingDST())
 				.cause(exSimpleName)
 				.message(errorMessage)
-				.origin(CLASS_NAME_SHORT + exSimpleName)
+				.origin(CLASS_NAME_SHORT + " " + exSimpleName)
 				.path(path)
 				.logged(logged)
 				.fatal(fatal)
@@ -195,7 +198,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		if (logged) {
 			error.setId(null);
-			error.setCreatedOn(LocalDateTime.now());
 			APIError savedError = this.errorRepository.save(error);
 			error.setId(savedError.getId());
 		}
@@ -212,14 +214,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		APIError error = APIError.builder()
 				.cause(ex.getClass().getSimpleName())
+				.createdOn(TimeUtils.getNowAccountingDST())
 				.message(ex.getMessage())
-				.origin(CLASS_NAME_SHORT + details)
+				.origin(CLASS_NAME_SHORT + " " + details)
 				.path(path)
 				.logged(true)
 				.fatal(true)
 				.build();
 
-		error.setCreatedOn(LocalDateTime.now());
 		APIError savedError = errorRepository.save(error);
 		error.setId(savedError.getId());
 

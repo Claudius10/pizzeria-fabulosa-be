@@ -10,10 +10,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
-import org.pizzeria.fabulosa.web.dto.order.OrderSummaryListDTO;
 import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
+import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.OrderSummaryListDTO;
 import org.pizzeria.fabulosa.web.dto.order.UserOrderDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +21,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.pizzeria.fabulosa.web.util.constant.ApiResponses.*;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
 
 @Tag(name = "User orders API")
-@SecurityRequirement(name = "Bearer_Authentication")
+@SecurityRequirement(name = ACCESS_TOKEN)
 public interface UserOrdersControllerSwagger {
 
 	@Operation(operationId = "createUserOrder", summary = "Create user order")

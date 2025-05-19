@@ -15,6 +15,7 @@ import org.pizzeria.fabulosa.common.util.TimeUtils;
 import org.pizzeria.fabulosa.web.dto.order.*;
 import org.pizzeria.fabulosa.web.service.address.AddressService;
 import org.pizzeria.fabulosa.web.service.user.UserService;
+import org.pizzeria.fabulosa.web.util.OrderUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -115,6 +116,10 @@ public class OrderServiceImpl implements OrderService {
 			anonOrder.setAddress(unknownAddress);
 		}
 
+		if (null != newAnonOrder.orderDetails().billToChange()) {
+			anonOrder.getOrderDetails().setChangeToGive(OrderUtils.calculatePaymentChange(newAnonOrder.orderDetails().billToChange(), newAnonOrder.cart().totalCost(), newAnonOrder.cart().totalCostOffers()));
+		}
+
 		Order order = orderRepository.save(anonOrder);
 
 		return fromOrderToDTO(order);
@@ -140,6 +145,10 @@ public class OrderServiceImpl implements OrderService {
 				.withCart(cart)
 				.withOrderDetails(OrderDetails.fromDTOBuilder().build(newUserOrder.orderDetails()))
 				.build();
+
+		if (null != newUserOrder.orderDetails().billToChange()) {
+			order.getOrderDetails().setChangeToGive(OrderUtils.calculatePaymentChange(newUserOrder.orderDetails().billToChange(), newUserOrder.cart().totalCost(), newUserOrder.cart().totalCostOffers()));
+		}
 
 		Order newOrder = orderRepository.save(order);
 

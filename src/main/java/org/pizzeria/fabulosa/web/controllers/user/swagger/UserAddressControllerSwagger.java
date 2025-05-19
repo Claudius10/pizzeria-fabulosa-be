@@ -16,9 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import static org.pizzeria.fabulosa.web.util.constant.ApiResponses.*;
+import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
 
 @Tag(name = "User Address API", description = "User address related operations")
-@SecurityRequirement(name = "Bearer_Authentication")
+@SecurityRequirement(name = ACCESS_TOKEN)
 public interface UserAddressControllerSwagger {
 
 	@Operation(operationId = "findUserAddressListById", summary = "Find user's address list")
