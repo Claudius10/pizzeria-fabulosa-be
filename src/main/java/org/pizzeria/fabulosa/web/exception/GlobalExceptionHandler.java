@@ -1,5 +1,6 @@
 package org.pizzeria.fabulosa.web.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -126,6 +127,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	}
+
+	@ExceptionHandler(EntityNotFoundException.class)
+	protected ResponseEntity<ResponseDTO> entityNotFound(EntityNotFoundException ex, WebRequest request) {
+		String path = extractPath(request);
+		String exSimpleName = ex.getClass().getSimpleName();
+
+		APIError error = APIError.builder()
+				.id(UUID.randomUUID().getMostSignificantBits())
+				.createdOn(TimeUtils.getNowAccountingDST())
+				.cause(exSimpleName)
+				.message(ex.getMessage())
+				.origin(CLASS_NAME_SHORT + " " + exSimpleName)
+				.path(path)
+				.logged(false)
+				.fatal(true)
+				.build();
+
+		ResponseDTO response = ResponseDTO.builder().apiError(error).build();
+		ExceptionLogger.log(ex, log, response);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
 
 	@ExceptionHandler(Exception.class)

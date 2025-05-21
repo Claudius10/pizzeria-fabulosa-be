@@ -161,7 +161,8 @@ public class UserAddressControllerTests {
 		// Arrange
 
 		// create access token
-		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), 2L);
+		Long userId = 43543L;
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 		// create address object
 		Address address = Address.builder()
 				.withStreet("Street")
@@ -177,7 +178,7 @@ public class UserAddressControllerTests {
 								ApiRoutes.USER_BASE +
 								ApiRoutes.USER_ID +
 								ApiRoutes.USER_ADDRESS,
-						999)
+						userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(address))
 						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 60, true, false)))
@@ -185,9 +186,9 @@ public class UserAddressControllerTests {
 
 		// Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.USER_ID_NO_MATCH);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(ApiResponses.USER_NOT_FOUND);
 	}
 
 	@Test
