@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 		Optional<Role> userRoleById = roleService.findByName("USER");
 
 		if (userRoleById.isEmpty()) {
-			throw new EntityNotFoundException("Role 'User' not found");
+			throw new EntityNotFoundException("RoleNotFound");
 		}
 
 		Set<Role> roles = new HashSet<>();

@@ -137,8 +137,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		APIError error = APIError.builder()
 				.id(UUID.randomUUID().getMostSignificantBits())
 				.createdOn(TimeUtils.getNowAccountingDST())
-				.cause(exSimpleName)
-				.message(ex.getMessage())
+				.cause(ex.getMessage()) // the message contains which entity was not found
+				.message(exSimpleName)
 				.origin(CLASS_NAME_SHORT + " " + exSimpleName)
 				.path(path)
 				.logged(false)
