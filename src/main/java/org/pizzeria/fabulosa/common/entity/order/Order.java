@@ -3,6 +3,7 @@ package org.pizzeria.fabulosa.common.entity.order;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -12,6 +13,7 @@ import org.pizzeria.fabulosa.common.entity.user.User;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Entity(name = "Order")
 @Table(name = "orders")
 @Getter
@@ -51,10 +53,6 @@ public class Order {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.SET_NULL)
 	private User user;
-
-	public Order() {
-		// The JPA specification requires all Entity classes to have a default no-arg constructor.
-	}
 
 	public void setOrderDetails(OrderDetails orderDetails) {
 		if (orderDetails == null) {

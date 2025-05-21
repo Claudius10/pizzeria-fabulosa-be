@@ -1,21 +1,15 @@
 package org.pizzeria.fabulosa.web.controller.locked;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
-import org.pizzeria.fabulosa.common.dao.order.OrderRepository;
-import org.pizzeria.fabulosa.common.dao.user.UserRepository;
-import org.pizzeria.fabulosa.common.entity.address.Address;
-import org.pizzeria.fabulosa.common.entity.dto.OrderDTO;
+import org.pizzeria.fabulosa.common.entity.projection.OrderProjection;
 import org.pizzeria.fabulosa.common.entity.role.Role;
-import org.pizzeria.fabulosa.common.entity.user.User;
+import org.pizzeria.fabulosa.helpers.TestHelperService;
 import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.order.*;
-import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +30,6 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pizzeria.fabulosa.helpers.TestUtils.getResponse;
@@ -67,30 +60,18 @@ class UserOrdersControllerTests {
 	private JWTTokenManager JWTTokenManager;
 
 	@Autowired
-	private AddressRepository addressRepository;
+	private TestHelperService testHelperService;
 
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private OrderRepository orderRepository;
-
-	@AfterEach
-	void cleanUp() {
-		orderRepository.deleteAll();
-		userRepository.deleteAll();
-		addressRepository.deleteAll();
-	}
 
 	@Test
 	void givenPostApiCallToCreateOrder_thenReturnCreatedAndDTO() throws Exception {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = testHelperService.createAddress("Test", 1);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -149,10 +130,10 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = testHelperService.createAddress("Test", 1);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -198,10 +179,10 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = testHelperService.createAddress("Test", 1);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -268,7 +249,7 @@ class UserOrdersControllerTests {
 		// Assert
 
 		assertThat(getResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
-		UserOrderDTO order = objectMapper.readValue(getResponse.getContentAsString(), UserOrderDTO.class);
+		OrderDTO order = objectMapper.readValue(getResponse.getContentAsString(), OrderDTO.class);
 		assertThat(order.id()).isEqualTo(createdOrder.id());
 	}
 
@@ -278,7 +259,7 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -306,17 +287,17 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = testHelperService.createAddress("Test", 1);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// create user order
 		int minutesInThePast = 0;
-		OrderDTO order = createUserOrderTestSubject(minutesInThePast, userId, addressId, accessToken);
+		OrderProjection order = testHelperService.createOrder(userId, addressId, minutesInThePast);
 
 		// Act
 
@@ -327,7 +308,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_BASE
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
-								+ ApiRoutes.ORDER_ID, userId, order.id())
+								+ ApiRoutes.ORDER_ID, userId, order.getId())
 						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
@@ -336,7 +317,7 @@ class UserOrdersControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		Long id = objectMapper.readValue(response.getContentAsString(), Long.class);
-		assertThat(id).isEqualTo(order.id());
+		assertThat(id).isEqualTo(order.getId());
 	}
 
 	@Test
@@ -344,17 +325,17 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = testHelperService.createAddress("Test", 1);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// create user order
 		int minutesInThePast = 21;
-		OrderDTO order = createUserOrderTestSubject(minutesInThePast, userId, addressId, accessToken);
+		OrderProjection order = testHelperService.createOrder(userId, addressId, minutesInThePast);
 
 		// Act
 
@@ -365,7 +346,7 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_BASE
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
-								+ ApiRoutes.ORDER_ID, userId, order.id())
+								+ ApiRoutes.ORDER_ID, userId, order.getId())
 						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
@@ -382,7 +363,7 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -411,17 +392,17 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create address in database
-		Long addressId = createAddressTestSubject("Test", 1);
+		Long addressId = testHelperService.createAddress("Test", 1);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		// create user order
 		int minutesInThePast = 0;
-		createUserOrderTestSubject(minutesInThePast, userId, addressId, accessToken);
+		testHelperService.createOrder(userId, addressId, minutesInThePast);
 
 		int pageSize = 5;
 		int pageNumber = 0;
@@ -454,7 +435,7 @@ class UserOrdersControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser();
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -487,11 +468,12 @@ class UserOrdersControllerTests {
 	}
 
 	@Test
-	void givenGetUserOrderSummary_whenUserNotFound_thenReturnUnauthorizedWithMessage() throws Exception {
+	void givenGetUserOrderSummary_whenUserNotFound_thenReturnNoContent() throws Exception {
 		// Arrange
 
 		// create JWT token
-		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), 0L);
+		Long userId = 985643L;
+		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
 
 		int pageSize = 1;
 		int pageNumber = 0;
@@ -505,103 +487,13 @@ class UserOrdersControllerTests {
 								+ ApiRoutes.USER_BASE
 								+ ApiRoutes.USER_ID
 								+ ApiRoutes.USER_ORDER
-								+ ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}", 0, pageNumber, pageSize)
+								+ ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}", userId, pageNumber, pageSize)
 						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 30, true, false)))
 				.andReturn()
 				.getResponse();
 
 		// Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getApiError().getCause()).isEqualTo("UsernameNotFoundException");
-	}
-
-	// ------------------------- HELPERS -------------------------
-
-	OrderDTO findOrder(Long orderId, long userId, String validAccessToken) throws Exception {
-		MockHttpServletResponse response = mockMvc.perform(get(
-						ApiRoutes.BASE
-								+ ApiRoutes.V1
-								+ ApiRoutes.USER_BASE
-								+ ApiRoutes.USER_ID
-								+ ApiRoutes.USER_ORDER
-								+ ApiRoutes.ORDER_ID, userId, orderId)
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, validAccessToken, 1800, true, false)))
-				.andReturn().getResponse();
-
-		return objectMapper.readValue(response.getContentAsString(), OrderDTO.class);
-	}
-
-	OrderDTO createUserOrderTestSubject(int minutesInThePast, long userId, long addressId, String validAccessToken) throws Exception {
-		CartDTO cart = new CartDTO(
-				1,
-				18.30D,
-				0D,
-				List.of(new CartItemDTO(
-						null,
-						"pizza",
-						13.30D,
-						1,
-						Map.of("es", "Cuatro Quesos", "en", "Cuatro Quesos"),
-						Map.of(
-								"es", List.of("Salsa de Tomate", "Mozzarella 100%", "Parmesano", "Emmental", "Queso Azul"),
-								"en", List.of("Tomato Sauce", "100% Mozzarella", "Parmesan Cheese", "Emmental Cheese", "Blue Cheese")
-						),
-						Map.of("m", Map.of("es", "Mediana", "en", "Medium"), "l", Map.of(), "s", Map.of())
-				))
-		);
-
-		OrderDetailsDTO orderDetails = new OrderDetailsDTO(
-				"ASAP",
-				"Card",
-				null,
-				null,
-				false,
-				0D
-		);
-
-		NewUserOrderDTO newUserOrderDTO = new NewUserOrderDTO(addressId, orderDetails, cart);
-
-		// post api call to create user order
-		MockHttpServletResponse response = mockMvc.perform(post(
-						"/api/tests/user/{userId}/order?minusMin={minutesInThePast}", userId, minutesInThePast)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(newUserOrderDTO))
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, validAccessToken, 1800, true, false)))
-				.andReturn().getResponse();
-
-		Long orderId = Long.valueOf(response.getContentAsString());
-		return findOrder(orderId, userId, validAccessToken);
-	}
-
-	Long createUser() throws Exception {
-		mockMvc.perform(post(
-				ApiRoutes.BASE
-						+ ApiRoutes.V1
-						+ ApiRoutes.ANON_BASE
-						+ ApiRoutes.ANON_REGISTER)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(new RegisterDTO(
-						"Tester",
-						"Tester@gmail.com",
-						"Tester@gmail.com",
-						123456789,
-						"Password1",
-						"Password1")
-				)));
-
-		Optional<User> user = userRepository.findUserByEmailWithRoles("Tester@gmail.com");
-		assertThat(user.isPresent()).isTrue();
-		return user.get().getId();
-	}
-
-	Long createAddressTestSubject(String streetName, int streetNumber) {
-		return addressRepository.save(
-						Address.builder()
-								.withStreet(streetName)
-								.withNumber(streetNumber)
-								.build())
-				.getId();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
 	}
 }

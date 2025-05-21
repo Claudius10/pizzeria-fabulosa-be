@@ -2,7 +2,7 @@ package org.pizzeria.fabulosa.common.service.user.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.pizzeria.fabulosa.common.dao.user.UserRepository;
+import org.pizzeria.fabulosa.common.dao.internal.UserRepositoryInternal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,11 +15,11 @@ import static org.pizzeria.fabulosa.web.util.constant.ApiResponses.USER_NOT_FOUN
 @Transactional
 public class UserAuthenticationServiceImpl implements UserDetailsService {
 
-	private final UserRepository userRepository;
+	private final UserRepositoryInternal userRepositoryInternal;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return userRepository.findUserByEmailWithRoles(username)
+		return userRepositoryInternal.findUserByEmail(username)
 				.orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND)); // this ends up as AuthenticationException
 	}
 }

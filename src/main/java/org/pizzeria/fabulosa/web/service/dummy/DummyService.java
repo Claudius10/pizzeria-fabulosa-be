@@ -1,9 +1,9 @@
 package org.pizzeria.fabulosa.web.service.dummy;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pizzeria.fabulosa.common.dao.user.UserRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.common.entity.user.User;
@@ -14,12 +14,12 @@ import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.OrderDetailsDTO;
 import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.service.address.AddressService;
+import org.pizzeria.fabulosa.web.service.internal.UserServiceInternal;
 import org.pizzeria.fabulosa.web.service.order.OrderService;
 import org.pizzeria.fabulosa.web.service.user.UserAddressService;
 import org.pizzeria.fabulosa.web.service.user.UserService;
+import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class DummyService {
 
 	private final UserAddressService userAddressService;
 
-	private final UserRepository userRepository;
+	private final UserServiceInternal userServiceInternal;
 
 	private final OrderService orderService;
 
@@ -61,31 +61,30 @@ public class DummyService {
 			this.roleService.createRole(new Role("ADMIN"));
 		}
 
-		log.info("Roles setup done");
+		log.info("Roles done");
 	}
 
 	private void setupDummyUser() {
 		if (!exists()) {
 			createDummyUser();
-			User user = userRepository.findUserByEmail(DUMMY_ACCOUNT_EMAIL);
-			log.info("Dummy user setup: id is {}", user.getId());
+
+			Optional<User> userByEmail = userServiceInternal.findUserByEmail(DUMMY_ACCOUNT_EMAIL);
+
+			if (userByEmail.isEmpty()) {
+				throw new EntityNotFoundException(ApiResponses.USER_NOT_FOUND);
+			}
+
+			User user = userByEmail.get();
 			addAddress(user.getId());
 			addOrder(user.getId());
-			log.info("Dummy user setup: done");
+			log.info("Dummy user created with id {}", user.getId());
 		} else {
-			log.info("Dummy user setup: nothing to do");
+			log.info("Dummy user already exists");
 		}
 	}
 
 	private boolean exists() {
-		User it = new User();
-		it.setEmail(DUMMY_ACCOUNT_EMAIL);
-		ExampleMatcher matcher = ExampleMatcher.matching()
-				.withIgnoreNullValues()
-				.withStringMatcher(ExampleMatcher.StringMatcher.EXACT);
-
-		Example<User> example = Example.of(it, matcher);
-		return userRepository.exists(example);
+		return userServiceInternal.existsByEmail(DUMMY_ACCOUNT_EMAIL);
 	}
 
 	private void createDummyUser() {
@@ -101,7 +100,6 @@ public class DummyService {
 	}
 
 	private void addAddress(Long userId) {
-		log.info("Adding address to dummy user");
 		userAddressService.addUserAddress(userId, Address.builder()
 				.withStreet("En un lugar de la Mancha...")
 				.withNumber(1605)
@@ -110,8 +108,6 @@ public class DummyService {
 	}
 
 	private void addOrder(Long userId) {
-		log.info("Adding order to dummy user");
-
 		Address address = Address.builder()
 				.withStreet("En un lugar de la Mancha...")
 				.withNumber(1605)
@@ -152,5 +148,6 @@ public class DummyService {
 		NewUserOrderDTO order = new NewUserOrderDTO(addressByExample.get().getId(), orderDetailsDTO, cartDTO);
 
 		orderService.createUserOrder(userId, order);
+		log.info("Created order for dummy user");
 	}
 }

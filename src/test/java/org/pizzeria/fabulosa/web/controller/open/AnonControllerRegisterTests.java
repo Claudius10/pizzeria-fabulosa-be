@@ -3,6 +3,7 @@ package org.pizzeria.fabulosa.web.controller.open;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.pizzeria.fabulosa.common.dao.user.UserRepository;
+import org.pizzeria.fabulosa.helpers.TestHelperService;
 import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
@@ -57,6 +58,9 @@ class AnonControllerRegisterTests {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private TestHelperService testHelperService;
+
 	@Test
 	@Order(1)
 	void givenRegisterApiCall_thenRegisterUser() throws Exception {
@@ -85,13 +89,7 @@ class AnonControllerRegisterTests {
 		// Arrange
 
 		// post api call to register new user in database
-		createUserTestSubject(new RegisterDTO(
-				"RegisterTest",
-				"registerAnExistingUser@gmail.com",
-				"registerAnExistingUser@gmail.com",
-				123456789,
-				"Password1",
-				"Password1"));
+		testHelperService.createUser("registerAnExistingUser@gmail.com");
 
 		// Act
 
@@ -249,12 +247,5 @@ class AnonControllerRegisterTests {
 							assertThat(errors.getFirst().getDefaultMessage()).isEqualTo(ValidationResponses.PASSWORD_INVALID);
 						}
 				);
-	}
-
-	void createUserTestSubject(RegisterDTO registerDTO) throws Exception {
-		mockMvc.perform(post(ApiRoutes.BASE + ApiRoutes.V1 + ApiRoutes.ANON_BASE + ApiRoutes.ANON_REGISTER)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(registerDTO)))
-				.andExpect(status().isCreated());
 	}
 }

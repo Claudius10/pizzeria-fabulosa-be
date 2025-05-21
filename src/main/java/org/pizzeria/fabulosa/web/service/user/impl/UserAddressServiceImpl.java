@@ -1,13 +1,15 @@
 package org.pizzeria.fabulosa.web.service.user.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.pizzeria.fabulosa.common.dao.user.UserRepository;
+import org.pizzeria.fabulosa.common.dao.user.UserAddressRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.common.entity.user.User;
 import org.pizzeria.fabulosa.web.service.address.AddressService;
+import org.pizzeria.fabulosa.web.service.internal.UserServiceInternal;
 import org.pizzeria.fabulosa.web.service.user.UserAddressService;
-import org.pizzeria.fabulosa.web.service.user.UserService;
+import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,15 +20,23 @@ import java.util.Set;
 @Transactional
 public class UserAddressServiceImpl implements UserAddressService {
 
-	private final UserRepository userRepository;
+	private final UserAddressRepository userAddressRepository;
 
-	private final UserService userService;
+	private final UserServiceInternal userServiceInternal;
 
 	private final AddressService addressService;
 
 	@Override
 	public boolean addUserAddress(Long userId, Address address) {
-		User user = userService.findUserById(userId);
+
+		Optional<User> userById = userServiceInternal.findUserById(userId);
+
+		if (userById.isEmpty()) {
+			throw new EntityNotFoundException(ApiResponses.USER_NOT_FOUND);
+		}
+
+		User user = userById.get();
+
 		if (user.getAddressList().size() == 3) {
 			return false;
 		}
@@ -44,7 +54,13 @@ public class UserAddressServiceImpl implements UserAddressService {
 
 	@Override
 	public boolean removeUserAddress(Long userId, Long addressId) {
-		User user = userService.findUserById(userId);
+		Optional<User> userById = userServiceInternal.findUserById(userId);
+
+		if (userById.isEmpty()) {
+			throw new EntityNotFoundException(ApiResponses.USER_NOT_FOUND);
+		}
+
+		User user = userById.get();
 
 		Optional<Address> dbAddress = user.getAddressList()
 				.stream()
@@ -61,6 +77,6 @@ public class UserAddressServiceImpl implements UserAddressService {
 
 	@Override
 	public Set<Address> findUserAddressListById(Long userId) {
-		return userRepository.findUserAddressListById(userId);
+		return userAddressRepository.findUserAddressListById(userId);
 	}
 }

@@ -2,19 +2,17 @@ package org.pizzeria.fabulosa.helpers;
 
 import lombok.AllArgsConstructor;
 import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
-import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/tests")
 @AllArgsConstructor
 class TestController {
-
-	private final OrderServiceImplTest orderServiceImplTest;
 
 	@GetMapping()
 	ResponseEntity<ResponseDTO> testGetEndpoint() {
@@ -34,11 +32,5 @@ class TestController {
 	@GetMapping("/admin")
 	ResponseEntity<ResponseDTO> adminTestEndPoint() {
 		return ResponseEntity.status(HttpStatus.OK).body(ResponseDTO.builder().build());
-	}
-
-	@PostMapping(path = "/user/{userId}/order", params = "minusMin")
-	public ResponseEntity<Long> createOrderTestSubjects(@RequestBody NewUserOrderDTO order, @PathVariable Long userId, @RequestParam Long minusMin) {
-		LocalDateTime createdOn = LocalDateTime.now().minusMinutes(minusMin);
-		return ResponseEntity.status(HttpStatus.OK).body(orderServiceImplTest.createOrderTestSubjects(order, userId, createdOn));
 	}
 }

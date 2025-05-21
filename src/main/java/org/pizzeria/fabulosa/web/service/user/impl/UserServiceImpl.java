@@ -1,5 +1,6 @@
 package org.pizzeria.fabulosa.web.service.user.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.common.dao.user.UserRepository;
@@ -8,7 +9,7 @@ import org.pizzeria.fabulosa.common.entity.user.User;
 import org.pizzeria.fabulosa.common.service.role.RoleService;
 import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
 import org.pizzeria.fabulosa.web.service.user.UserService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +33,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void createUser(RegisterDTO registerDTO) {
 		String encodedPassword = bCryptEncoder.encode(registerDTO.password());
-		Optional<Role> userRole = roleService.findByName("USER");
+		Optional<Role> userRoleById = roleService.findByName("USER");
+
+		if (userRoleById.isEmpty()) {
+			throw new EntityNotFoundException("Role 'User' not found");
+		}
+
 		Set<Role> roles = new HashSet<>();
-		roles.add(userRole.get());
+		roles.add(userRoleById.get());
 
 		User user = User.builder()
 				.withName(registerDTO.name())
@@ -49,7 +55,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean deleteUserById(String password, Long userId) {
-		User user = findUserById(userId);
+		Optional<User> userById = userRepository.findById(userId);
+
+		if (userById.isEmpty()) {
+			throw new EntityNotFoundException(ApiResponses.USER_NOT_FOUND);
+		}
+
+		User user = userById.get();
 
 		if (DUMMY_ACCOUNT_EMAIL.equals(user.getEmail())) {
 			return true; // cannot delete dummy account
@@ -57,23 +69,5 @@ public class UserServiceImpl implements UserService {
 
 		userRepository.deleteById(user.getId());
 		return false; // no error otherwise
-	}
-
-	@Override
-	public User findUserReference(Long userId) {
-		return userRepository.getReferenceById(userId);
-	}
-
-	// for internal use only
-
-	public User findUserById(Long userId) {
-		return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException(String.format("UserNotFound %s", userId)));
-	}
-
-	@Override
-	public void existsOrThrow(Long userId) {
-		if (!userRepository.existsById(userId)) {
-			throw new UsernameNotFoundException(String.format("UserNotFound %s", userId));
-		}
 	}
 }

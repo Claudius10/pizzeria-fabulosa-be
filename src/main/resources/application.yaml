@@ -3,6 +3,11 @@ spring:
     url: jdbc:mariadb://localhost:3306/pizzeria
     username: root
     password: root
+    #    url: jdbc:mariadb://db:3306/pizzeria
+    #    username: chef
+    #    password: pizza
+    hikari:
+      initialization-fail-timeout: 60000
 
   profiles:
     active: production
@@ -73,3 +78,6 @@ security:
 #    info enabled – info, warn and error produce log output.
 #    warn enabled – warn and error produce log output.
 #    error enabled – Only error produces log output.
+
+
+# mvn spring-boot:build-image -Dspring-boot.build-image.imageName=pizzeria-be -DskipTests

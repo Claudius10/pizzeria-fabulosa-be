@@ -94,12 +94,6 @@ public class Cart {
 			return this;
 		}
 
-		public Builder withEmptyItemList() {
-			cart.cartItems = new ArrayList<>();
-			cart.totalQuantity = 0;
-			return this;
-		}
-
 		public Cart build() {
 			return cart;
 		}

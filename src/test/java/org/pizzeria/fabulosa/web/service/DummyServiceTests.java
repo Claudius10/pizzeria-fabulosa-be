@@ -5,12 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.pizzeria.fabulosa.common.dao.user.UserRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.common.entity.user.User;
 import org.pizzeria.fabulosa.common.service.role.RoleService;
 import org.pizzeria.fabulosa.web.service.address.AddressService;
 import org.pizzeria.fabulosa.web.service.dummy.DummyService;
+import org.pizzeria.fabulosa.web.service.internal.UserServiceInternal;
 import org.pizzeria.fabulosa.web.service.order.OrderService;
 import org.pizzeria.fabulosa.web.service.user.UserAddressService;
 import org.pizzeria.fabulosa.web.service.user.UserService;
@@ -30,7 +30,7 @@ public class DummyServiceTests {
 	private UserAddressService userAddressService;
 
 	@Mock
-	private UserRepository userRepository;
+	private UserServiceInternal userServiceInternal;
 
 	@Mock
 	private OrderService orderService;
@@ -59,7 +59,8 @@ public class DummyServiceTests {
 
 		doReturn(Optional.empty()).when(roleService).findByName("USER");
 		doReturn(Optional.empty()).when(roleService).findByName("ADMIN");
-		doReturn(user).when(userRepository).findUserByEmail(DUMMY_ACCOUNT_EMAIL);
+		doReturn(false).when(userServiceInternal).existsByEmail(DUMMY_ACCOUNT_EMAIL);
+		doReturn(Optional.of(user)).when(userServiceInternal).findUserByEmail(DUMMY_ACCOUNT_EMAIL);
 		doReturn(Optional.of(address)).when(addressService).findByExample(address);
 
 		// Act
@@ -70,7 +71,7 @@ public class DummyServiceTests {
 
 		verify(roleService, times(1)).findByName("USER");
 		verify(roleService, times(1)).findByName("ADMIN");
-		verify(userRepository, times(1)).findUserByEmail(DUMMY_ACCOUNT_EMAIL);
+		verify(userServiceInternal, times(1)).findUserByEmail(DUMMY_ACCOUNT_EMAIL);
 		verify(addressService, times(1)).findByExample(address);
 	}
 
@@ -81,7 +82,7 @@ public class DummyServiceTests {
 
 		doReturn(Optional.empty()).when(roleService).findByName("USER");
 		doReturn(Optional.empty()).when(roleService).findByName("ADMIN");
-		doReturn(true).when(userRepository).exists(any());
+		doReturn(true).when(userServiceInternal).existsByEmail(DUMMY_ACCOUNT_EMAIL);
 
 		// Act
 
@@ -91,6 +92,5 @@ public class DummyServiceTests {
 
 		verify(roleService, times(1)).findByName("USER");
 		verify(roleService, times(1)).findByName("ADMIN");
-		verify(userRepository, times(1)).exists(any());
 	}
 }

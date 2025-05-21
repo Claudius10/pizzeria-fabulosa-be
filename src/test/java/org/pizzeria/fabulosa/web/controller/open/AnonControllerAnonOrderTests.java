@@ -6,7 +6,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
-import org.pizzeria.fabulosa.web.dto.order.*;
+import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.pizzeria.fabulosa.web.util.constant.ValidationResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +26,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.pizzeria.fabulosa.helpers.TestUtils.anonOrderStub;
 import static org.pizzeria.fabulosa.helpers.TestUtils.getResponse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -470,48 +470,5 @@ class AnonControllerAnonOrderTests {
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
-	}
-
-	NewAnonOrderDTO anonOrderStub(String customerName, int customerNumber, String customerEmail, String street,
-								  int streetNumber, String floor, String door, Double changeRequested,
-								  String deliveryHour, String paymentType, String comment,
-								  boolean emptyCart) {
-
-		CartDTO cartStub = new CartDTO(
-				1,
-				14.75D,
-				0D,
-				List.of(new CartItemDTO(
-						null,
-						"pizza",
-						14.75D,
-						1,
-						Map.of("es", "Cuatro Quesos", "en", "Cuatro Quesos"),
-						Map.of(
-								"es", List.of("Salsa de Tomate", "Mozzarella 100%", "Parmesano", "Emmental", "Queso Azul"),
-								"en", List.of("Tomato Sauce", "100% Mozzarella", "Parmesan Cheese", "Emmental Cheese", "Blue Cheese")
-						),
-						Map.of("m", Map.of("es", "Mediana", "en", "Medium"), "l", Map.of(), "s", Map.of())
-				))
-		);
-
-		if (emptyCart) {
-			cartStub = new CartDTO(
-					0,
-					0D,
-					0D,
-					List.of()
-			);
-		}
-
-		return new NewAnonOrderDTO(
-				new CustomerDTO(
-						customerName,
-						customerNumber,
-						customerEmail),
-				new AddressDTO(null, street, streetNumber, floor + " " + door),
-				new OrderDetailsDTO(deliveryHour, paymentType, changeRequested, comment, false, 0D),
-				cartStub
-		);
 	}
 }

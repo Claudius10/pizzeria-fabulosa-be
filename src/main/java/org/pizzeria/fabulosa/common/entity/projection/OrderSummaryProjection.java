@@ -1,4 +1,4 @@
-package org.pizzeria.fabulosa.common.entity.dto;
+package org.pizzeria.fabulosa.common.entity.projection;
 
 public interface OrderSummaryProjection {
 

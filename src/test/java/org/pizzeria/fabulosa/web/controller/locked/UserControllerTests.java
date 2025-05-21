@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.pizzeria.fabulosa.common.dao.user.UserRepository;
 import org.pizzeria.fabulosa.common.entity.role.Role;
 import org.pizzeria.fabulosa.common.entity.user.User;
+import org.pizzeria.fabulosa.helpers.TestHelperService;
 import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
-import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
+import org.pizzeria.fabulosa.web.service.internal.UserServiceInternal;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.pizzeria.fabulosa.web.util.constant.SecurityResponses;
@@ -19,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
@@ -41,7 +40,6 @@ import static org.pizzeria.fabulosa.helpers.TestUtils.getResponse;
 import static org.pizzeria.fabulosa.web.util.constant.SecurityConstants.ACCESS_TOKEN;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -66,16 +64,19 @@ class UserControllerTests {
 	private JWTTokenManager JWTTokenManager;
 
 	@Autowired
-	private UserRepository userRepository;
+	private TestHelperService testHelperService;
+
+	@Autowired
+	private UserServiceInternal userServiceInternal;
 
 	@Test
 	void givenDeleteUserApiCall_thenDeleteUserAndDeleteAuthTokenCookie() throws Exception {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester3@gmail.com");
+		Long userId = testHelperService.createUser("Tester3@gmail.com");
 
-		Optional<User> user = userRepository.findUserByEmailWithRoles("Tester3@gmail.com");
+		Optional<User> user = userServiceInternal.findUserByEmail("Tester3@gmail.com");
 		assertThat(user).isPresent();
 
 		// create JWT token
@@ -97,7 +98,7 @@ class UserControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		Optional<User> userAfter = userRepository.findUserByEmailWithRoles("Tester3@gmail.com");
+		Optional<User> userAfter = userServiceInternal.findUserByEmail("Tester3@gmail.com");
 		assertThat(userAfter).isEmpty();
 
 		Optional<Cookie> authCookie = Arrays.stream(response.getCookies()).filter(cookie -> cookie.getName().equals(ACCESS_TOKEN)).findFirst();
@@ -114,7 +115,7 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser(DUMMY_ACCOUNT_EMAIL);
+		Long userId = testHelperService.createUser(DUMMY_ACCOUNT_EMAIL);
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken(DUMMY_ACCOUNT_EMAIL, List.of(new Role("USER")), userId);
@@ -144,7 +145,7 @@ class UserControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester3@gmail.com");
+		Long userId = testHelperService.createUser("Tester3@gmail.com");
 
 		// create JWT token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester3@gmail.com", List.of(new Role("USER")), userId);
@@ -167,29 +168,5 @@ class UserControllerTests {
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.BAD_CREDENTIALS);
-	}
-
-	// ------------------------- HELPERS -------------------------
-
-	Long createUser(String email) throws Exception {
-
-		mockMvc.perform(post(
-				ApiRoutes.BASE
-						+ ApiRoutes.V1
-						+ ApiRoutes.ANON_BASE
-						+ ApiRoutes.ANON_REGISTER)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(new RegisterDTO(
-						"Tester",
-						email,
-						email,
-						123456789,
-						"Password1",
-						"Password1")
-				)));
-
-		Optional<User> user = userRepository.findUserByEmailWithRoles(email);
-		assertThat(user.isPresent()).isTrue();
-		return user.get().getId();
 	}
 }

@@ -14,7 +14,7 @@ import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
 import org.pizzeria.fabulosa.web.dto.order.CreatedOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.NewUserOrderDTO;
 import org.pizzeria.fabulosa.web.dto.order.OrderSummaryListDTO;
-import org.pizzeria.fabulosa.web.dto.order.UserOrderDTO;
+import org.pizzeria.fabulosa.web.dto.order.OrderDTO;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,7 +64,7 @@ public interface UserOrdersControllerSwagger {
 	@ApiResponse(
 			responseCode = OK,
 			description = "Returns user order",
-			content = @Content(mediaType = JSON, schema = @Schema(implementation = UserOrderDTO.class))
+			content = @Content(mediaType = JSON, schema = @Schema(implementation = OrderDTO.class))
 	)
 	@ApiResponse(
 			responseCode = NO_CONTENT,

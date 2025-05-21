@@ -5,16 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.pizzeria.fabulosa.common.dao.order.OrderRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.common.entity.cart.Cart;
-import org.pizzeria.fabulosa.common.entity.dto.CreatedOnDTO;
-import org.pizzeria.fabulosa.common.entity.dto.OrderDTO;
-import org.pizzeria.fabulosa.common.entity.dto.OrderSummaryProjection;
 import org.pizzeria.fabulosa.common.entity.order.Order;
 import org.pizzeria.fabulosa.common.entity.order.OrderDetails;
-import org.pizzeria.fabulosa.common.entity.user.User;
+import org.pizzeria.fabulosa.common.entity.projection.CreatedOnProjection;
+import org.pizzeria.fabulosa.common.entity.projection.OrderProjection;
+import org.pizzeria.fabulosa.common.entity.projection.OrderSummaryProjection;
 import org.pizzeria.fabulosa.common.util.TimeUtils;
 import org.pizzeria.fabulosa.web.dto.order.*;
 import org.pizzeria.fabulosa.web.service.address.AddressService;
-import org.pizzeria.fabulosa.web.service.user.UserService;
+import org.pizzeria.fabulosa.web.service.internal.UserServiceInternal;
 import org.pizzeria.fabulosa.web.util.OrderUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,42 +35,42 @@ public class OrderServiceImpl implements OrderService {
 
 	private final AddressService addressService;
 
-	private final UserService userService;
+	private final UserServiceInternal userServiceInternal;
 
 	@Override
-	public Optional<UserOrderDTO> findOrderDTOById(Long orderId) {
+	public Optional<OrderDTO> findOrderDTOById(Long orderId) {
 
-		Optional<OrderDTO> orderDTO = orderRepository.findOrderDTOById(orderId);
+		Optional<OrderProjection> orderDTO = orderRepository.findOrderDTOById(orderId);
 
 		if (orderDTO.isEmpty()) {
 			return Optional.empty();
 		}
 
-		OrderDTO order = orderDTO.get();
+		OrderProjection order = orderDTO.get();
 
-		return Optional.of(new UserOrderDTO(
-				order.id(),
-				order.createdOn(),
-				order.formattedCreatedOn(),
+		return Optional.of(new OrderDTO(
+				order.getId(),
+				order.getCreatedOn(),
+				order.getFormattedCreatedOn(),
 				new AddressDTO(
-						order.address().getId(),
-						order.address().getStreet(),
-						order.address().getNumber(),
-						order.address().getDetails()
+						order.getAddress().getId(),
+						order.getAddress().getStreet(),
+						order.getAddress().getNumber(),
+						order.getAddress().getDetails()
 				),
 				new OrderDetailsDTO(
-						order.orderDetails().getDeliveryTime(),
-						order.orderDetails().getPaymentMethod(),
-						order.orderDetails().getBillToChange(),
-						order.orderDetails().getComment(),
-						order.orderDetails().getStorePickUp(),
-						order.orderDetails().getChangeToGive()
+						order.getOrderDetails().getDeliveryTime(),
+						order.getOrderDetails().getPaymentMethod(),
+						order.getOrderDetails().getBillToChange(),
+						order.getOrderDetails().getComment(),
+						order.getOrderDetails().getStorePickUp(),
+						order.getOrderDetails().getChangeToGive()
 				),
 				new CartDTO(
-						order.cart().getTotalQuantity(),
-						order.cart().getTotalCost(),
-						order.cart().getTotalCostOffers(),
-						order.cart().getCartItems().stream().map(cartItem -> new CartItemDTO(
+						order.getCart().getTotalQuantity(),
+						order.getCart().getTotalCost(),
+						order.getCart().getTotalCostOffers(),
+						order.getCart().getCartItems().stream().map(cartItem -> new CartItemDTO(
 										cartItem.getId(),
 										cartItem.getType(),
 										cartItem.getPrice(),
@@ -127,9 +126,6 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public CreatedOrderDTO createUserOrder(Long userId, NewUserOrderDTO newUserOrder) {
-		User user = userService.findUserById(userId);
-		Address address = addressService.findReference(newUserOrder.addressId());
-
 		Cart cart = new Cart.Builder()
 				.withTotalQuantity(newUserOrder.cart().totalQuantity())
 				.withTotalCost(newUserOrder.cart().totalCost())
@@ -140,8 +136,8 @@ public class OrderServiceImpl implements OrderService {
 		Order order = new Order.Builder()
 				.withCreatedOn(LocalDateTime.now())
 				.withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
-				.withUser(user)
-				.withAddress(address)
+				.withUser(userServiceInternal.findReference(userId))
+				.withAddress(addressService.findReference(newUserOrder.addressId()))
 				.withCart(cart)
 				.withOrderDetails(OrderDetails.fromDTOBuilder().build(newUserOrder.orderDetails()))
 				.build();
@@ -162,7 +158,6 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public Page<OrderSummaryProjection> findUserOrderSummary(Long userId, int size, int page) {
-		userService.existsOrThrow(userId);
 		Sort.TypedSort<Order> order = Sort.sort(Order.class);
 		Sort sort = order.by(Order::getId).descending();
 		PageRequest pageRequest = PageRequest.of(page, size, sort);
@@ -170,7 +165,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Optional<CreatedOnDTO> findCreatedOnDTOById(Long orderId) {
+	public Optional<CreatedOnProjection> findCreatedOnDTOById(Long orderId) {
 		return orderRepository.findCreatedOnById(orderId);
 	}
 }

@@ -3,7 +3,8 @@ package org.pizzeria.fabulosa.web.controllers.user;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pizzeria.fabulosa.common.entity.dto.*;
+import org.pizzeria.fabulosa.common.entity.projection.CreatedOnProjection;
+import org.pizzeria.fabulosa.common.entity.projection.OrderSummaryProjection;
 import org.pizzeria.fabulosa.security.utils.UserSecurity;
 import org.pizzeria.fabulosa.web.controllers.user.swagger.UserOrdersControllerSwagger;
 import org.pizzeria.fabulosa.web.dto.order.*;
@@ -60,7 +61,7 @@ public class UserOrdersController implements UserOrdersControllerSwagger {
 			return UserSecurity.deny(request);
 		}
 
-		Optional<UserOrderDTO> order = orderService.findOrderDTOById(orderId);
+		Optional<OrderDTO> order = orderService.findOrderDTOById(orderId);
 
 		return order.map(orderDTO -> ResponseEntity.ok().body(orderDTO)).orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
 	}
@@ -72,12 +73,12 @@ public class UserOrdersController implements UserOrdersControllerSwagger {
 			return UserSecurity.deny(request);
 		}
 
-		Optional<CreatedOnDTO> createdOnDTOById = orderService.findCreatedOnDTOById(orderId);
+		Optional<CreatedOnProjection> createdOnDTOById = orderService.findCreatedOnDTOById(orderId);
 
 		if (createdOnDTOById.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} else {
-			ValidationResult result = deleteOrderValidator.validate(createdOnDTOById.get().createdOn());
+			ValidationResult result = deleteOrderValidator.validate(createdOnDTOById.get().getCreatedOn());
 			if (!result.valid()) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error(this.getClass().getSimpleName(), result.message(), request.getPathInfo()));
 			}

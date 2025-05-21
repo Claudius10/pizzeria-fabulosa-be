@@ -7,11 +7,11 @@ import org.pizzeria.fabulosa.common.dao.address.AddressRepository;
 import org.pizzeria.fabulosa.common.dao.user.UserRepository;
 import org.pizzeria.fabulosa.common.entity.address.Address;
 import org.pizzeria.fabulosa.common.entity.role.Role;
-import org.pizzeria.fabulosa.common.entity.user.User;
+import org.pizzeria.fabulosa.helpers.TestHelperService;
 import org.pizzeria.fabulosa.security.auth.JWTTokenManager;
 import org.pizzeria.fabulosa.security.utils.SecurityCookies;
 import org.pizzeria.fabulosa.web.dto.api.ResponseDTO;
-import org.pizzeria.fabulosa.web.dto.user.RegisterDTO;
+import org.pizzeria.fabulosa.web.service.user.UserAddressService;
 import org.pizzeria.fabulosa.web.util.constant.ApiResponses;
 import org.pizzeria.fabulosa.web.util.constant.ApiRoutes;
 import org.pizzeria.fabulosa.web.util.constant.SecurityResponses;
@@ -69,6 +69,12 @@ public class UserAddressControllerTests {
 	private UserRepository userRepository;
 
 	@Autowired
+	private TestHelperService testHelperService;
+
+	@Autowired
+	private UserAddressService userAddressService;
+
+	@Autowired
 	private AddressRepository addressRepository;
 
 	@Test
@@ -76,7 +82,7 @@ public class UserAddressControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create access token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -105,7 +111,7 @@ public class UserAddressControllerTests {
 		assertThat(userRepository.count()).isEqualTo(1);
 		assertThat(addressRepository.count()).isEqualTo(1);
 
-		Set<Address> userAddressList = userRepository.findUserAddressListById(userId);
+		Set<Address> userAddressList = userAddressService.findUserAddressListById(userId);
 		assertThat(userAddressList).hasSize(1);
 	}
 
@@ -114,7 +120,7 @@ public class UserAddressControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create access token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -145,7 +151,7 @@ public class UserAddressControllerTests {
 		assertThat(userRepository.count()).isEqualTo(1);
 		assertThat(addressRepository.count()).isEqualTo(1);
 
-		Set<Address> userAddressList = userRepository.findUserAddressListById(userId);
+		Set<Address> userAddressList = userAddressService.findUserAddressListById(userId);
 		assertThat(userAddressList).hasSize(1);
 		assertThat(userAddressList.iterator().next()).isEqualTo(address);
 	}
@@ -189,7 +195,7 @@ public class UserAddressControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create access token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -239,7 +245,7 @@ public class UserAddressControllerTests {
 
 		assertThat(addressRepository.count()).isEqualTo(3);
 
-		Set<Address> userAddressList = userRepository.findUserAddressListById(userId);
+		Set<Address> userAddressList = userAddressService.findUserAddressListById(userId);
 		assertThat(userAddressList).hasSize(3);
 
 		ResponseDTO responseObj = getResponse(response, objectMapper);
@@ -251,7 +257,7 @@ public class UserAddressControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create access token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -311,7 +317,7 @@ public class UserAddressControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create address object
 		Address address = Address.builder()
@@ -329,7 +335,7 @@ public class UserAddressControllerTests {
 				.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 60, true, false)));
 
 		// confirm address was added
-		Set<Address> userAddressList = userRepository.findUserAddressListById(userId);
+		Set<Address> userAddressList = userAddressService.findUserAddressListById(userId);
 		assertThat(userAddressList).hasSize(1);
 
 		// find created address
@@ -354,7 +360,7 @@ public class UserAddressControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		Set<Address> userAddressListAfterDelete = userRepository.findUserAddressListById(userId);
+		Set<Address> userAddressListAfterDelete = userAddressService.findUserAddressListById(userId);
 		assertThat(userAddressListAfterDelete).isEmpty();
 	}
 
@@ -363,7 +369,7 @@ public class UserAddressControllerTests {
 		// Arrange
 
 		// post api call to register new user in database
-		Long userId = createUser("Tester@gmail.com");
+		Long userId = testHelperService.createUser("Tester@gmail.com");
 
 		// create access token
 		String accessToken = JWTTokenManager.generateAccessToken("Tester@gmail.com", List.of(new Role("USER")), userId);
@@ -417,29 +423,5 @@ public class UserAddressControllerTests {
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponses.USER_ID_NO_MATCH);
-	}
-
-	// ------------------------- HELPERS -------------------------
-
-	Long createUser(String email) throws Exception {
-
-		mockMvc.perform(post(
-				ApiRoutes.BASE
-						+ ApiRoutes.V1
-						+ ApiRoutes.ANON_BASE
-						+ ApiRoutes.ANON_REGISTER)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(new RegisterDTO(
-						"Tester",
-						email,
-						email,
-						123456789,
-						"Password1",
-						"Password1")
-				)));
-
-		Optional<User> user = userRepository.findUserByEmailWithRoles(email);
-		assertThat(user.isPresent()).isTrue();
-		return user.get().getId();
 	}
 }
